@@ -3,7 +3,7 @@ import { SimNodeModel } from '../SimNodeModel'
 import Modal from '../components/modal';
 
 const Icon = (value) => <svg width={ 32 } height={ 32 } viewBox={`0 0 100 100`} fill="none" xmlns="http://www.w3.org/2000/svg" >
-    <rect x={5} y={5} width={ 90 } height={ 90 } stroke="rgba(10,10,10,0.9)" strokeWidth={1.8} strokeLinejoin="round" />
+    <rect x={5} y={5} width={ 90 } height={ 90 } stroke="#000000" strokeWidth={1.8} strokeLinejoin="round" />
     <text x="50" y="65" fontFamily="Arial" fontSize={ 40 - 2*value.toString().slice(0,5).length } textAnchor="middle" fill="#000000">{value.toString().slice(0,5)}</text>
 </svg>
 
