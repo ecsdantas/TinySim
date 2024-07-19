@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="99.397034mm"
+   height="99.397552mm"
+   viewBox="0 0 99.397034 99.397552"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="minisim.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title45">Mini sim logo</title>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.48910324"
+     inkscape:cx="-340.41893"
+     inkscape:cy="182.98795"
+     inkscape:window-width="3200"
+     inkscape:window-height="1711"
+     inkscape:window-x="1911"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient35"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#6f2290;stop-opacity:1;"
+         offset="0"
+         id="stop36" />
+      <stop
+         style="stop-color:#864c9e;stop-opacity:1;"
+         offset="0.30578512"
+         id="stop39" />
+      <stop
+         style="stop-color:#0a000b;stop-opacity:1;"
+         offset="0.80165291"
+         id="stop38" />
+      <stop
+         style="stop-color:#120606;stop-opacity:0;"
+         offset="0.9679752"
+         id="stop37" />
+    </linearGradient>
+    <linearGradient
+       id="swatch14"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop15" />
+    </linearGradient>
+    <linearGradient
+       id="swatch6">
+      <stop
+         style="stop-color:#8f8d5a;stop-opacity:1;"
+         offset="0.09917355"
+         id="stop10" />
+      <stop
+         style="stop-color:#a3ba43;stop-opacity:1;"
+         offset="0.38842976"
+         id="stop6" />
+      <stop
+         style="stop-color:#ae450a;stop-opacity:1;"
+         offset="0.68285125"
+         id="stop9" />
+      <stop
+         style="stop-color:#de8d15;stop-opacity:1;"
+         offset="0.98966944"
+         id="stop8" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient35"
+       id="linearGradient37"
+       x1="-43.416405"
+       y1="-130.30411"
+       x2="-48.014526"
+       y2="-10.482348"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(282.29508,159.89071)" />
+  </defs>
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-184.63124,-16.48172)">
+    <path
+       id="rect1"
+       style="opacity:1;fill:url(#linearGradient37);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.603;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 188.01295,16.48172 c -1.87348,0 -3.38171,1.50823 -3.38171,3.38171 v 42.730721 h 28.98944 c 0.0876,-12.818311 0.934,-25.105231 2.54869,-26.035621 0.10595,-0.06103 0.25261,-0.09484 0.43718,-0.10284 5.0922,-0.21844 39.07701,19.1908 46.49587,26.138461 h 20.92585 V 19.86343 c 0,-1.87348 -1.50823,-3.38171 -3.3817,-3.38171 z m -3.38171,49.969043 v 46.046807 c 0,1.87347 1.50823,3.3817 3.38171,3.3817 h 92.63362 c 1.87347,0 3.3817,-1.50823 3.3817,-3.3817 V 66.450763 h -20.87314 c -7.58053,7.138934 -44.00058,27.760382 -47.03382,26.005648 -1.61164,-0.932332 -2.43682,-13.199689 -2.50373,-26.005648 z" />
+  </g>
+  <metadata
+     id="metadata45">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Mini sim logo</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

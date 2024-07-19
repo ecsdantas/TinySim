@@ -1,0 +1,24 @@
+/* start of menubar */
+.menubar {
+    background-color: rgb(40, 38, 38);
+    color: rgb(210, 212, 220);
+    border: 0px;
+    border-radius: 6px;
+    padding: 10px 20px;
+    z-index: 10;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+}
+
+.menubar img {
+    cursor: pointer;
+}
+
+.menubar img:hover {
+    transform: scale(1.2);
+}
+/* end of menubar */

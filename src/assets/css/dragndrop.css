@@ -1,0 +1,17 @@
+.drag-and-drop {
+    background-color: black;
+    color: #d72929;
+    width: 300px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.drag-item {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #d72929;
+    cursor: grab;
+}

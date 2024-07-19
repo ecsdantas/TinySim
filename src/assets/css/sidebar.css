@@ -1,0 +1,65 @@
+/* start of sidebar */
+.sidebar {
+    width: 300px;
+    background-color: rgb(40, 38, 38);
+    color: rgb(210, 212, 220);
+    height: 100vh;
+    z-index: 10;
+    position: absolute;
+    transition: transform 0.5s ease-in-out;
+    padding: 8px;
+}
+
+.sidebar.left {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.sidebar.right {
+    right: 0;
+    transform: translateX(100%);
+}
+
+/* show */
+.sidebar.left.show,
+.sidebar.right.show {
+    transform: translateX(0);
+}
+
+/* titulo da barra side */
+.sidebar .flex-container {
+    display: flex;
+    justify-content: space-between;
+    height: max-content;
+    font-size: x-large;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar .flex-container img.close {
+    cursor: pointer;
+}
+/* end of sidebar */
+
+/* start of settings and library */
+.settings, .library {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+    margin: 10px 0 0 0;
+}
+
+.library {
+    background-color: rgb(220, 220, 220);
+    border-radius: 2px;
+    height: calc(100vh - 80px);
+    overflow-y: scroll;
+    display: flex;
+    gap: 8px;
+    padding: 10px 8px;
+    vertical-align: middle;
+}
+
+.library svg {
+    cursor: grab;
+}
+/* end of settings */
