@@ -47,11 +47,30 @@ class SimulationEngine {
 
     }
 
+    runStep(){
+        // To be made...
+    }
+
     // Obtem o step atual
     getStep(){
         return this.currentStep
     }
 
+    // Obtem o step atual
+    getTime(){
+        return this.time
+    }
+
+    setSimulationTime(step, stopTime){
+        const timeArr = 0;
+        for(let time = 0; time + step <= stopTime; time += step ){
+            timeArr.push(time)
+        };
+        this.currentStep = 0;
+        this.time = timeArr;
+    }
+
+    // 
     freeze(){
         Object.freeze(this)
     }

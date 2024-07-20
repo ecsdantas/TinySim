@@ -42,14 +42,6 @@ const LineChart = ({time, data}) => {
   };
 
 
-
-
-
-
-
-
-
-
 const Settings = (props) => {
     const [getShow, setShow] = useState(false);
     return (
@@ -95,13 +87,13 @@ class PlotModel extends SimNodeModel {
             return <LineChart time={ Simulation.time } data={ this.value } />
         }
 
-    return (<svg width={100} height={30} viewBox="0 0 100 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x={0} y={0} width={'100%'} height={'100%'} fill='#000000' />
-    <rect x="10" y="15" width="10" height="10" fill="#FFFFFF" />
-    <rect x="30" y="10" width="10" height="15" fill="#FFFFFF" />
-    <rect x="50" y="5" width="10" height="20" fill="#FFFFFF" />
-    <rect x="70" y="12" width="10" height="13" fill="#FFFFFF" />
-  </svg>)}
+    /* Retorna o icone padrão */
+    return (<svg width="100" height="30" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="100%" height="100%" fill="#000000" />
+        <path style={{ opacity: 0.4, stroke: '#b3b3b3', strokeWidth: 1 }} d="M 88,7 V 23 M 80,7 V 23 M 73,7 V 23 M 65,7 V 23 M 57,7 V 23 M 49,7 V 23 M 41,7 V 23 M 33,7 V 23 M 25,7 V 23 M 10,7 V 23 M 18,7 v 16 m -11,0 h 87 M 7,15 h 87 M 7,7 h 87" />
+        <path style={{ stroke: '#008080', fill: 'none', strokeWidth: 2 }} d="m 10,23 c 0,0 1,-10 14,-13 13,-3 90,-3 50,-3" />
+    </svg>
+    )}
     
     
 }
