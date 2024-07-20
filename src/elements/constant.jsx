@@ -16,7 +16,6 @@ const Settings = (props) => {
 class ConstantModel extends SimNodeModel {
 
     kind = 'constant'
-    icon = _ => Icon(this.value)
     settings = Settings
     value = 0
 

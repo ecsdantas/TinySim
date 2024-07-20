@@ -6,14 +6,15 @@ class MemoryModel extends SimNodeModel {
 
     kind = 'memory'
     settings = null
-    initialValue = 100
+    initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null
      
-    constructor(options = {}, initialValue) {
+    constructor(options = {}, initialValue = 100) {
         super({...options});
         
         // Define the initial value
+        this.initialValue = initialValue
         this.memoryValue = initialValue
         
         // Create the ports of add model

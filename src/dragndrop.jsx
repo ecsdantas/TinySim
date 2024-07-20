@@ -12,10 +12,6 @@ const DragAndDrop = () => {
 
     return (
         <div className="drag-and-drop">
-            <div className="drag-item" draggable onDragStart={(event) => handleDragStart(event, { name: 'Node 1', kind: 'generic' })}>
-                Generic
-            </div>
-
             <div className='library'>
             {
                 modelsArray.map((model) => {
@@ -23,8 +19,7 @@ const DragAndDrop = () => {
                     return (
                         <div
                             key={`models-${model.name}`}
-                            className=''
-                            style={{ display: 'flex', flexDirection: 'column', gap: '2px'}}
+                            className='library-modal'
                             draggable
                             onDragStart={(event) => handleDragStart(event, { modelName: model.name })}>
                             { modelInitialized.icon && <div style={{margin:'0 auto'}}> { modelInitialized.icon() } </div> }

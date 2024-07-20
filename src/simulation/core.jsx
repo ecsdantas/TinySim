@@ -52,7 +52,7 @@ class SimulationEngine {
         return this.currentStep
     }
 
-    static freeze(){
+    freeze(){
         Object.freeze(this)
     }
 
