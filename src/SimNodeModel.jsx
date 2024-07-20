@@ -8,6 +8,7 @@ import createEngine, {
     RightAngleLinkFactory,
 } from '@projectstorm/react-diagrams';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
+import Simulation from './simulation/core';
 
 // Modelo de fio quadrado
 class SimPortModel extends DefaultPortModel {
@@ -20,6 +21,8 @@ class SimPortModel extends DefaultPortModel {
 class SimNodeModel extends DefaultNodeModel {
 
     kind = 'generic'
+    isTerminalBlock = false    // Indica ao simulador que este bloco não é terminal
+    lastStepSolved = null      // Help to avoid re-work
     icon = null
     settings = null
 
@@ -28,7 +31,6 @@ class SimNodeModel extends DefaultNodeModel {
             ...options,
             type: 'sim-node',
         });
-
     }
 
     // Registra o component para que possa ser possível atualizar
@@ -46,9 +48,27 @@ class SimNodeModel extends DefaultNodeModel {
         return port;
     }
 
-    // Solver basico
-    solve(simControl){
-        return NaN
+    solve() {
+        // Verifica pelo modo de simulação
+        if (Simulation.statelessMode){
+            return this.solution()
+        }
+        if (this.lastStepSolved && this.lastStepSolved.step === Simulation.getStep()){
+            return this.lastStepSolved.value
+        }
+        // Resolve e retorna com os resultados
+        this.lastStepSolved = {step: Simulation.getStep(), value: this.solution()}
+        return this.lastStepSolved.value
+    }
+
+    // Basic solution
+    solution(){
+        return 0
+    }
+
+    // Reset
+    reset(){
+        this.lastStepSolved = null
     }
 
     // Icon must be a React Component

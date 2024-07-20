@@ -8,6 +8,7 @@ import { CanvasWidget } from '@projectstorm/react-canvas-core';
 
 import { Engine as engine, Model as model, SimNodeModel } from './SimNodeModel'
 import DragAndDrop from './dragndrop'
+import Simulation from './simulation/core';
 
 const App = () => {
 
@@ -22,6 +23,7 @@ const App = () => {
                                 event.clientY - event.target.offsetTop);
             model.addNode(newNode);
             engine.setModel(model);
+            Simulation.setModel(model);
         };
 
         const handleDragOver = (event) => {
@@ -39,32 +41,25 @@ const App = () => {
     })
 
 
+    /*
     useEffect(()=>{
-
-        
-        
+  
         /*
         const link = port1.link(port2);
         link.addLabel('Hello World!');
-        
 
         const node1 = new Models.ConstantModel({ name: 'G1' }, 9);
         node1.setPosition(320, 100);
         const node2 = new Models.ConstantModel({ name: 'G2' }, 1/3);
         node2.setPosition(320, 200);
         model.addAll(node1, node2);
-        engine.setModel(model);
-
-       */
-
-        
+        engine.setModel(model);        
 
     },[])
+       */
+
 
     
-   
-    
-
     const [getLBarShow, setLBarShow] = useState(false)
     const [getRBarShow, setRBarShow] = useState(false)
 
@@ -86,7 +81,7 @@ const App = () => {
 
     // Funções do menu de simulação
     const MenuOptions = {
-        Simulate: _ => Simula(),
+        Simulate: _ => Simulation.run(),
         LeftbarToogle: _ => setLBarShow(e => !e),
         RightbarToogle: _ => setRBarShow(e => !e)
     }

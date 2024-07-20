@@ -15,6 +15,7 @@ const Settings = (props) => {
 class DisplayModel extends SimNodeModel {
 
     kind = 'display'
+    isTerminalBlock = true
     settings = Settings
     
     constructor(options = {}) {
@@ -24,10 +25,11 @@ class DisplayModel extends SimNodeModel {
         this.component = null;
     }
 
-    solve(simControl) {
+    // Função principal do bloco
+    solution() {
         const inpt = this.getNodeByInput(0);
         if (inpt && inpt.solve) {
-            this.value = inpt.solve(simControl);
+            this.value = inpt.solve();
             if (this.component) {
                 this.component.forceUpdate();
             }
