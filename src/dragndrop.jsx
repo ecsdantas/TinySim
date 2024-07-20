@@ -26,8 +26,7 @@ const DragAndDrop = () => {
                             { model.name && <div style={{margin:'0 auto'}}> {model.name.replace('Model','') } </div> }
                         </div>
                     )
-
-                })            
+                })
             }
             </div>
 
