@@ -50,6 +50,7 @@
 
 .library {
     background-color: rgb(220, 220, 220);
+    color: brown;
     border-radius: 2px;
     height: calc(100vh - 80px);
     width: 100%;

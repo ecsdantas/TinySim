@@ -1,24 +1,31 @@
 import React from "react"
+import * as Models from '../elements'
 
-export const LibraryList = (props) => {
-
-    // const {Side, Show, closeFcn} = props
+export const LibraryList = () => {
+    
+    const modelsArray = Object.values(Models);
+    const handleDragStart = (event, nodeData) => {
+        event.dataTransfer.setData('drag-block', nodeData.modelName);
+    };
 
     return (
-        <div className="library">
+        <div className='library'>
             {
-            /*
-                blocks.map( (Block,Index) => {
-                 return (<div key={Index}>AAA</div>)
+                modelsArray.map((model) => {
+                    const modelInitialized = new model()
+                    return (
+                        <div
+                            key={`models-${model.name}`}
+                            className='library-modal'
+                            draggable
+                            onDragStart={(event) => handleDragStart(event, { modelName: model.name })}>
+                            { modelInitialized.icon && <div style={{margin:'0 auto'}}> { modelInitialized.icon() } </div> }
+                            { model.name && <div style={{margin:'0 auto'}}> {model.name.replace('Model','') } </div> }
+                        </div>
+                    )
                 })
-            */ 
-        }
+            }
         </div>
     )
 
 }
-/*
-<span key={ Block.name } onDragStart={ _ => alert('a') } draggable="true" title={ Block.name }>
-                    <Block.render height={32} hideports='true' />
-                </span>
-*/

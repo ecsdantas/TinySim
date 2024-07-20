@@ -5,6 +5,7 @@ import DisplayModel from "./display";
 import GainModel from "./gain";
 import MemoryModel from "./memory";
 import PlotModel from "./plot";
+import ClockModel from "./clock";
 
 export { 
     ConstantModel,
@@ -13,5 +14,6 @@ export {
     DisplayModel, 
     GainModel, 
     MemoryModel,
-    PlotModel
+    PlotModel,
+    ClockModel
 }
