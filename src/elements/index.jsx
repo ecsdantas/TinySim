@@ -6,6 +6,7 @@ import GainModel from "./gain";
 import MemoryModel from "./memory";
 import PlotModel from "./plot";
 import ClockModel from "./clock";
+import TextModel from "./text";
 
 export { 
     ConstantModel,
@@ -15,5 +16,6 @@ export {
     GainModel, 
     MemoryModel,
     PlotModel,
-    ClockModel
+    ClockModel,
+    TextModel    
 }

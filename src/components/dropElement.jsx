@@ -8,7 +8,6 @@ const DropElement = () => {
     useEffect(()=>{
         const handleDrop = (event) => {
             event.preventDefault();
-            console.dir(event.dataTransfer.getData('drag-block'));
             const blockName = event.dataTransfer.getData('drag-block');
             const newNode = new Models[blockName]({name: blockName.replace('Model','')})
             newNode.setPosition(event.clientX - event.target.offsetLeft,

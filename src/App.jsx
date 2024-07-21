@@ -5,14 +5,16 @@ import { CanvasWidget } from '@projectstorm/react-canvas-core';
 import { Engine } from './SimNodeModel'
 import Simulation from './simulation/core';
 import { DropElement } from './components/dropElement';
+import Modal from './components/modal';
 
 const App = () => {
 
     // Captura elementos dropados a partir da biblioteca
     DropElement()
 
-    const [getLBarShow, setLBarShow] = useState(true)
+    const [getLBarShow, setLBarShow] = useState(false)
     const [getRBarShow, setRBarShow] = useState(false)
+    const [getModelStates, setModelStates] = useState({ show: false, title: 'not in use', content: <b>Empty</b>})
 
     // Funções do menu de simulação
     const MenuOptions = {
@@ -29,7 +31,7 @@ const App = () => {
             <Menubar {...MenuOptions} />
             <CanvasWidget className="srd-diagram" engine={Engine}  />
         </div>
-
+        <Modal.container getState={getModelStates} setState={setModelStates}/>
     </>
 
 }

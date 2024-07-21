@@ -8,7 +8,6 @@ export const SettingsList = (props) => {
 
     return (
         <div className="settings">
-
             <div className="group-frame">
                 <h3>Simulation Settings</h3>
                 <InputGroup type="text" label='Step time' value={ 0.1 } unit='s' />
