@@ -54,11 +54,11 @@ class SimNodeModel extends DefaultNodeModel {
         if (Simulation.statelessMode){
             return this.solution()
         }
-        if (this.lastStepSolved && this.lastStepSolved.step === Simulation.getStep()){
+        if (this.lastStepSolved && this.lastStepSolved.step === Simulation.getCurrentStep()){
             return this.lastStepSolved.value
         }
         // Resolve e retorna com os resultados
-        this.lastStepSolved = {step: Simulation.getStep(), value: this.solution()}
+        this.lastStepSolved = {step: Simulation.getCurrentStep(), value: this.solution()}
         return this.lastStepSolved.value
     }
 

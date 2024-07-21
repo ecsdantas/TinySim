@@ -1,7 +1,7 @@
 class SimulationEngine {
 
     currentStep = 0
-    time = [1, 2, 3, 4]
+    time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     method = 0
     statelessMode = false
     saveLog = false
@@ -52,8 +52,17 @@ class SimulationEngine {
     }
 
     // Obtem o step atual
-    getStep(){
+    getCurrentStep(){
         return this.currentStep
+    }
+
+    getStepTime(){
+        return (this.time[this.time.length - 1] - this.time[0])/this.time.length
+    }
+
+    // Obtem o step atual
+    getStopTime(){
+        return this.time[this.time.length - 1]
     }
 
     // Obtem o step atual
@@ -62,9 +71,10 @@ class SimulationEngine {
     }
 
     setSimulationTime(step, stopTime){
-        const timeArr = 0;
-        for(let time = 0; time + step <= stopTime; time += step ){
-            timeArr.push(time)
+        const timeArr = [];
+        const n = (stopTime / step)
+        for(let s = 0; s <= n; s +=1  ){
+            timeArr.push( s * step )
         };
         this.currentStep = 0;
         this.time = timeArr;

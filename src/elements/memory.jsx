@@ -26,10 +26,10 @@ class MemoryModel extends SimNodeModel {
     solution() {
         const outValue = this.memoryValue;
         // Previne loop algébrico
-        if (this.lastStepSolved === Simulation.getStep()){
+        if (this.lastStepSolved === Simulation.getCurrentStep()){
             return outValue
         }
-        this.lastStepSolved = Simulation.getStep()
+        this.lastStepSolved = Simulation.getCurrentStep()
         // Realiza o calculo nominal
         const inpt = this.getNodeByInput(0);
         this.memoryValue = (inpt && inpt.solve)? inpt.solve() : 0

@@ -7,7 +7,7 @@ export const InputGroup = (props) => {
     return (
         <div className="input-group">
                 { label && <span>{ label }</span> }
-                <input type={ type } value={ value } disabled={ disabled } onChange={ e => setValue(Number(e.target.value))}/>
+                <input type={ type } value={ value } disabled={ disabled } onChange={ e => setValue(e.target.value)}/>
                 { unit && <span>{ unit }</span> }
         </div>
     )

@@ -87,3 +87,29 @@
   padding: 0 0 6px 0;
   margin: 0;
 }
+
+/* Red text */
+.danger {
+  display: block;
+  color: rgb(198, 66, 45);
+  background-color: #ccc;
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  font-weight: 600;
+  animation: shake 0.5s ease-in;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 0px) }
+  10% { transform: translate(-1px, 0px) }
+  20% { transform: translate(-3px, 0px) }
+  30% { transform: translate(3px, 0px) }
+  40% { transform: translate(1px, 0px) }
+  50% { transform: translate(-1px, 0px) }
+  60% { transform: translate(-3px, 0px) }
+  70% { transform: translate(3px, 0px) }
+  80% { transform: translate(-1px, 0px) }
+  90% { transform: translate(1px, 0px) }
+  100% { transform: translate(1px, 0px) }
+}

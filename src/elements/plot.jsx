@@ -9,7 +9,7 @@ const LineChart = ({time, data}) => {
   
     useEffect(() => {
       const ctx = canvasRef.current.getContext('2d');
-  
+      
       const myLineChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -36,7 +36,7 @@ const LineChart = ({time, data}) => {
       return () => {
         myLineChart.destroy(); // Clean up the chart instance on component unmount
       };
-    }, []);
+    }, [time, data]);
   
     return <canvas ref={canvasRef} />;
   };
