@@ -1,22 +1,12 @@
 import React, { useState } from 'react';
 import { SimNodeModel } from '../SimNodeModel'
-import Modal from '../components/modal';
 
-const Settings = (props) => {
-    const [getShow, setShow] = useState(false);
-    return (
-        <>
-            <button onClick={ _ => setShow(e => !e)} className='settings-button'>⚙️</button>
-            <Modal show={getShow} handleClose={ _ => setShow(false)} children={<>Hello world 2!</>} title={'Test Modal'} />
-        </>
-    )
-}
 
 class DisplayModel extends SimNodeModel {
 
     kind = 'display'
     isTerminalBlock = true
-    settings = Settings
+    settings = null
     
     constructor(options = {}) {
         super({...options});

@@ -42,21 +42,11 @@ const LineChart = ({time, data}) => {
   };
 
 
-const Settings = (props) => {
-    const [getShow, setShow] = useState(false);
-    return (
-        <>
-            <button onClick={ _ => setShow(e => !e)} className='settings-button'>⚙️</button>
-            <Modal show={getShow} handleClose={ _ => setShow(false)} children={<>Hello world 2!</>} title={'Test Modal'} />
-        </>
-    )
-}
-
 class PlotModel extends SimNodeModel {
 
     kind = 'plot'
     isTerminalBlock = true
-    settings = Settings
+    settings = null
     value = []
     
     constructor(options = {}) {
