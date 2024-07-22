@@ -34,6 +34,10 @@ class SimNodeModel extends DefaultNodeModel {
         });
     }
 
+    getModelName(){
+        return this.constructor.name;
+    }
+
     // Registra o component para que possa ser possível atualizar
     registerComponent(component) {
         this.component = component;

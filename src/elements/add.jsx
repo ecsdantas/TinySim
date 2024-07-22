@@ -13,6 +13,7 @@ class AddModel extends SimNodeModel {
         this.createPort('out', false);
         this.createPort('in1', true);
         this.createPort('in2', true);
+        this.createPort('in3', true);
     }
 
     // Função principal do bloco

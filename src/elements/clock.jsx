@@ -4,7 +4,7 @@ import Simulation from '../simulation/core';
 
 class ClockModel extends SimNodeModel {
 
-    kind = 'add'
+    kind = 'clock'
     settings = null
 
     constructor(options = {}) {

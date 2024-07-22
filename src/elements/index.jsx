@@ -19,3 +19,15 @@ export {
     ClockModel,
     TextModel    
 }
+
+export const ModelsArray = [
+    ConstantModel,
+    AddModel,
+    SubModel,
+    DisplayModel,
+    GainModel,
+    MemoryModel,
+    PlotModel,
+    ClockModel,
+    TextModel
+];
