@@ -20,6 +20,10 @@ class SimulationEngine {
     // Run simulation
     run(){
 
+        // Verifica se consegue puxar os nós
+        if (!this.model || !this.model.getNodes)
+            return null
+
         // Obtém todos nós
         const nodes = this.model.getNodes();
 

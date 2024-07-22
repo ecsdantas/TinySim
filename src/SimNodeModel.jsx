@@ -148,7 +148,7 @@ class SimNodeFactory extends AbstractReactFactory {
                     )}</div>
                 </div>
                 <div className="element-label">
-                    <span>{node.getOptions().name}</span>
+                    <span>{node.kind}</span>
                     {Settings && <Settings/>}
                 </div>
             </div>
