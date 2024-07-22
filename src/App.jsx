@@ -6,6 +6,8 @@ import { Engine } from './SimNodeModel'
 import Simulation from './simulation/core';
 import { DropElement } from './components/dropElement';
 import Modal from './components/modal';
+import { SpeedInsights } from "@vercel/speed-insights/react"
+
 
 const App = () => {
 
@@ -32,6 +34,7 @@ const App = () => {
             <CanvasWidget className="srd-diagram" engine={Engine}  />
         </div>
         <Modal.container getState={getModelStates} setState={setModelStates}/>
+        <SpeedInsights />
     </>
 
 }
