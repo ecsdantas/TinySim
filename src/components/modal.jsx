@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import closeSVG from '../assets/icons/close-black.svg';
-import Editor from 'react-simple-wysiwyg';
 
 const Modal = {}
 const useModal = {}
