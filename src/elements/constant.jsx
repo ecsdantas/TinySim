@@ -9,7 +9,7 @@ class ConstantModel extends SimNodeModel {
     value = 0
 
     constructor(options = {}, value = 10) {
-        super({...options});
+        super({...options, name: 'constant'});
         
         // Create the ports of add model
         this.createPort('out', false);

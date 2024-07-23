@@ -62,7 +62,7 @@ class PlotModel extends SimNodeModel {
   value = [];
 
   constructor(options = {}) {
-    super({ ...options });
+    super({ ...options, name: 'plot' });
     this.createPort('in', true);
     this.value = [];
     this.component = null;

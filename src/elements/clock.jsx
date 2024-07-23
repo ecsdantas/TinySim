@@ -8,7 +8,7 @@ class ClockModel extends SimNodeModel {
     settings = null
 
     constructor(options = {}) {
-        super({...options});
+        super({...options, name: 'clock'});
 
         // Create the ports of add model
         this.createPort('out', false);

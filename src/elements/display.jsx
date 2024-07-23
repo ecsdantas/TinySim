@@ -9,7 +9,7 @@ class DisplayModel extends SimNodeModel {
     settings = null
     
     constructor(options = {}) {
-        super({...options});
+        super({...options, name: 'display'});
         this.createPort('in', true);
         this.value = null;
         this.component = null;

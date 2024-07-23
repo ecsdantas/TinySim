@@ -7,7 +7,7 @@ class AddModel extends SimNodeModel {
     kind = 'add'
 
     constructor(options = {}) {
-        super({...options});
+        super({...options, name: 'add'});
 
         // Create the ports of add model
         this.createPort('out', false);

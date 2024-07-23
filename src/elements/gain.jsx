@@ -9,7 +9,7 @@ class GainModel extends SimNodeModel {
     gainValue = 1
 
     constructor(options = {}, gain = 0.5) {
-        super({ ...options });
+        super({ ...options, name: 'gain' });
 
         // Updates the internal gain
         this.gainValue = gain

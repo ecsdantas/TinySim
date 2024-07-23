@@ -11,7 +11,7 @@ class MemoryModel extends SimNodeModel {
     lastStepSolved = null
      
     constructor(options = {}, initialValue = 8) {
-        super({...options});
+        super({...options, name: 'memory'});
         
         // Define the initial value
         this.initialValue = initialValue

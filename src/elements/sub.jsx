@@ -7,7 +7,7 @@ class SubModel extends SimNodeModel {
     kind = 'sub'
     
     constructor(options = {}) {
-        super({ ...options });
+        super({ ...options, name: 'sub' });
 
         // Create the ports of add model
         this.createPort('out', false);

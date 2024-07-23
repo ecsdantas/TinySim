@@ -20,7 +20,7 @@ class TextModel extends SimNodeModel {
     fontSize = 12
 
     constructor(options = {}) {
-        super({ ...options });
+        super({ ...options, name: 'text' });
     }
 
     icon = () => {
