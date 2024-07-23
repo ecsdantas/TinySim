@@ -191,6 +191,7 @@ const Engine = createEngine();
 Engine.getNodeFactories().registerFactory(new SimNodeFactory());
 Engine.getLinkFactories().registerFactory(new RightAngleLinkFactory());
 const Model = new DiagramModel();
+
 Engine.setModel(Model);
 
 export { Engine, Model, SimNodeModel }

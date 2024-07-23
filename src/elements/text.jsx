@@ -43,17 +43,8 @@ class TextModel extends SimNodeModel {
             })
             return <Editor value={text} onChange={e => setText(e.target.value)} />
         }
-
-        // Configura e exibe o modal
-        const showModal = () => {
-            this.setSelected(false)
-            useModal.setTitle('Annotation editor')
-            useModal.setContent(<ControlEditor />)
-            useModal.setShow(true)
-        }
-    
-        // Retorna o botão de edição
-        return <button onClick={ showModal } className='settings-button'>⚙️</button>
+        
+        useModal.configure(this, 'Annotation Block', <ControlEditor />, true);
     }
 
 }

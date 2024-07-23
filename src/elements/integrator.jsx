@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../SimNodeModel'
+import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
+import { InputGroup } from '../components/inputGroup';
 
 class IntegratorModel extends SimNodeModel {
 
     kind = 'integrator'
-    settings = null
     initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null
@@ -44,11 +45,38 @@ class IntegratorModel extends SimNodeModel {
     }
 
     icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="2" width="20" height="20" stroke="#000000" strokeWidth="1" />
-    <text x="8" y="11" font-family="Arial" fontSize="10" fill="#000000">1</text>
-    <line x1="6" x2="17" y1="12" y2="12" fontFamily="Arial" strokeWidth="1" stroke="#000000" />
-    <text x="9" y="20" font-family="Arial" fontSize="10" fill="#000000">s</text>
-</svg>
+        <rect x="2" y="2" width="20" height="20" stroke="#000000" strokeWidth="1" />
+        <text x="8" y="11" fontFamily="Arial" fontSize="10" fill="#000000">1</text>
+        <line x1="6" x2="17" y1="12" y2="12" fontFamily="Arial" strokeWidth="1" stroke="#000000" />
+        <text x="9" y="20" fontFamily="Arial" fontSize="10" fill="#000000">s</text>
+    </svg>
+
+    settings = _ => {
+
+        const isNumber = (n) => {
+            return !isNaN(Number(n))
+        }
+
+        // Editor interno
+        const ControlEditor = () => {
+
+            const [getValue, setValue] = useState(this.initialValue)
+            useEffect(()=>{
+                if (isNumber(getValue)) {
+                    this.initialValue = Number(getValue)
+                    this.component && this.component.forceUpdate();
+                }
+            }, [getValue])
+
+            return <div>
+                <p>The Integrator block sums the input with its internal value, delivering an integrated signal over time to the output. It uses the step time to compute the integration.</p>
+                    <InputGroup label={ 'Initial Condition'}  value={ getValue } setValue={ e => setValue(e) } />
+                </div>
+        }
+
+        useModal.configure(this, 'Integrator Block', <ControlEditor />, true);
+
+    }
     
 }
 
