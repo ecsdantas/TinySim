@@ -14,6 +14,14 @@ import DivideModel from "./divide";
 import PowModel from "./pow";
 import LogModel from "./log";
 import ExponentialModel from "./exp";
+import SwitchModel from "./switch";
+import DerivatorModel from "./derivator"
+import LookupTableModel from "./lookupTable";
+import RandomNumberModel from "./random";
+import RoundModel from "./round";
+import RelationalOperatorModel from "./relational";
+import MinModel from "./min";
+import MaxModel from "./max";
 
 export { 
     ConstantModel,
@@ -31,7 +39,15 @@ export {
     ClockModel,
     TextModel,
     IntegratorModel,
-    SaturationModel
+    DerivatorModel,
+    SaturationModel,
+    SwitchModel,
+    LookupTableModel,
+    RandomNumberModel,
+    RoundModel,
+    RelationalOperatorModel,
+    MinModel,
+    MaxModel
 }
 
 export const ModelsArray = [
@@ -50,5 +66,13 @@ export const ModelsArray = [
     ClockModel,
     TextModel,
     IntegratorModel,
-    SaturationModel
+    DerivatorModel,
+    SaturationModel,
+    SwitchModel,
+    LookupTableModel,
+    RandomNumberModel,
+    RoundModel,
+    RelationalOperatorModel,
+    MinModel,
+    MaxModel
 ];
