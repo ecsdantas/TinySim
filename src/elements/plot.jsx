@@ -1,95 +1,68 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../SimNodeModel';
-import Modal from '../components/modal';
+import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
-
-const LineChart = ({ time, data }) => {
-  const canvasRef = useRef(null);
-  const [chartInstance, setChartInstance] = useState(null);
-
-  useEffect(() => {
-    let Chart;
-
-    const loadChartJs = async () => {
-      const module = await import('chart.js/auto');
-      Chart = module.default;
-
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d');
-        const newChartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: time,
-            datasets: [
-              {
-                label: 'My First Dataset',
-                data: data,
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true,
-              },
-            },
-          },
-        });
-
-        setChartInstance(newChartInstance);
-      }
-    };
-
-    loadChartJs();
-
-    return () => {
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-    };
-  }, [time, data]);
-
-  return <canvas ref={canvasRef} />;
-};
+import LineChart from './complements/LineChart';
+import { InputGroup, ColorPicker } from '../components/inputGroup';
 
 class PlotModel extends SimNodeModel {
   kind = 'plot';
   isTerminalBlock = true;
-  settings = null;
-  value = [];
+  values = [];
+  datasetSettings = [];
+  plotWidth = 'auto';
+  plotHeight = 'auto';
 
   constructor(options = {}) {
     super({ ...options, name: 'plot' });
-    this.createPort('in', true);
-    this.value = [];
+    this.createPort('in1', true);
+    this.values = [];
     this.component = null;
+
+    // Initialize default dataset settings
+    this.datasetSettings = [{
+      name: 'Dataset 1',
+      color: '#4bc0c0',
+    }];
   }
 
-  // Função principal do bloco
+  // Main function of the block
   solution() {
-    const inpt = this.getNodeByInput(0);
-    if (inpt && inpt.solve) {
-      this.value.push(inpt.solve());
-      if (Simulation.time.length === this.value.length && this.component) {
-        this.component.forceUpdate();
+    const ports = this.getInPorts();
+    ports.forEach((port, index) => {
+      const inpt = this.getNodeByInput(index);
+      if (inpt && inpt.solve) {
+        if (!this.values[index]) {
+          this.values[index] = [];
+        }
+        this.values[index].push(inpt.solve());
       }
+    });
+    if (Simulation.time.length === this.values[0]?.length && this.component) {
+      this.component.forceUpdate();
     }
   }
 
   reset() {
     super.reset();
-    this.value = [];
+    this.values = [];
   }
 
   icon = () => {
-    if (Simulation.time.length === this.value.length) {
-      return <LineChart time={Simulation.time} data={this.value} />;
+    const GenColor = (index) => this.datasetSettings[index]?.color || `#${((1 << 24) + (index * 60 << 16) + (70 << 8) + 50).toString(16).slice(1)}`;
+    if (Simulation.time.length === this.values[0]?.length) {
+      const datasets = this.getInPorts().map((_, index) => ({
+        label: this.datasetSettings[index]?.name || `Dataset ${index + 1}`,
+        data: this.values[index],
+        fill: false,
+        backgroundColor: GenColor(index),
+        borderColor:  GenColor(index),
+        tension: 0.1,
+      }));
+      return <LineChart time={Simulation.time} datasets={datasets} plotWidth={this.plotWidth} plotHeight={this.plotHeight} />;
     }
 
-    // Retorna o ícone padrão
+    // Return the default icon
     return (
       <svg width="100" height="30" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="100%" height="100%" fill="#000000" />
@@ -104,6 +77,91 @@ class PlotModel extends SimNodeModel {
       </svg>
     );
   };
+
+  settings = _ => {
+    const ControlEditor = () => {
+      const [settings, setSettings] = useState(this.datasetSettings);
+      const [chartWidth, setChartWidth] = useState(this.plotWidth);
+      const [chartHeight, setChartHeight] = useState(this.plotHeight);
+
+      const handleNameChange = (index, newName) => {
+        const newSettings = [...settings];
+        newSettings[index].name = newName;
+        setSettings(newSettings);
+        this.datasetSettings = newSettings;
+        this.component && this.component.forceUpdate();
+      };
+
+      const handleColorChange = (index, newColor) => {
+        const newSettings = [...settings];
+        newSettings[index].color = newColor;
+        setSettings(newSettings);
+        this.datasetSettings = newSettings;
+        this.component && this.component.forceUpdate();
+      };
+
+      const handleWidthChange = (newWidth) => {
+        this.plotWidth = newWidth;
+        setChartWidth(this.plotWidth);
+        this.component && this.component.forceUpdate();
+      };
+
+      const handleHeightChange = (newHeight) => {
+        this.plotHeight = newHeight;
+        setChartHeight(this.plotHeight);
+        this.component && this.component.forceUpdate();
+      };
+
+      const AddPorts = () => {
+        const portCount = this.getInPorts().length + 1;
+        this.createPort(`in${portCount}`, true);
+        const newSettings = [
+          ...settings,
+          {
+            name: `Dataset ${portCount}`,
+            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random hex color
+          },
+        ];
+        setSettings(newSettings);
+        this.datasetSettings = newSettings;
+        this.component && this.component.forceUpdate();
+      }
+
+      return (
+        <div>
+          <p>This block plots the input values over time. You can add new input ports to plot multiple datasets and customize their names and colors.</p>
+          {settings.map((setting, index) => (
+            <div key={index} style={{ display: 'flex' }}>
+              <InputGroup
+                label={`Dataset ${index + 1}`}
+                value={setting.name}
+                setValue={e => handleNameChange(index, e)}
+              />
+              <ColorPicker
+                value={setting.color}
+                setValue={e => handleColorChange(index, e)}
+              />
+            </div>
+          ))}
+          <InputGroup
+            label="Chart Width"
+            value={chartWidth}
+            setValue={handleWidthChange}
+            unit="px or 'auto'"
+          />
+          <InputGroup
+            label="Chart Height"
+            value={chartHeight}
+            setValue={handleHeightChange}
+            unit="px or 'auto'"
+          />
+          <button className='btn' onClick={AddPorts}>Add port</button>
+        </div>
+      );
+    }
+
+    useModal.configure(this, 'Plot Block', <ControlEditor />, true);
+  }
 }
 
 export default PlotModel;
