@@ -29,17 +29,8 @@ const App = () => {
     useEffect(()=>{
         const InitialText = new TextModel()
         InitialText.setPosition(330, 30)
-        InitialText.text = '<p>Welcome to TinySim.</p>' + 
-'<p>This blocky simulator is under development and is only compatible with devices with a mouse and keyboard (desktops).</p>' +
-'<p>To start, click on library, and drag some components. Connect ports and perform the simulation. All wires must be connected to ports, there are no connections between wires.</p>' +
-'<p>Keyboard shortcuts:</p>' +
-'1. Delete items: Select the desired item and press [delete] or [del]</p>' +
-'2. flip horizontally: select the desired item and press [i] on the keyboard.</p>' +
-'3. Configure block: Select desired block and press [o] on the keyboard.</p>' +
-'4. Zoom: Rotate the scroll wheel</p>' +
-'5. Move item: Select the desired item, click and hold the mouse while dragging.</p>' + 
-'<p>You can now delete this message and start simulating.</p>' + 
-'Any questions, mail-me: evandson@live.com'
+        InitialText.text = '<p>Welcome to <b>TinySim</b>.</p><br />' + 
+            '<p>You can read the <a href="/instructions.html" target="_blank">instructions here</a>.</p>'
         Model.addNode(InitialText)
         Engine.setModel(Model)    
     }, [])
