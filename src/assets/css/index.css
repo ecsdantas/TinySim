@@ -41,10 +41,6 @@
   border: 3px solid rgba(0,0,0,0);
 }
 
-.element.flip {
-  transform: scaleX(-1);
-}
-
 
 .element.selected {
   border: 3px solid rgba(64, 208, 255, 1);
@@ -81,7 +77,7 @@
   gap:"3px";
 }
 
-.element.flip .element-label {
+.element.flip .element-icon {
   transform: scaleX(-1);
 }
 
