@@ -7,6 +7,7 @@ import MemoryModel from "./memory";
 import PlotModel from "./plot";
 import ClockModel from "./clock";
 import TextModel from "./text";
+import IntegratorModel from "./integrator";
 
 export { 
     ConstantModel,
@@ -17,7 +18,8 @@ export {
     MemoryModel,
     PlotModel,
     ClockModel,
-    TextModel    
+    TextModel,
+    IntegratorModel
 }
 
 export const ModelsArray = [
@@ -29,5 +31,6 @@ export const ModelsArray = [
     MemoryModel,
     PlotModel,
     ClockModel,
-    TextModel
+    TextModel,
+    IntegratorModel
 ];

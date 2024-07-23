@@ -2,6 +2,7 @@ class SimulationEngine {
 
     currentStep = 0
     time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    stepSize = 1
     method = 0
     statelessMode = false
     saveLog = false
@@ -10,6 +11,7 @@ class SimulationEngine {
     constructor(model){
         // Salva o modelo contendo todo o circuito
         this.model = model
+        this.stepSize = (this.time[this.time.length - 1] - this.time[0])/this.time.length
     }
 
     // Define o modelo
@@ -61,7 +63,8 @@ class SimulationEngine {
     }
 
     getStepTime(){
-        return (this.time[this.time.length - 1] - this.time[0])/this.time.length
+        // return (this.time[this.time.length - 1] - this.time[0])/this.time.length
+        return this.stepSize;
     }
 
     // Obtem o step atual
@@ -80,6 +83,7 @@ class SimulationEngine {
         for(let s = 0; s <= n; s +=1  ){
             timeArr.push( s * step )
         };
+        this.stepSize = step;
         this.currentStep = 0;
         this.time = timeArr;
     }
