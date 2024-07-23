@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 
-import { InputGroup } from "./inputGroup"
+import { InputGroup, CheckGroup} from "./inputGroup"
 import Simulation from "../simulation/core"
 
 export const SettingsList = (props) => {
@@ -8,6 +8,7 @@ export const SettingsList = (props) => {
     // const {Side, Show, closeFcn} = props
     const [getStepTime, setStepTime] = useState(Simulation.getStepTime())
     const [getStopTime, setStopTime] = useState(Simulation.getStopTime())
+    const [getUseStateless, setUseStateless] = useState(Simulation.statelessMode)
 
     const isValid = () => {
         const stepTime = Number(getStepTime)
@@ -21,7 +22,8 @@ export const SettingsList = (props) => {
         if ( isValid() ) {
             Simulation.setSimulationTime(stepTime, stopTime)
         }
-    },[getStepTime, getStopTime])
+        Simulation.statelessMode = getUseStateless
+    },[getStepTime, getStopTime, getUseStateless])
     
     const handleNumber = (text, func) => {
         const match = text.match(/^\d*\.?\d*$/);
@@ -38,8 +40,9 @@ export const SettingsList = (props) => {
                 {  !isValid() && <span className="danger">⚠️ Invalid settings!</span>}
                 <InputGroup type="text" label='Step time' value={ getStepTime } setValue={ e => handleNumber(e, setStepTime) } unit='s' />
                 <InputGroup type="text" label='Stop time' value={ getStopTime } setValue={ e => setStopTime(e) } unit='s' />
-                <InputGroup type="checkbox" label='Save log' disabled />
-            </div>
+                <div  title={ 'Forces to solve a block every time it is accessed, even if its already solved. Use only if you have troubles.' }>
+                    <CheckGroup type="checkbox" label='Force stateless' value={getUseStateless} setValue={ e => setUseStateless(e) }/></div>
+                </div>
             
         </div>
     )

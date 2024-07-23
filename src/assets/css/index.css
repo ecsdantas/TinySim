@@ -15,14 +15,36 @@
 
 
 
+@keyframes kf-btn {
+  0%, 100% {
+    background-color: linear-gradient(90deg, black, rgb(92, 0, 128));
+  }
+  50% {
+    background-color: linear-gradient(90deg, rgb(92, 0, 128), black
+     );
+  }
+}
 
-
+.btn {
+  border: 0 px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, black, rgb(92, 0, 128));
+  padding: 6px 8px;
+  color: #eeeeee;
+  cursor: pointer;
+  animation: kf-btn 2s infinite;
+}
 
 
 
 .element {
   border: 3px solid rgba(0,0,0,0);
 }
+
+.element.flip {
+  transform: scaleX(-1);
+}
+
 
 .element.selected {
   border: 3px solid rgba(64, 208, 255, 1);
@@ -56,7 +78,11 @@
   background-color: rgba(210,210,9,0.5);
   display: flex;
   justify-content: space-between;
-  gap:"3px"
+  gap:"3px";
+}
+
+.element.flip .element-label {
+  transform: scaleX(-1);
 }
 
 .element .element-label * {
@@ -64,10 +90,16 @@
 }
 
 .element .settings-button {
-  display: none;
+  display: inline;
+  margin: 0;
+  padding: 0;
   border: none;
   background: none;
   outline: none;
+}
+
+.element .settings-button:hover {
+  transform: scale(1.2);
 }
 
 .element:hover .settings-button {

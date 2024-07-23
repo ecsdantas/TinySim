@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SimNodeModel } from '../SimNodeModel'
-
+import { useModal } from '../components/modal';
+import { InputGroup } from '../components/inputGroup';
 
 class ConstantModel extends SimNodeModel {
 
     kind = 'constant'
-    settings = null
     value = 0
 
     constructor(options = {}, value = 10) {
@@ -25,6 +25,33 @@ class ConstantModel extends SimNodeModel {
         <rect x={5} y={5} width={ 90 } height={ 90 } stroke="#000000" strokeWidth={1.8} strokeLinejoin="round" />
         <text x="50" y="65" fontFamily="Arial" fontSize={ 40 - 2*this.value.toString().slice(0,5).length } textAnchor="middle" fill="#000000">{this.value.toString().slice(0,5)}</text>
     </svg>
+
+    settings = _ => {
+
+        const isNumber = (n) => {
+            return !isNaN(Number(n))
+        }
+
+        // Editor interno
+        const ControlEditor = () => {
+
+            const [getConstant, setConstant] = useState(this.value)
+            useEffect(()=>{
+                if (isNumber(getConstant)) {
+                    this.value = Number(getConstant)
+                    this.component && this.component.forceUpdate();
+                }
+            }, [getConstant])
+
+            return <div>
+                <p>This blocks outputs a constant.</p>
+                    <InputGroup label={ 'Constant value'}  value={ getConstant } setValue={ e => setConstant(e) } />
+                </div>
+        }
+
+        useModal.configure(this, 'Add Block', <ControlEditor />, true);
+
+    }
 }
 
 export default ConstantModel

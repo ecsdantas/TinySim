@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../SimNodeModel'
+import { useModal } from '../components/modal';
 
 class AddModel extends SimNodeModel {
 
     kind = 'add'
-    settings = null
 
     constructor(options = {}) {
         super({...options});
@@ -13,7 +13,6 @@ class AddModel extends SimNodeModel {
         this.createPort('out', false);
         this.createPort('in1', true);
         this.createPort('in2', true);
-        this.createPort('in3', true);
     }
 
     // Função principal do bloco
@@ -33,6 +32,23 @@ class AddModel extends SimNodeModel {
         <line x1="12" y1="6" x2="12" y2="18" stroke="#000000" strokeWidth={1} />
         <line x1="6" y1="12" x2="18" y2="12" stroke="#000000" strokeWidth={1} />
     </svg>
+
+    settings = _ => {
+        
+        // Editor interno
+        const ControlEditor = () => {
+
+            const AddPorts = () => {
+                this.createPort(`in${this.getInPorts().length+1}`, true)
+                this.component && this.component.forceUpdate();
+            }
+            return <div>
+                <p>This blocks sum the values from all input ports.<br />You can add new ports.</p>
+                <button className='btn' onClick={ AddPorts }>Add port</button></div>
+        }
+
+        useModal.configure(this, 'Add Block', <ControlEditor />, true);
+    }
 }
 
 export default AddModel

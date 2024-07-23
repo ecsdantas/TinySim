@@ -4,6 +4,13 @@ import closeSVG from '../assets/icons/close-black.svg';
 const Modal = {}
 const useModal = {}
 
+useModal.configure = (block, title, body, show) => {
+    block.setSelected(false)
+    useModal.setTitle(title)
+    useModal.setContent(body)
+    useModal.setShow(show)
+}
+
 Modal.container = (props) => {
 
     const { getState, setState } = props

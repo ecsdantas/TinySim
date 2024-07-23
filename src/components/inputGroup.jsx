@@ -14,6 +14,20 @@ export const InputGroup = (props) => {
 
 }
 
+export const CheckGroup = (props) => {
+
+  const {label, type, value, setValue, unit, disabled} = props
+
+  return (
+      <div className="input-group">
+              { label && <span>{ label }</span> }
+              <input type={ type } checked={ value } disabled={ disabled } onChange={ e => setValue(e.target.checked)}/>
+              { unit && <span>{ unit }</span> }
+      </div>
+  )
+
+}
+
 export const SelectGroup = (props) => {
     const { label, options, value, setValue, unit, disabled } = props;
   

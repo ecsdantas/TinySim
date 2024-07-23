@@ -9,6 +9,7 @@ import createEngine, {
 } from '@projectstorm/react-diagrams';
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
 import Simulation from './simulation/core';
+import { useModal } from './components/modal';
 
 // Modelo de fio quadrado
 class SimPortModel extends DefaultPortModel {
@@ -26,12 +27,17 @@ class SimNodeModel extends DefaultNodeModel {
     lastStepSolved = null      // Help to avoid re-work
     icon = null                // Icone do bloco (deve ser uma React SVG _ => <svg>...</svg>)
     settings = null            // Página de configuração do bloco (deve ser uma React SVG _ => <svg>...</svg>)
+    flip = false                // Mirror the block 180 degree
 
     constructor(options = {}) {
         super({
             ...options,
             type: 'sim-node',
         });
+    }
+
+    update(){
+        this.component && this.component.forceUpdate()
     }
 
     getModelName(){
@@ -107,11 +113,33 @@ class DisplayNodeWidget extends React.Component {
         this.props.node.registerComponent(this);
     }
     render() {
-        const { node } = this.props;
+        const { node, engine } = this.props;
         const Icon = node.icon;
+        const isSelected = node.isSelected();
+        const isFlip = node.flip
+        const Settings = node.settings;
         return (
-            <div className='element-icon' title={node.getOptions().name}>
-                {Icon && <Icon />}
+            <div className={`element ${isSelected? 'selected' : ''}  ${isFlip? 'flip' : ''}`}>
+                <div className='element-body'>
+                    <div className='element-portsIn'>{node.portsIn && node.portsIn.map( inPort =>
+                        <PortWidget engine={engine} port={inPort} key={`in-${inPort.getOptions().name}`}>
+                            <div className='port-widget' title={inPort.getOptions().name} />
+                        </PortWidget>
+                    )}</div>
+                    
+                    <div className='element-icon' title={node.getOptions().name}>
+                        {Icon && <Icon />}
+                    </div>
+                    <div className='element-portsOut'>{node.portsOut && node.portsOut.map( outPort =>
+                        <PortWidget engine={engine} port={outPort} key={`out-${outPort.getOptions().name}`}>
+                            <div className='port-widget' title={outPort.getOptions().name} />
+                        </PortWidget>
+                    )}</div>
+                </div>
+                <div className="element-label">
+                    <span>{node.kind}</span>
+                    {Settings && <button onClick={ Settings } className='settings-button' title={'Block Parameters (O)'}>⚙️</button>}
+                </div>
             </div>
         );
     }
@@ -121,6 +149,30 @@ class DisplayNodeWidget extends React.Component {
 class SimNodeFactory extends AbstractReactFactory {
     constructor() {
         super('sim-node');
+        
+        // Add evento para monitorar os blocos
+        window.addEventListener('keydown', event => this.handleKeyDown(event));
+    }
+
+    // Aqui inveter os nós selecionados
+    handleKeyDown(event) {
+        if (useModal.getShow)
+            return
+        const selectedEntities = this.engine.getModel().getSelectedEntities();
+        switch(event.key){
+            case 'i':
+                selectedEntities.forEach((entity) => {
+                    if ( typeof entity.flip === "boolean" ) {
+                        entity.flip = !entity.flip
+                        entity.update()
+                    }
+                })
+                break
+            case 'o':
+                Array.isArray(selectedEntities) && 
+                selectedEntities.filter(node => node.settings).map(node => node.settings())
+
+        }
     }
 
     generateModel() {
@@ -128,32 +180,7 @@ class SimNodeFactory extends AbstractReactFactory {
     }
 
     generateReactWidget(event) {
-        const node = event.model;
-        const isSelected = node.isSelected();
-        const Settings = node.settings;
-        return (
-            <>
-            <div className={`element ${isSelected? 'selected' : ''}`}>
-                <div className='element-body'>
-                    <div className='element-portsIn'>{node.portsIn && node.portsIn.map( inPort =>
-                        <PortWidget engine={this.engine} port={inPort} key={`in-${inPort.getOptions().name}`}>
-                            <div className='port-widget' title={inPort.getOptions().name} />
-                        </PortWidget>
-                    )}</div>
-                    <DisplayNodeWidget node={node} />
-                    <div className='element-portsOut'>{node.portsOut && node.portsOut.map( outPort =>
-                        <PortWidget engine={this.engine} port={outPort} key={`out-${outPort.getOptions().name}`}>
-                            <div className='port-widget' title={outPort.getOptions().name} />
-                        </PortWidget>
-                    )}</div>
-                </div>
-                <div className="element-label">
-                    <span>{node.kind}</span>
-                    {Settings && <Settings/>}
-                </div>
-            </div>
-            </>
-        );
+        return <DisplayNodeWidget node={ event.model } engine={ this.engine } />
     }
 }
 

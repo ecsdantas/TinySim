@@ -1,13 +1,13 @@
 import React from 'react';
 import { SimNodeModel } from '../SimNodeModel'
+import { useModal } from '../components/modal';
 
 class SubModel extends SimNodeModel {
 
     kind = 'sub'
-    settings = null
-
+    
     constructor(options = {}) {
-        super({...options});
+        super({ ...options });
 
         // Create the ports of add model
         this.createPort('out', false);
@@ -16,7 +16,7 @@ class SubModel extends SimNodeModel {
     }
 
     // Função principal do bloco
-    solution() { 
+    solution() {
         let sum = 0;
         const inpt = this.getNodeByInput(0)
         if (inpt && inpt.solve) {
@@ -35,6 +35,24 @@ class SubModel extends SimNodeModel {
         <circle cx="12" cy="12" r="10" stroke="#000000" strokeWidth={1} />
         <line x1="6" y1="12" x2="18" y2="12" stroke="#000000" strokeWidth={1} />
     </svg>
+
+    settings = _ => {
+
+        // Editor interno
+        const ControlEditor = () => {
+
+            const AddPorts = () => {
+                this.createPort(`in${this.getInPorts().length + 1}`, true)
+                this.component && this.component.forceUpdate();
+            }
+            return <div>
+                <p>This blocks subtract the values from in1 port.<br />You can add new ports to subtract.</p>
+                <button className='btn' onClick={AddPorts}>Add port</button></div>
+        }
+
+        // Configura e exibe o modal
+        useModal.configure(this, 'Sub Block', <ControlEditor />, true);
+    }
 }
 
 export default SubModel
