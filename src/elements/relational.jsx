@@ -30,22 +30,22 @@ class RelationalOperatorModel extends SimNodeModel {
             const value2 = inpt2.solve();
             switch(this.operator) {
                 case 'greaterThanOrEqual':
-                    return Number(value1 >= value2);
+                    return {'out': Number(value1 >= value2)};
                 case 'greaterThan':
-                    return Number(value1 > value2);
+                    return {'out': Number(value1 > value2)};
                 case 'equal':
-                    return Number(value1 === value2);
+                    return {'out': Number(value1 === value2)};
                 case 'lowerThanOrEqual':
-                    return Number(value1 <= value2);
+                    return {'out': Number(value1 <= value2)};
                 case 'lowerThan':
-                    return Number(value1 < value2);
+                    return {'out': Number(value1 < value2)};
                 case 'different':
-                    return Number(value1 !== value2);
+                    return {'out': Number(value1 !== value2)};
                 default:
-                    return NaN;
+                    return {'out': NaN};
             }
         }
-        return NaN;
+        return {'out': NaN};
     }
 
     reset(){

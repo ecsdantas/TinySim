@@ -42,7 +42,14 @@ class ImportCSVModel extends SimNodeModel {
   // Main function of the block
   solution() {
     const currentTime = Simulation.getCurrentStep();
-    return this.values[currentTime] || [];
+    const colValues = this.values[currentTime] || [];
+    const outputs = {};
+
+    colValues.forEach((value, index) => {
+      outputs[`out${index + 1}`] = value;
+    });
+
+    return outputs;
   }
 
   icon = () => (

@@ -7,12 +7,11 @@ class DisplayModel extends SimNodeModel {
     kind = 'display'
     isTerminalBlock = true
     settings = null
-    
+    value = null;
+        
     constructor(options = {}) {
         super({...options, name: 'display'});
         this.createPort('in', true);
-        this.value = null;
-        this.component = null;
     }
 
     // Função principal do bloco
@@ -20,11 +19,11 @@ class DisplayModel extends SimNodeModel {
         const inpt = this.getNodeByInput(0);
         if (inpt && inpt.solve) {
             this.value = inpt.solve();
-            if (this.component) {
-                this.component.forceUpdate();
-            }
-            return this.value;
+            this.update()
+            return {'out': this.value};
         }
+        this.value = 'offline'
+        this.update()
     }
 
     icon = () => <svg width={100} height={30} fill="none" xmlns="http://www.w3.org/2000/svg">

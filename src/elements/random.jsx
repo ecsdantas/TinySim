@@ -27,7 +27,7 @@ class RandomNumberModel extends SimNodeModel {
         const min = this.minValue;
         const max = this.maxValue;
         if (this.distribution === 'uniform') {
-            return Math.random() * (max - min) + min;
+            return {'out': Math.random() * (max - min) + min};
         } else if (this.distribution === 'normal') {
             let u = 0, v = 0;
             while(u === 0) u = Math.random(); // Converting [0,1) to (0,1)
@@ -35,9 +35,9 @@ class RandomNumberModel extends SimNodeModel {
             const num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
             const mean = (max + min) / 2;
             const stdDev = (max - min) / 6; // 99.7% of values lie within +/- 3 std dev for normal distribution
-            return num * stdDev + mean;
+            return {'out': num * stdDev + mean};
         }
-        return NaN;
+        return {'out': NaN};
     }
 
     reset(){
@@ -90,7 +90,7 @@ class RandomNumberModel extends SimNodeModel {
                 <p>This block generates a random number based on the specified minimum and maximum values, and the distribution type.</p>
                 <InputGroup label={'Minimum Value'} value={getMinValue} setValue={e => setMinValue(e)} />
                 <InputGroup label={'Maximum Value'} value={getMaxValue} setValue={e => setMaxValue(e)} />
-                <SelectGroup label={'Distribution'} value={getDistribution} setValue={e => setDistribution(e)} options={['uniform', 'normal']} />
+                <SelectGroup label={'Distribution'} value={getDistribution} setValue={e => setDistribution(e)} options={[{value: 'uniform',label:'uniform'},{value: 'normal',label:'normal'}]} />
             </div>
         }
 

@@ -39,7 +39,7 @@ class PlotModel extends SimNodeModel {
       }
     });
     if (Simulation.time.length === this.values[0]?.length && this.component) {
-      this.component.forceUpdate();
+      this.update()
     }
   }
 

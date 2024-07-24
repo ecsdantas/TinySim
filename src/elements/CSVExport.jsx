@@ -21,7 +21,7 @@ class CSVExportModel extends SimNodeModel {
   // Main function of the block
   solution() {
     const ports = this.getInPorts();
-    ports.forEach((port, index) => {
+    ports.forEach((_, index) => {
       const inpt = this.getNodeByInput(index);
       if (inpt && inpt.solve) {
         if (!this.values[index]) {

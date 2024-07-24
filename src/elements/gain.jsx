@@ -22,7 +22,8 @@ class GainModel extends SimNodeModel {
     // Função principal do bloco
     solution() {
         const inpt = this.getNodeByInput(0);
-        return (inpt && inpt.solve) ? inpt.solve() * this.gainValue : 0
+        const out = (inpt && inpt.solve) ? inpt.solve() * this.gainValue : 0
+        return {'out': out}
     }
 
     icon = () => <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" >

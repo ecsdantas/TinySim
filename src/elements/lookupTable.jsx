@@ -34,9 +34,9 @@ class LookupTableModel extends SimNodeModel {
                     closest = this.lookupTable[i];
                 }
             }
-            return closest[1];
+            return {'out': closest[1]};
         }
-        return NaN;
+        return {'out': NaN};
     }
 
     reset(){
@@ -75,6 +75,7 @@ class LookupTableModel extends SimNodeModel {
 
             return <div>
                 <p>This block uses a lookup table to determine the output based on the input value.</p>
+                <p>The method used is the closest point (no interpolation).</p>
                 <p>Table must be pased in following format: [[x1,y1], [x2,y2], ...]</p>
                 { getError && <p className='danger'>Invalid lookup table format</p>}
                 <InputGroup label={ 'Table' }  value={ getTable } setValue={ e => setTable(e) } />

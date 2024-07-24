@@ -23,9 +23,9 @@ class MinModel extends SimNodeModel {
         if (inpt1 && inpt1.solve && inpt2 && inpt2.solve) {
             const value1 = inpt1.solve();
             const value2 = inpt2.solve();
-            return Math.min(value1, value2);
+            return {'out': Math.min(value1, value2)};
         }
-        return NaN;
+        return {'out': NaN};
     }
 
     icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

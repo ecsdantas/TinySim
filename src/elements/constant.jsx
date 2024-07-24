@@ -18,7 +18,7 @@ class ConstantModel extends SimNodeModel {
 
     // Função principal do bloco
     solution() { 
-        return this.value
+        return {'out': this.value}
     }
 
     icon = _ => <svg width={ 32 } height={ 32 } viewBox={`0 0 100 100`} fill="none" xmlns="http://www.w3.org/2000/svg" >

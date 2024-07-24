@@ -20,9 +20,9 @@ class ExponentialModel extends SimNodeModel {
         
         if (inpt && inpt.solve) {
             const value = inpt.solve();
-            return Math.exp(value);
+            return {'out': Math.exp(value)};
         }
-        return NaN;
+        return {'out': NaN};
     }
 
     icon = () => <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -28,14 +28,14 @@ class IntegratorModel extends SimNodeModel {
         const outValue = this.memoryValue;
         // Previne loop algébrico
         if (this.lastStepSolved === Simulation.getCurrentStep()){
-            return outValue
+            return {'out':  outValue}
         }
         this.lastStepSolved = Simulation.getCurrentStep()
         // Realiza o calculo nominal
         const inpt = this.getNodeByInput(0);
         this.memoryValue += ((inpt && inpt.solve)? inpt.solve() : 0) * Simulation.getStepTime()
         // Retorna o valor antigo da memória
-        return outValue
+        return {'out':  outValue}
     }
 
     reset(){

@@ -7,7 +7,7 @@ import Simulation from './simulation/core';
 import { DropElement } from './components/dropElement';
 import Modal from './components/modal';
 import { SpeedInsights } from "@vercel/speed-insights/react"
-import { TextModel } from './elements';
+import { TextModel, ConstantModel, DisplayModel } from './elements';
 
 
 const App = () => {
@@ -32,6 +32,24 @@ const App = () => {
         InitialText.text = '<p>Welcome to <b>TinySim</b>.</p><br />' + 
             '<p>You can read the <a href="/instructions.html" target="_blank">instructions here</a>.</p>'
         Model.addNode(InitialText)
+
+        const constant = new ConstantModel()
+        constant.setPosition(330, 200)
+        
+        const display = new DisplayModel()
+        display.setPosition(520, 200)
+        
+        Model.addNode(constant)
+        Model.addNode(display)
+
+        
+        const dispPort = display.getInPorts()[0]
+        const constPort = constant.getOutPorts()[0]
+        const link = dispPort.link(constPort)
+        Model.addLink(link)
+       
+
+
         Engine.setModel(Model)    
     }, [])
 

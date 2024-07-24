@@ -30,10 +30,7 @@ class SimNodeModel extends DefaultNodeModel {
     flip = false               // Mirror the block 180 degree
 
     constructor(options = {}) {
-        super({
-            ...options,
-            type: 'sim-node',
-        });
+        super({...options, type: 'sim-node'});
     }
 
     update(){
@@ -60,21 +57,24 @@ class SimNodeModel extends DefaultNodeModel {
     }
 
     solve() {
+        if (!this.calledPort) return
         // Verifica pelo modo de simulação
+        const portLabel = this.calledPort.options.label;
         if (Simulation.statelessMode){
-            return this.solution()
+            const solution = this.solution()
+            return solution[portLabel]
         }
         if (this.lastStepSolved && this.lastStepSolved.step === Simulation.getCurrentStep()){
-            return this.lastStepSolved.value
+            return this.lastStepSolved.value[portLabel]
         }
         // Resolve e retorna com os resultados
         this.lastStepSolved = {step: Simulation.getCurrentStep(), value: this.solution()}
-        return this.lastStepSolved.value
+        return this.lastStepSolved.value[portLabel]
     }
 
     // Basic solution
     solution(){
-        return 0
+        return {'portLabel': 0}
     }
 
     // Reset
@@ -101,8 +101,9 @@ class SimNodeModel extends DefaultNodeModel {
             // Assumindo que existe apenas uma ligação por porta de entrada
             const link = Object.values(port.getLinks())[0];
             const connectedPort = link.getSourcePort() === port ? link.getTargetPort() : link.getSourcePort();
-            // console.dir(connectedPort); Retorna a porta de saida ao qual a solução está conectada
-            return connectedPort.getNode();   
+            const node = connectedPort.getNode()
+            node.calledPort = connectedPort // Bind the port that was called
+            return node;   
         }
         return null; // Nenhuma ligação encontrada
     }

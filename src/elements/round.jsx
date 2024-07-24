@@ -25,9 +25,9 @@ class RoundModel extends SimNodeModel {
         if (inpt && inpt.solve) {
             const value = inpt.solve();
             const factor = Math.pow(10, this.decimalPlaces);
-            return Math.round(value * factor) / factor;
+            return {'out': Math.round(value * factor) / factor};
         }
-        return NaN;
+        return {'out': NaN};
     }
 
     reset(){

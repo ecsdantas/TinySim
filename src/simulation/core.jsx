@@ -4,7 +4,7 @@ class SimulationEngine {
     time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     stepSize = 1
     method = 0
-    statelessMode = false
+    statelessMode = true
     saveLog = false
     model = null
 
@@ -22,6 +22,7 @@ class SimulationEngine {
     // Run simulation
     run(){
 
+        
         // Verifica se consegue puxar os nós
         if (!this.model || !this.model.getNodes)
             return null
@@ -43,7 +44,7 @@ class SimulationEngine {
  
             // Procura por outputs
             nodes.filter(node => node.isTerminalBlock).map( node => {
-                node.solve()
+                node.solution() // Chama diretamente a solução
             })
 
             // Incrementa o step

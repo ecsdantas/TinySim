@@ -29,7 +29,7 @@ class DerivatorModel extends SimNodeModel {
         const currentInput = (inpt && inpt.solve) ? inpt.solve() : 0;
         const derivative = (currentInput - this.previousInput) / Simulation.getStepTime();
         this.previousInput = currentInput;
-        return derivative;
+        return {'out': derivative};
     }
 
     reset(){

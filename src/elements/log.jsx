@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SimNodeModel } from '../SimNodeModel'
 import { useModal } from '../components/modal';
 
@@ -24,11 +24,11 @@ class LogModel extends SimNodeModel {
             const value = inpt1.solve();
             const base = inpt2.solve();
             if (value <= 0 || base <= 0 || base === 1) {
-                return NaN; // Logarithm is not defined for non-positive values or base 1
+                return {'out':  NaN}; // Logarithm is not defined for non-positive values or base 1
             }
-            return Math.log(value) / Math.log(base);
+            return {'out': Math.log(value) / Math.log(base)}
         }
-        return NaN;
+        return {'out':  NaN}
     }
 
     icon = () => <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

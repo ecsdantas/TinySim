@@ -24,9 +24,9 @@ class SaturationModel extends SimNodeModel {
         const inpt = this.getNodeByInput(0)
         if (inpt && inpt.solve) {
             const value = inpt.solve();
-            return Math.max(this.MinValue, Math.min(this.MaxValue, value));
+            return {'out': Math.max(this.MinValue, Math.min(this.MaxValue, value)) };
         }
-        return 0;
+        return {'out': 0}
     }
 
     icon = () => <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
