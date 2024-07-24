@@ -27,6 +27,7 @@ import ImportCSVMode from "./CSVImport"
 import HistogramModel from "./histogram";
 import AverageModel from "./average";
 import StandardDeviationModel from "./standardDeviation";
+import GaugeModel from "./gauge";
 
 export { 
     ConstantModel,
@@ -57,7 +58,8 @@ export {
     RoundModel,
     RelationalOperatorModel,
     CSVExportModel,
-    ImportCSVMode
+    ImportCSVMode, 
+    GaugeModel
 }
 
 export const ModelsArray = [
@@ -89,5 +91,6 @@ export const ModelsArray = [
     RoundModel,
     RelationalOperatorModel,
     CSVExportModel,
-    ImportCSVMode
+    ImportCSVMode, 
+    GaugeModel
 ];
