@@ -36,7 +36,7 @@ class RoundModel extends SimNodeModel {
 
     icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="10" stroke="#000000" strokeWidth="1" />
-        <text x="8" y="15" fontFamily="Arial" fontSize="12" fill="#000000">Rnd</text>
+        <text x="5" y="15" fontFamily="Arial" fontSize="8" fill="#000000">Rnd</text>
     </svg>
 
     settings = _ => {

@@ -22,6 +22,8 @@ import RoundModel from "./round";
 import RelationalOperatorModel from "./relational";
 import MinModel from "./min";
 import MaxModel from "./max";
+import CSVExportModel from "./CSVExport";
+import ImportCSVMode from "./CSVImport"
 
 export { 
     ConstantModel,
@@ -47,7 +49,9 @@ export {
     RoundModel,
     RelationalOperatorModel,
     MinModel,
-    MaxModel
+    MaxModel,
+    CSVExportModel,
+    ImportCSVMode
 }
 
 export const ModelsArray = [
@@ -74,5 +78,7 @@ export const ModelsArray = [
     RoundModel,
     RelationalOperatorModel,
     MinModel,
-    MaxModel
+    MaxModel,
+    CSVExportModel,
+    ImportCSVMode
 ];

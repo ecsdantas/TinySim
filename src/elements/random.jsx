@@ -44,10 +44,15 @@ class RandomNumberModel extends SimNodeModel {
         super.reset();
     }
 
-    icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="20" height="20" stroke="#000000" strokeWidth="1" />
-        <text x="5" y="15" fontFamily="Arial" fontSize="8" fill="#000000">Rnd</text>
-    </svg>
+    icon = () => {
+    const arr = [Math.random(),Math.random(),Math.random(),Math.random(),Math.random()].map(v => v*20 + 5 )
+    return <svg width="64" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="62" height="30" stroke="#000000" strokeWidth="1" />
+        <line x1={8} x2={20} y1={arr[0]} y2={arr[1]} stroke='#000000' />
+        <line x1={20} x2={32} y1={arr[1]} y2={arr[2]} stroke='#000000' />
+        <line x1={32} x2={44} y1={arr[2]} y2={arr[3]} stroke='#000000' />
+        <line x1={44} x2={56} y1={arr[3]} y2={arr[4]} stroke='#000000' />
+    </svg>}
 
     settings = _ => {
 
