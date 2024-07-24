@@ -27,7 +27,7 @@ class SimNodeModel extends DefaultNodeModel {
     lastStepSolved = null      // Help to avoid re-work
     icon = null                // Icone do bloco (deve ser uma React SVG _ => <svg>...</svg>)
     settings = null            // Página de configuração do bloco (deve ser uma React SVG _ => <svg>...</svg>)
-    flip = false                // Mirror the block 180 degree
+    flip = false               // Mirror the block 180 degree
 
     constructor(options = {}) {
         super({
@@ -101,6 +101,7 @@ class SimNodeModel extends DefaultNodeModel {
             // Assumindo que existe apenas uma ligação por porta de entrada
             const link = Object.values(port.getLinks())[0];
             const connectedPort = link.getSourcePort() === port ? link.getTargetPort() : link.getSourcePort();
+            // console.dir(connectedPort); Retorna a porta de saida ao qual a solução está conectada
             return connectedPort.getNode();   
         }
         return null; // Nenhuma ligação encontrada
