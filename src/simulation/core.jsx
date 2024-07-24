@@ -4,7 +4,7 @@ class SimulationEngine {
     time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     stepSize = 1
     method = 0
-    statelessMode = true
+    statelessMode = false
     saveLog = false
     model = null
 

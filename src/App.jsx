@@ -33,6 +33,7 @@ const App = () => {
             '<p>You can read the <a href="/instructions.html" target="_blank">instructions here</a>.</p>'
         Model.addNode(InitialText)
 
+        /*
         const constant = new ConstantModel()
         constant.setPosition(330, 200)
         
@@ -47,8 +48,8 @@ const App = () => {
         const constPort = constant.getOutPorts()[0]
         const link = dispPort.link(constPort)
         Model.addLink(link)
+        */
        
-
 
         Engine.setModel(Model)    
     }, [])
