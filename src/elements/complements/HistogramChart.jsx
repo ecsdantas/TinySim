@@ -21,12 +21,26 @@ const HistogramChart = ({ datasets, plotWidth, plotHeight }) => {
         if (chartInstance) {
           chartInstance.destroy();
         }
+
+        const bins = 20;
+        const dataArray = datasets[0].data;
+        const histogramData = new Array(bins).fill(0);
+        const minValue = Math.min(...dataArray);
+        const maxValue = Math.max(...dataArray);
+        const binSize = (maxValue - minValue) / bins;
+
+        dataArray.forEach(value => {
+          const bin = Math.floor((value - minValue) / binSize);
+          histogramData[Math.min(bin, bins - 1)] += 1;
+        });
+
         const newChartInstance = new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: datasets[0].data.map((_, i) => `Bin ${i + 1}`),
+            labels: Array.from({ length: bins }, (_, i) => `${(minValue + i * binSize).toFixed(2)}-${(minValue + (i + 1) * binSize).toFixed(2)}`),
             datasets: datasets.map(dataset => ({
               ...dataset,
+              data: histogramData,
               backgroundColor: dataset.backgroundColor,
               borderColor: dataset.borderColor,
               borderWidth: 1

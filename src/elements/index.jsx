@@ -25,21 +25,28 @@ import MaxModel from "./max";
 import CSVExportModel from "./CSVExport";
 import ImportCSVMode from "./CSVImport"
 import HistogramModel from "./histogram";
+import AverageModel from "./average";
+import StandardDeviationModel from "./standardDeviation";
 
 export { 
     ConstantModel,
-    AddModel, 
+    AddModel,
     SubModel,
     MultiplyModel,
     DivideModel,
     PowModel,
     LogModel,
-    ExponentialModel,        
-    DisplayModel, 
-    GainModel, 
+    ExponentialModel,
+    MinModel,
+    MaxModel,
+    GainModel,
     MemoryModel,
-    PlotModel,
     ClockModel,
+    AverageModel,
+    StandardDeviationModel,
+    DisplayModel,
+    PlotModel,
+    HistogramModel,
     TextModel,
     IntegratorModel,
     DerivatorModel,
@@ -49,11 +56,8 @@ export {
     RandomNumberModel,
     RoundModel,
     RelationalOperatorModel,
-    MinModel,
-    MaxModel,
     CSVExportModel,
-    ImportCSVMode,
-    HistogramModel
+    ImportCSVMode
 }
 
 export const ModelsArray = [
@@ -70,8 +74,11 @@ export const ModelsArray = [
     GainModel,
     MemoryModel,
     ClockModel,
+    AverageModel,
+    StandardDeviationModel,
     DisplayModel,
     PlotModel,
+    HistogramModel,
     TextModel,
     IntegratorModel,
     DerivatorModel,
@@ -82,6 +89,5 @@ export const ModelsArray = [
     RoundModel,
     RelationalOperatorModel,
     CSVExportModel,
-    ImportCSVMode,
-    HistogramModel
+    ImportCSVMode
 ];
