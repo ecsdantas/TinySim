@@ -95,7 +95,7 @@ class TrigonometricModel extends SimNodeModel {
 
       return (
         <div>
-          <p>This block computes the trigonometric function of the input value.</p>
+          <p>This block computes the trigonometric function of the input value. Angles in radian.</p>
           <SelectGroup
             label="Function"
             value={functionType}
