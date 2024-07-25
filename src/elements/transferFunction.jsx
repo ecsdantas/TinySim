@@ -3,77 +3,47 @@ import { SimNodeModel } from '../SimNodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import * as ControlSystems from 'control-systems-js';
 
 class TransferFunctionModel extends SimNodeModel {
   kind = 'transferFunction';
-  isTerminalBlock = false;
   numerator = [1];
-  denominator = [1,0];
-  pastInputs = [];
-  pastOutputs = [];
-  integral = 0;
-
-  constructor(options = {}, numerator = [1], denominator = [1,0]) {
+  denominator = [1, 0];
+  values = [];
+  times = [];
+  
+  constructor(options = {}, numerator = [1], denominator = [1, 0]) {
     super({ ...options, name: 'Transfer Function' });
     this.createPort('in', true);
     this.createPort('out', false);
     this.numerator = numerator;
     this.denominator = denominator;
+    this.tf = ControlSystems.transferFunction({
+      numerator: this.numerator,
+      denominator: this.denominator,
+    });
   }
 
   // Main function of the block
   solution() {
     const inpt = this.getNodeByInput(0);
-    const currentStep = Simulation.getCurrentStep();
-    const deltaTime = Simulation.getStepTime();
-
     if (inpt && inpt.solve) {
-      const input = inpt.solve();
-
-      // Handle the 1/s (integrator) case specifically
-      if (this.denominator.length === 2 && this.denominator[0] === 1 && this.denominator[1] === 0) {
-        this.integral += input * deltaTime;
-        return { 'out': this.integral };
-      }
-
-      // Store the current input
-      this.pastInputs.push(input);
-      if (this.pastInputs.length > this.denominator.length) {
-        this.pastInputs.shift(); // Maintain the correct number of past inputs
-      }
-
-      // Compute the output using the difference equation
-      let output = 0;
-      for (let i = 0; i < this.numerator.length; i++) {
-        if (i < this.pastInputs.length) {
-          output += this.numerator[i] * this.pastInputs[this.pastInputs.length - 1 - i];
-        }
-      }
-      for (let i = 1; i < this.denominator.length; i++) {
-        if (i < this.pastOutputs.length) {
-          output -= this.denominator[i] * this.pastOutputs[this.pastOutputs.length - i];
-        }
-      }
-      output /= this.denominator[0];
-
-      // Store the current output
-      this.pastOutputs.push(output);
-      if (this.pastOutputs.length > this.denominator.length) {
-        this.pastOutputs.shift(); // Maintain the correct number of past outputs
-      }
-
-      // Return the output considering the initial condition
-      return { 'out': currentStep === 0 ? 0 : output };
+      this.times.push(Simulation.getCurrentTime());
+      this.values.push(inpt.solve());
+      const stepResult = this.tf.step(this.times, { input: this.values });
+      return { 'out': stepResult[stepResult.length - 1].y };
     }
-
     return { 'out': 0 };
   }
 
   reset() {
     super.reset();
-    this.pastInputs = [];
-    this.pastOutputs = [];
-    this.integral = 0;
+    this.times = [];
+    this.values = [];
+    this.tf = ControlSystems.transferFunction({
+      numerator: this.numerator,
+      denominator: this.denominator,
+    });
   }
 
   generateEquationText() {
@@ -85,10 +55,8 @@ class TransferFunctionModel extends SimNodeModel {
         return `${coef}s^${power}`;
       }).join(' + ');
     };
-
     const numeratorText = formatPolynomial(this.numerator);
     const denominatorText = formatPolynomial(this.denominator);
-
     return { numeratorText, denominatorText };
   }
 
@@ -113,6 +81,10 @@ class TransferFunctionModel extends SimNodeModel {
         try {
           this.numerator = JSON.parse(numerator);
           this.denominator = JSON.parse(denominator);
+          this.tf = ControlSystems.transferFunction({
+            numerator: this.numerator,
+            denominator: this.denominator,
+          });
           this.component && this.component.forceUpdate();
         } catch (error) {
           console.error('Invalid input:', error);
@@ -121,7 +93,7 @@ class TransferFunctionModel extends SimNodeModel {
 
       return (
         <div>
-          <p>This block implements a transfer function in the Laplace domain.</p>
+          <p>This block implements a transfer function in the Laplace domain. This model uses: <a href="https://github.com/Brenopms/control-systems-js" target='_blank'>control-systems-js</a>.</p>
           <InputGroup label="Numerator" value={numerator} setValue={e => setNumerator(e)} />
           <InputGroup label="Denominator" value={denominator} setValue={e => setDenominator(e)} />
         </div>
