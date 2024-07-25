@@ -7,7 +7,6 @@ import { InputGroup } from '../components/inputGroup';
 class MemoryModel extends SimNodeModel {
 
     kind = 'memory'
-    settings = null
     initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null

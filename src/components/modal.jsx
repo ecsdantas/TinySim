@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import closeSVG from '../assets/icons/close-black.svg';
+import React from 'react';
 
 const Modal = {}
 const useModal = {}
@@ -29,7 +28,9 @@ Modal.container = (props) => {
                 <section className="modal-main">
                     <div className="modal-header">
                         <h3>{getState.title}</h3>
-                        <img src={closeSVG} width={24} onClick={() => useModal.setShow(false)} alt="Close" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" height={ 24 } width={ 24 } onClick={() => useModal.setShow(false)} alt="Close">
+                            <path stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m18 18-6-6m0 0L6 6m6 6 6-6m-6 6-6 6"/>
+                        </svg>
                     </div>
                     {getState.content}
                     

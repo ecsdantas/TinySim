@@ -63,6 +63,10 @@ class SimulationEngine {
         return this.currentStep
     }
 
+    getCurrentTime(){
+        return this.time[this.currentStep]
+    }
+
     getStepTime(){
         // return (this.time[this.time.length - 1] - this.time[0])/this.time.length
         return this.stepSize;

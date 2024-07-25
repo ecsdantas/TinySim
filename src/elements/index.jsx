@@ -28,6 +28,9 @@ import HistogramModel from "./histogram";
 import AverageModel from "./average";
 import StandardDeviationModel from "./standardDeviation";
 import GaugeModel from "./gauge";
+import TrigonometricModel from "./trigonometric";
+import PIDControllerModel from "./PIDcontroller";
+import TransferFunctionModel from "./transferFunction";
 
 export { 
     ConstantModel,
@@ -43,6 +46,7 @@ export {
     GainModel,
     MemoryModel,
     ClockModel,
+    TrigonometricModel,
     AverageModel,
     StandardDeviationModel,
     DisplayModel,
@@ -59,7 +63,9 @@ export {
     RelationalOperatorModel,
     CSVExportModel,
     ImportCSVMode, 
-    GaugeModel
+    GaugeModel,
+    PIDControllerModel,
+    TransferFunctionModel
 }
 
 export const ModelsArray = [
@@ -76,6 +82,7 @@ export const ModelsArray = [
     GainModel,
     MemoryModel,
     ClockModel,
+    TrigonometricModel,
     AverageModel,
     StandardDeviationModel,
     DisplayModel,
@@ -92,5 +99,7 @@ export const ModelsArray = [
     RelationalOperatorModel,
     CSVExportModel,
     ImportCSVMode, 
-    GaugeModel
+    GaugeModel,
+    PIDControllerModel,
+    TransferFunctionModel
 ];
