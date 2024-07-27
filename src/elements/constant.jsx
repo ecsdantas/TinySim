@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SimNodeModel } from '../SimNodeModel'
+import { SimNodeModel } from '../nodes/nodeModel'
 import { useModal } from '../components/modal';
 import { InputGroup } from '../components/inputGroup';
 

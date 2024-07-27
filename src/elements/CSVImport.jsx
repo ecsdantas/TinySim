@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SimNodeModel } from '../SimNodeModel';
+import { SimNodeModel } from '../nodes/nodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 

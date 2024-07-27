@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sidebar } from './components/sidebar';
 import { Menubar } from './components/menubar';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
-import { Model, Engine } from './SimNodeModel' 
+import { Model, Engine } from './nodes/nodeModel' 
 import Simulation from './simulation/core';
 import { DropElement } from './components/dropElement';
 import Modal from './components/modal';

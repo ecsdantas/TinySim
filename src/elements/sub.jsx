@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimNodeModel } from '../SimNodeModel'
+import { SimNodeModel } from '../nodes/nodeModel'
 import { useModal } from '../components/modal';
 
 class SubModel extends SimNodeModel {
