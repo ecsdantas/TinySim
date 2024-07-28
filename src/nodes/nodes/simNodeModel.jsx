@@ -1,8 +1,10 @@
 import { 
-    DefaultNodeModel
+    DefaultNodeModel,
+    DefaultPortModel,
+    RightAngleLinkModel
 } from '@projectstorm/react-diagrams';
 import Simulation from '../../simulation/core';
-import { SimPortModel  } from '../ports/simPortModel';
+import { RightAnglePortModel } from '../ports/rightAnglePortModel'
 
 class SimNodeModel extends DefaultNodeModel {
 
@@ -33,7 +35,7 @@ class SimNodeModel extends DefaultNodeModel {
 
     // Creates a new port
     createPort(label, isInput = false) {
-        const port = new SimPortModel({
+        const port = new RightAnglePortModel({
             in: isInput,
             name: label,
         });

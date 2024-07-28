@@ -23,7 +23,7 @@ class PowModel extends SimNodeModel {
         if (inpt1 && inpt1.solve && inpt2 && inpt2.solve) {
             const base = inpt1.solve();
             const exponent = inpt2.solve();
-            return Math.pow(base, exponent);
+            return {'out': Math.pow(base, exponent)};
         }
         return {'out': 0};
     }

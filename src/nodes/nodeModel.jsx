@@ -1,13 +1,19 @@
-import createEngine, { DiagramModel } from '@projectstorm/react-diagrams';
+import createEngine, { DiagramModel, DefaultDiagramState, RightAngleLinkFactory  } from '@projectstorm/react-diagrams';
 import { SimNodeModel } from './nodes/simNodeModel';
 import { SimNodeFactory  } from './nodes/simNodeFactory';
-import { SimLinkFactory } from './links/simLinkFactory';
 
 // Cria o motor do diagrama e o Modelo
 const Engine = createEngine();
+
+const state = Engine.getStateMachine().getCurrentState();
+if (state instanceof DefaultDiagramState) {
+    state.dragNewLink.config.allowLooseLinks = false;
+}
+
 Engine.getNodeFactories().registerFactory(new SimNodeFactory());
-// Engine.getLinkFactories().registerFactory(new RightAngleLinkFactory());
-Engine.getLinkFactories().registerFactory(new SimLinkFactory());
+Engine.getLinkFactories().registerFactory(new RightAngleLinkFactory());
+
+
 const Model = new DiagramModel();
 
 Engine.setModel(Model);
