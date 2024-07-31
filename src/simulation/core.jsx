@@ -1,7 +1,7 @@
 class SimulationEngine {
 
     currentStep = 0
-    time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    time = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
     stepSize = 1
     method = 0
     statelessMode = false
@@ -11,7 +11,7 @@ class SimulationEngine {
     constructor(model){
         // Salva o modelo contendo todo o circuito
         this.model = model
-        this.stepSize = (this.time[this.time.length - 1] - this.time[0])/this.time.length
+        this.stepSize = (this.time[this.time.length - 1] - this.time[0])/(this.time.length-1)
     }
 
     // Define o modelo

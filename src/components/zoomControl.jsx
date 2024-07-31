@@ -30,35 +30,38 @@ export const Zoombar = (props) => {
         };
     };
 
-    const model = engine.getModel();
+    useEffect(() => {
+        const model = engine.getModel();
 
-    control.center = screenToModel(getCanvasCenter());
-    control.zoomLevel = model.getZoomLevel();
+        control.center = screenToModel(getCanvasCenter());
+        control.zoomLevel = model.getZoomLevel();
 
-    // Zoom reset
-    control.zoomReset = () => {
-        model.setZoomLevel(100);
-        model.setOffset(0, 0);
-        engine.repaintCanvas();
-    };
+        // Zoom reset
+        control.zoomReset = () => {
+            model.setZoomLevel(100);
+            model.setOffset(0, 0);
+            engine.repaintCanvas();
+        };
 
-    // Fit nodes
-    control.zoomFitNodes = () => {
-        engine.zoomToFitSelectedNodes();
-        engine.repaintCanvas();
-    };
+        // Fit nodes
+        control.zoomFitNodes = () => {
+            engine.zoomToFitSelectedNodes();
+            engine.repaintCanvas();
+        };
 
-    // Zoom in and out
-    control.zoomIn = (zoomValue) => {
-        const centerBefore = screenToModel(getCanvasCenter());
-        model.setZoomLevel(model.getZoomLevel() * (1 + zoomValue));
-        const centerAfter = modelToScreen(centerBefore);
-        model.setOffset(
-            model.getOffsetX() + (getCanvasCenter().x - centerAfter.x),
-            model.getOffsetY() + (getCanvasCenter().y - centerAfter.y)
-        );
-        engine.repaintCanvas();
-    };
+        // Zoom in and out
+        control.zoomIn = (zoomValue) => {
+            const centerBefore = screenToModel(getCanvasCenter());
+            model.setZoomLevel(model.getZoomLevel() * (1 + zoomValue));
+            const centerAfter = modelToScreen(centerBefore);
+            model.setOffset(
+                model.getOffsetX() + (getCanvasCenter().x - centerAfter.x),
+                model.getOffsetY() + (getCanvasCenter().y - centerAfter.y)
+            );
+            engine.repaintCanvas();
+        };
+
+    }, [engine]);
 
     const SVG = (props) => {
         const { children, onClick, title } = props;
