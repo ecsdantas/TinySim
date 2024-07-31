@@ -2,7 +2,7 @@
 .zoombar {
     border: 0px;
     padding: 10px 10px;
-    z-index: 10;
+    z-index: 2;
     position: absolute;
     top: 0;
     right: 0;
