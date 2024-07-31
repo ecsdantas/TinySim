@@ -31,6 +31,18 @@ import GaugeModel from "./gauge";
 import TrigonometricModel from "./trigonometric";
 import PIDControllerModel from "./PIDcontroller";
 import TransferFunctionModel from "./transferFunction";
+import NotModel from "./not";
+import AndModel from "./and";
+import OrModel from "./or";
+import NandModel from "./nand";
+import NorModel from "./nor";
+import XorModel from "./xor";
+import XnorModel from './xnor'
+import DFlipFlopModel from "./Dflipflop";
+import TFlipFlopModel from "./Tflipflop";
+import JKFlipFlopModel from "./JKflipflop";
+import SRFlipFlopModel from "./SRflipflop";
+
 
 export { 
     ConstantModel,
@@ -65,7 +77,18 @@ export {
     ImportCSVMode, 
     GaugeModel,
     PIDControllerModel,
-    TransferFunctionModel
+    TransferFunctionModel,
+    NotModel,
+    AndModel,
+    OrModel,
+    NandModel,
+    NorModel,
+    XorModel,
+    XnorModel,
+    DFlipFlopModel,
+    TFlipFlopModel,
+    JKFlipFlopModel,
+    SRFlipFlopModel
 }
 
 export const ModelsArray = [
@@ -101,5 +124,16 @@ export const ModelsArray = [
     ImportCSVMode, 
     GaugeModel,
     PIDControllerModel,
-    TransferFunctionModel
+    TransferFunctionModel,
+    NotModel,
+    AndModel,
+    OrModel,
+    NandModel,
+    NorModel,
+    XorModel,
+    XnorModel,
+    DFlipFlopModel,
+    TFlipFlopModel,
+    JKFlipFlopModel,
+    SRFlipFlopModel
 ];
