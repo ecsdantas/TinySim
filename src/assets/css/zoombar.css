@@ -1,0 +1,27 @@
+/* start of zoombar */
+.zoombar {
+    border: 0px;
+    padding: 10px 10px;
+    z-index: 10;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    gap: 4px;
+}
+
+.zoombar button {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+}
+
+.zoombar svg {
+    cursor: pointer;
+}
+
+.zoombar svg:hover {
+    transform: scale(1.2);
+}
+/* end of zoombar */

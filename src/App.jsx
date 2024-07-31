@@ -8,6 +8,7 @@ import { DropElement } from './components/dropElement';
 import Modal from './components/modal';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { TextModel, ConstantModel, DisplayModel } from './elements';
+import { Zoombar } from './components/zoomControl';
 
 
 const App = () => {
@@ -60,6 +61,7 @@ const App = () => {
             <Sidebar Side='right' Show={getRBarShow} closeFcn={_ => setRBarShow(false)} />
             <Sidebar Side='left' Show={getLBarShow} closeFcn={_ => setLBarShow(false)} />
             <Menubar {...MenuOptions} />
+            <Zoombar engine={ Engine } />
             <CanvasWidget className="srd-diagram" engine={Engine}  />
         </div>
         <Modal.container getState={getModelStates} setState={setModelStates}/>
