@@ -38,7 +38,7 @@ class CSVExportModel extends SimNodeModel {
   }
 
   generateCSV = () => {
-    const { time } = Simulation;
+    const time = Simulation.getTotalTimeArray();
     const rows = [['Time', ...this.columnNames]];
 
     for (let i = 0; i < time.length; i++) {

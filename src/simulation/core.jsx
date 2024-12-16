@@ -1,61 +1,127 @@
 class SimulationEngine {
 
     currentStep = 0
-    time = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10]
+    currentTime = 0
     stepSize = 1
-    method = 0
+    stopTime = 10
+    method = 0 // método de integração: 0 = ODE1, 1 = ODE2... a ser implementado
     statelessMode = false
-    saveLog = false
-    model = null
+    saveLog = true
+    #model = null
+    #nodes = null
+    realTimeMode = false
+    emergencyStop = false
+    isSimulationRunning = false
 
     constructor(model){
         // Salva o modelo contendo todo o circuito
-        this.model = model
-        this.stepSize = (this.time[this.time.length - 1] - this.time[0])/(this.time.length-1)
+        this.#model = model;
+        this.runStep = this.runStep.bind(this);
+        this.runStandard = this.runStandard.bind(this);
+        this.runRealTime = this.runRealTime.bind(this);
+        this.resetSimulation = this.resetSimulation.bind(this);
     }
 
     // Define o modelo
     setModel(model){
-        this.model = model
+        this.#model = model
     }
 
     // Run simulation
     run(){
 
-        
+        // Impede a simulação de continuar
+        if(this.isSimulationRunning){
+            this.emergencyStop = true
+            this.isSimulationRunning = false
+            return
+        }
+
         // Verifica se consegue puxar os nós
-        if (!this.model || !this.model.getNodes)
+        if (!this.#model || !this.#model.getNodes)
             return null
 
         // Obtém todos nós
-        const nodes = this.model.getNodes();
+        this.#nodes = this.#model.getNodes();
 
-        // Reseta o Step
-        this.currentStep = 0;
+        // Reseta a simulação
+        this.resetSimulation()
 
-        // Aplica o reset nos modelos que contém reset
-        nodes.filter(node => node.reset).map(node => node.reset());
+        // Habilita a flag de simulação
+        this.isSimulationRunning = true
+        
+        // Log de simulação
+        this.saveLog && console.log("==== Simulation is starting ====")
 
+        // Simula
+        const sim = this.realTimeMode? this.runRealTime : this.runStandard
+        sim()
+        
+    }
+
+    // Simula no modo padrão
+    runStandard(){
+        
         // Inicio da simulação
-        this.time.map( (time, step) => {
+        while( (this.stopTime >= this.currentTime) && (!this.emergencyStop) ){
+            this.runStep() // Roda o passo
+        }
 
-            // Registra o log
-            console.log("Time[" + step + "] " + time)
- 
-            // Procura por outputs
-            nodes.filter(node => node.isTerminalBlock).map( node => {
-                node.solution() // Chama diretamente a solução
-            })
-
-            // Incrementa o step
-            this.currentStep += 1
-
-        })
+        // Desabilita a flag de simulação
+        this.isSimulationRunning = false
 
     }
 
+    // Simula com sincronismo em tempo real
+    runRealTime(){
+
+        // Update rate of realtime
+        this.stepSize = 0.2;
+        
+        // Função para rodar
+        const sync = () => {
+            setTimeout(() => {
+                (!this.emergencyStop) && sync(); // Chama uma nova instância
+            }, this.stepSize * 1E3)
+            this.runStep()   
+        }
+
+        // Inicia a simulação e só para com o emergencyStop
+        sync()        
+
+    }
+
+    // Roda um passo de simulação
     runStep(){
-        // To be made...
+
+        // Registra o log
+        this.saveLog && console.log("Time[" + this.currentStep + "] " + this.currentTime)
+
+        // Procura por outputs
+        this.#nodes.filter(node => node.isTerminalBlock).map( node => {
+            node.solution() // Chama diretamente a solução
+        })
+
+        // Incrementa o step
+        this.currentStep += 1
+        this.currentTime += this.stepSize
+
+    }
+
+    resetSimulation(){
+        
+        // Reseta o Step e o  time
+        this.currentStep = 0;
+        this.currentTime = 0;
+        this.emergencyStop = false
+        this.isSimulationRunning = false
+
+        // Reseta o console
+        this.saveLog && console.clear()
+
+        // Aplica o reset nos modelos que contém reset
+        this.#nodes.filter(node => node.reset).map(node => node.reset());
+
     }
 
     // Obtem o step atual
@@ -64,36 +130,54 @@ class SimulationEngine {
     }
 
     getCurrentTime(){
-        return this.time[this.currentStep]
+        return this.currentTime
     }
 
     getStepTime(){
-        // return (this.time[this.time.length - 1] - this.time[0])/this.time.length
-        return this.stepSize;
+        return this.stepSize
     }
 
     // Obtem o step atual
     getStopTime(){
-        return this.time[this.time.length - 1]
+        return this.stopTime 
     }
 
-    // Obtem o step atual
+    // Obtém o tempo atual 
     getTime(){
-        return this.time
+        return this.currentTime
+    }
+
+    // Obtém o tempo atual 
+    getCurrentTime(){
+        return this.currentTime
     }
 
     setSimulationTime(step, stopTime){
-        const timeArr = [];
-        const n = (stopTime / step)
-        for(let s = 0; s <= n; s +=1  ){
-            timeArr.push( s * step )
-        };
         this.stepSize = step;
+        this.stopTime = stopTime;
         this.currentStep = 0;
-        this.time = timeArr;
     }
 
-    // 
+    // Obtém o array de tempo total
+    getTotalTimeArray(){
+        const timeArr = [];
+        const n = (this.stopTime / this.stepSize)
+        for(let s = 0; s <= n + 1; s +=1  ){
+            timeArr.push( s * this.stepSize )
+        };
+        return timeArr
+    }
+
+    // Obtém o array de tempo até o passo de simulação atual
+    getTimeArray(){
+        const timeArr = [];
+        for(let s = 0; s < this.currentStep; s +=1  ){
+            timeArr.push( s * this.stepSize )
+        };
+        return timeArr
+    }
+
+    // Congela o objeto
     freeze(){
         Object.freeze(this)
     }

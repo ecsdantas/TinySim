@@ -38,7 +38,7 @@ class PlotModel extends SimNodeModel {
         this.values[index].push(inpt.solve());
       }
     });
-    if (Simulation.time.length === this.values[0]?.length && this.component) {
+    if (this.values[0]?.length > 0 && this.component) {
       this.update()
     }
   }
@@ -50,7 +50,7 @@ class PlotModel extends SimNodeModel {
 
   icon = () => {
     const GenColor = (index) => this.datasetSettings[index]?.color || `#${((1 << 24) + (index * 60 << 16) + (70 << 8) + 50).toString(16).slice(1)}`;
-    if (Simulation.time.length === this.values[0]?.length) {
+    if (this.values[0]?.length > 0 && this.component) {
       const datasets = this.getInPorts().map((_, index) => ({
         label: this.datasetSettings[index]?.name || `Dataset ${index + 1}`,
         data: this.values[index],
@@ -59,7 +59,9 @@ class PlotModel extends SimNodeModel {
         borderColor:  GenColor(index),
         tension: 0.1,
       }));
-      return <LineChart time={Simulation.time} datasets={datasets} plotWidth={this.plotWidth} plotHeight={this.plotHeight} />;
+      console.dir(datasets)
+      console.dir(Simulation.getTimeArray())
+      return <LineChart time={Simulation.getTimeArray()} datasets={datasets} plotWidth={this.plotWidth} plotHeight={this.plotHeight} />;
     }
 
     // Return the default icon

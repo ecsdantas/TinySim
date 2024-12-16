@@ -38,7 +38,7 @@ class HistogramModel extends SimNodeModel {
         this.values[index].push(inpt.solve());
       }
     });
-    if (Simulation.time.length === this.values[0]?.length && this.component) {
+    if (Simulation.getTimeArray().length === this.values[0]?.length && this.component) {
       this.update()
     }
   }
@@ -50,7 +50,7 @@ class HistogramModel extends SimNodeModel {
 
   icon = () => {
     const GenColor = (index) => this.datasetSettings[index]?.color || `#${((1 << 24) + (index * 60 << 16) + (70 << 8) + 50).toString(16).slice(1)}`;
-    if (Simulation.time.length === this.values[0]?.length) {
+    if (Simulation.getTimeArray().length === this.values[0]?.length) {
       const datasets = this.getInPorts().map((_, index) => ({
         label: this.datasetSettings[index]?.name || `Dataset ${index + 1}`,
         data: this.values[index],

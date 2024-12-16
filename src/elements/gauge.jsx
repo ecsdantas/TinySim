@@ -35,7 +35,7 @@ class GaugeModel extends SimNodeModel {
     }
 
     icon = () => {
-        if (Simulation.time.length === Simulation.getCurrentStep() && this.component) {
+        if (Simulation.getCurrentStep() > 0 && this.component) {
             return (
                 <Gauge
                     value={this.value}
