@@ -33,6 +33,14 @@ class SimNodeModel extends DefaultNodeModel {
         this.component = component;
     }
 
+    addPort(port) {
+        if (this.getPorts()[port.getID()]) {
+            console.warn('Tentativa de adicionar uma porta com ID duplicado:', port.getID());
+            return; // Evita adicionar portas duplicadas
+        }
+        super.addPort(port);
+    }
+
     // Creates a new port
     createPort(label, isInput = false) {
         const port = new RightAnglePortModel({
@@ -94,6 +102,29 @@ class SimNodeModel extends DefaultNodeModel {
         }
         return null; // Nenhuma ligação encontrada
     }
+
+    serialize() {
+        return {
+            ...super.serialize(), // Serializa propriedades básicas do nó
+            type: this.constructor.name, // Nome da classe como tipo
+            kind: this.kind,
+            description: this.description,
+            isTerminalBlock: this.isTerminalBlock,
+            flip: this.flip
+            /* ,
+            ports: Object.fromEntries(
+                Object.values(this.getPorts()).map(port => [port.getID(), port.serialize()]) // Serializa as portas
+            )
+            */
+        };
+    }
+    
+
+    deserialize(event) {
+        super.deserialize(event);
+    }
+    
+    
 }
 
 export { SimNodeModel }

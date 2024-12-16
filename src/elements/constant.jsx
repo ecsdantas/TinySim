@@ -45,12 +45,25 @@ class ConstantModel extends SimNodeModel {
 
             return <div>
                 <p>This blocks outputs a constant.</p>
-                    <InputGroup label={ 'Constant value'}  value={ getConstant } setValue={ e => setConstant(e) } />
+                    <InputGroup label={ 'Constant value' }  value={ getConstant } setValue={ e => setConstant(e) } />
                 </div>
         }
 
         useModal.configure(this, 'Add Block', <ControlEditor />, true);
 
+    }
+
+    serialize() {
+        return {
+            ...super.serialize(),
+            kind: this.kind,
+            value: this.value
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.value = event.data.value || 0;
     }
 }
 

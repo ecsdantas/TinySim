@@ -56,6 +56,19 @@ class GainModel extends SimNodeModel {
         useModal.configure(this, 'Gain Block', <ControlEditor />, true);
 
     }
+
+    serialize() {
+        return {
+            ...super.serialize(),
+            kind: this.kind,
+            gainValue: this.gainValue
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.gainValue = event.data.gainValue || 1;
+    }
 }
 
 export default GainModel

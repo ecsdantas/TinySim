@@ -1,5 +1,6 @@
 import React from "react";
-import { ModelsArray } from "../elements";
+import * as Elements from "../elements";
+const ModelsArray = Object.entries(Elements)
 
 export const LibraryList = () => {
     const handleDragStart = (event, index) => {
@@ -52,8 +53,8 @@ export const LibraryList = () => {
     return (
         <div className='library'>
             {
-                ModelsArray.map((ModelConstructor, index) => {
-                    const Model = new ModelConstructor();
+                ModelsArray.map(([type, ModelClass], index) => {
+                    const Model = new ModelClass();
                     return (
                         <div
                             key={`models-${Model.getModelName()}`}

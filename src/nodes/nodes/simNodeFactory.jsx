@@ -5,8 +5,9 @@ import { DisplayNodeWidget } from './displayNodeWidget';
 
 // Factory: Esta classe é básica e permante
 class SimNodeFactory extends AbstractReactFactory {
-    constructor() {
-        super('sim-node');
+    constructor(type = 'sim-node') {
+        super(type);
+        this.type = type;
         
         // Add evento para monitorar os blocos
         window.addEventListener('keydown', event => this.handleKeyDown(event));
@@ -29,7 +30,6 @@ class SimNodeFactory extends AbstractReactFactory {
             case 'o':
                 Array.isArray(selectedEntities) && 
                 selectedEntities.filter(node => node.settings).map(node => node.settings())
-
         }
     }
 
@@ -40,6 +40,23 @@ class SimNodeFactory extends AbstractReactFactory {
     generateReactWidget(event) {
         return <DisplayNodeWidget node={ event.model } engine={ this.engine } />
     }
+
+    // Permite salvar e resgatar o circuito
+    // =======================================
+    serialize() {
+        return {
+            ...super.serialize(),
+            type: this.constructor.name,
+            kind: this.kind,
+            value: this.value
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.value = event.data.value || 0;
+    }
+    // =======================================
 }
 
 export { SimNodeFactory }

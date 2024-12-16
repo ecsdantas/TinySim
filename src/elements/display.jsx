@@ -31,6 +31,19 @@ class DisplayModel extends SimNodeModel {
         <text x="10" y={ (30+12)/2 - 1 } fontSize={12} fill='#FFFFFF'>{this.value}</text>
     </svg>
     
+    serialize() {
+        return {
+            ...super.serialize(),
+            kind: this.kind,
+            isTerminalBlock: this.isTerminalBlock,
+            value: this.value
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.value = event.data.value || null;
+    }
     
 }
 

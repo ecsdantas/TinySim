@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
-import { ModelsArray } from '../elements';
+// import { ModelsArray } from '../elements';
 import { Engine, Model } from '../nodes/nodeModel';
 import Simulation from '../simulation/core';
+import * as Elements from "../elements";
+
+const ModelsArray = Object.entries(Elements)
 
 const DropElement = () => {
 
@@ -9,7 +12,7 @@ const DropElement = () => {
         const handleDrop = (event) => {
             event.preventDefault();
             const index = Number(event.dataTransfer.getData('drag-block'));
-            const newNode = new ModelsArray[index]();
+            const newNode = new ModelsArray[index][1]();
             const canvasRect = event.target.getBoundingClientRect();
             newNode.setPosition(
                 event.clientX - canvasRect.left - newNode.width / 2,
@@ -55,7 +58,7 @@ const DropElement = () => {
         };
     }, []);
 
-    return null;
+  
 };
 
 export { DropElement };
