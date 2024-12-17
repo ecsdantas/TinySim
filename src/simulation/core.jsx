@@ -25,25 +25,35 @@ class SimulationEngine {
     // Define o modelo
     setModel(model){
         this.#model = model
+        this.runSetup()
+    }
+
+    runSetup(){
+        // Impede a simulação de continuar
+        if(this.isSimulationRunning){
+            this.emergencyStop = true
+            this.isSimulationRunning = false
+            return false
+        }
+
+        // Verifica se consegue puxar os nós
+        if (!this.#model || !this.#model.getNodes)
+            return false
+
+        // Obtém todos nós
+        this.#nodes = this.#model.getNodes();
+
+        return true
     }
 
     // Run simulation
     run(){
 
-        // Impede a simulação de continuar
-        if(this.isSimulationRunning){
-            this.emergencyStop = true
-            this.isSimulationRunning = false
+        // Run setup first
+        if(!this.runSetup()){
             return
         }
-
-        // Verifica se consegue puxar os nós
-        if (!this.#model || !this.#model.getNodes)
-            return null
-
-        // Obtém todos nós
-        this.#nodes = this.#model.getNodes();
-
+        
         // Reseta a simulação
         this.resetSimulation()
 

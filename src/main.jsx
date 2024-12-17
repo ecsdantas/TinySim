@@ -7,6 +7,7 @@ import './assets/css/sidebar.css'
 import './assets/css/menubar.css'
 import './assets/css/zoombar.css'
 import './assets/css/index.css'
+import './assets/css/dropdown.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <App />

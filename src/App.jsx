@@ -22,7 +22,8 @@ const App = () => {
 
     // Funções do menu de simulação
     const MenuOptions = {
-        Simulate: _ => Simulation.run(),
+        Run: _ => Simulation.run(),
+        RunStep: _ => Simulation.runStep(),
         LeftbarToogle: _ => setLBarShow(e => !e),
         RightbarToogle: _ => setRBarShow(e => !e)
     }

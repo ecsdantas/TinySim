@@ -1,54 +1,71 @@
-import React from "react"
+import React, { useState } from "react"
 import LibrarySVG from "../assets/icons/library-white.svg"
 import PlaySVG from "../assets/icons/play-white.svg"
+import PlayStepSVG from "../assets/icons/playStep-white.svg"
 import SettingsSVG from "../assets/icons/settings-white.svg"
 import downloadSVG from "../assets/icons/download.svg"
 import uploadSVG from "../assets/icons/upload.svg"
+import fileSVG from "../assets/icons/file.svg"
 import { Engine } from "../nodes/nodeModel"
 import Simulation from "../simulation/core"
 
-const iconSizes = { width: 32, height: 32 }
+const iconSizes = { width: 28, height: 28 }
 
-const load = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const text = await file.text();
-            const modelData = JSON.parse(text);
-            const EngModel = Engine.getModel()
-            EngModel.deserializeModel(modelData, Engine);
-            Engine.repaintCanvas();
-            Simulation.setModel(EngModel);
-        }
-    };
-    input.click();
-}
+const FileMenu = () => {
+    const [showDropdown, setShowDropdown] = useState(false);
+    const menuIconSizes =  { width: 16, height: 16 }
 
+    const load = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const text = await file.text();
+                const modelData = JSON.parse(text);
+                const EngModel = Engine.getModel()
+                EngModel.deserializeModel(modelData, Engine);
+                Engine.repaintCanvas();
+                Simulation.setModel(EngModel);
+            }
+        };
+        input.click();
+    }
+    
+    
+    const save = () => {
+        const modelData = Engine.getModel().serialize();
+        const blob = new Blob([JSON.stringify(modelData, null, 2)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'TinySim_Model.json';
+        link.click();
+    }
 
-const save = () => {
-    const modelData = Engine.getModel().serialize();
-    const blob = new Blob([JSON.stringify(modelData, null, 2)], { type: 'application/json' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'TinySim_Model.json';
-    link.click();
-}
+    return (
+        <div className="dropdown dropup">
+            <img src={fileSVG} {...iconSizes} onClick={() => setShowDropdown(prev => !prev)} title="File options"/>
+            <ul className={`dropdown-menu ${showDropdown ? 'show' : ''}`} onMouseLeave={() => setShowDropdown(false)} onClick={ () => setShowDropdown(false) }>
+                <li onClick={load} ><img src={uploadSVG} {...menuIconSizes} title={'Load'} /> Load diagram</li>
+                <li onClick={save} ><img src={downloadSVG} {...menuIconSizes} title={'Save'} /> Download diagram</li>
+            </ul>
+        </div>
+    );
+};
 
 
 export const Menubar = (props) => {
 
-    const { LeftbarToogle, RightbarToogle, Simulate } = props
+    const { LeftbarToogle, RightbarToogle, Run, RunStep } = props
 
     return (
         <div className='menubar'>
-            <img src={uploadSVG} {...iconSizes} onClick={load} title={'Load'} />
-            <img src={downloadSVG} {...iconSizes} onClick={save} title={'Save'} />
-            <img src={LibrarySVG} {...iconSizes} onClick={LeftbarToogle} />
-            <img src={PlaySVG} {...iconSizes} onClick={Simulate} />
-            <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} />
+            <FileMenu />
+            <img src={LibrarySVG} {...iconSizes} onClick={LeftbarToogle} title="Library" />
+            <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop" />
+            <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step" />
+            <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
         </div>
     )
 
