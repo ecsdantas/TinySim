@@ -22,37 +22,57 @@ const FileMenu = () => {
     const load = () => {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = '.json';
+        input.accept = '.tsim';
         input.onchange = async (event) => {
             const file = event.target.files[0];
             if (file) {
-                const text = await file.text();
-                const modelData = JSON.parse(text);
-                const EngModel = Engine.getModel()
-                EngModel.deserializeModel(modelData, Engine);
-                Engine.repaintCanvas();
-                Simulation.setModel(EngModel);
+                try {
+                    const zip = new JSZip();
+                    const content = await zip.loadAsync(file); // Load the ZIP file
+    
+                    if (content.files['model.json']) {
+                        const modelText = await content.files['model.json'].async('text'); // Extract model.json
+                        const modelData = JSON.parse(modelText);
+    
+                        const EngModel = Engine.getModel();
+                        EngModel.deserializeModel(modelData, Engine);
+    
+                        Engine.repaintCanvas();
+                        Simulation.setModel(EngModel);
+                    } else {
+                        console.error("Invalid .tsim file: model.json not found.");
+                    }
+                } catch (error) {
+                    console.error("Error loading .tsim file:", error);
+                }
             }
         };
         input.click();
-    }
+    };
+    
     
     const save = () => {
         const modelData = Engine.getModel().serialize();
         const modelJson = JSON.stringify(modelData, null, 2);
-
-        const blob = new Blob([JSON.stringify(modelData, null, 2)], { type: 'application/json' });
-        const link = document.createElement('a');
-        
+    
         const zip = new JSZip();
-        zip.file("model.json", modelJson)
-        zip.generateAsync({type:blob}).then( (content) => {
-            link.href = URL.createObjectURL(content)
+        zip.file("model.json", modelJson);
+    
+        zip.generateAsync({ type: "blob" }).then((content) => {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(content);
             link.download = 'schematic.tsim';
+            document.body.appendChild(link);
             link.click();
-        })
-
-    }
+    
+            // Clean up
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }).catch((err) => {
+            console.error("Error generating zip file:", err);
+        });
+    };
+    
 
     return (
         <div className="dropdown dropup">
@@ -79,7 +99,7 @@ export const Menubar = (props) => {
             <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop" />
             <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step" />
             <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
-            {false && <img src={CodeSVG} {...iconSizes} onClick={ _ => alert('Comming soon...') } title="Code generation" />}
+            {true && <img src={CodeSVG} {...iconSizes} onClick={ _ => alert('Comming soon...') } title="Code generation" />}
         </div>
     )
 
