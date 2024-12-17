@@ -6,8 +6,12 @@ import SettingsSVG from "../assets/icons/settings-white.svg"
 import downloadSVG from "../assets/icons/download.svg"
 import uploadSVG from "../assets/icons/upload.svg"
 import fileSVG from "../assets/icons/file.svg"
+import CodeSVG from "../assets/icons/code.svg"
+import BoxSVG from "../assets/icons/box.svg"
 import { Engine } from "../nodes/nodeModel"
 import Simulation from "../simulation/core"
+import JSZip from "jszip";
+
 
 const iconSizes = { width: 28, height: 28 }
 
@@ -33,20 +37,29 @@ const FileMenu = () => {
         input.click();
     }
     
-    
     const save = () => {
         const modelData = Engine.getModel().serialize();
+        const modelJson = JSON.stringify(modelData, null, 2);
+
         const blob = new Blob([JSON.stringify(modelData, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'TinySim_Model.json';
-        link.click();
+        
+        const zip = new JSZip();
+        zip.file("model.json", modelJson)
+        zip.generateAsync({type:blob}).then( (content) => {
+            link.href = URL.createObjectURL(content)
+            link.download = 'schematic.tsim';
+            link.click();
+        })
+
     }
 
     return (
         <div className="dropdown dropup">
             <img src={fileSVG} {...iconSizes} onClick={() => setShowDropdown(prev => !prev)} title="File options"/>
             <ul className={`dropdown-menu ${showDropdown ? 'show' : ''}`} onMouseLeave={() => setShowDropdown(false)} onClick={ () => setShowDropdown(false) }>
+                <li><img src={BoxSVG} {...menuIconSizes} title={'Load a sample diagram'} /> Samples diagram</li>
+                <hr className="dropdown-divider" />
                 <li onClick={load} ><img src={uploadSVG} {...menuIconSizes} title={'Load'} /> Load diagram</li>
                 <li onClick={save} ><img src={downloadSVG} {...menuIconSizes} title={'Save'} /> Download diagram</li>
             </ul>
@@ -66,6 +79,7 @@ export const Menubar = (props) => {
             <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop" />
             <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step" />
             <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
+            {false && <img src={CodeSVG} {...iconSizes} onClick={ _ => alert('Comming soon...') } title="Code generation" />}
         </div>
     )
 
