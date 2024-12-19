@@ -1,0 +1,50 @@
+// main.c
+// To compile, use: gcc *.c -o sim
+// To use after compilation: ./sim
+//
+// This is the main entry point for the simulation program. It initializes the model,
+// performs multiple simulation steps, and prints the outputs and simulation statistics.
+// Change it according your requirements
+
+#include "model.h"
+#include "libs.h"
+#include <stdio.h>
+
+// This is your model
+ModelType model;
+
+int main() {
+
+  // Initialize the model
+  printf("==== Starting Simulation ====\n");
+  init(&model);
+  
+  // Run for 10 steps...
+  for(int i = 0; i < 10; i++){
+
+    // Step information
+    printf("\t\nRunning step %d at time %.2f\n", model.simulation.current_step, model.simulation.elapsed_time);
+    
+    // Set the inputs
+    ${SETINPUTS_TEMPLATE}
+      
+    // Prints the input values at current step
+    ${SETPRINTSINPUTS_TEMPLATE}
+    
+    // Compute the step
+    printf("\tComputing step results...\n");
+    step(&model);
+
+    // Get the outputs
+    ${SETPRINTSOUTPUTS_TEMPLATE}
+
+  }
+
+  // Terminate the simulation
+  term(&model);
+
+  // Print final simulation statistics
+  printf("\n==== Simulation ended. ====\nTotal time: %.2f seconds\n", model.simulation.total_time);
+  
+  return 0;
+}

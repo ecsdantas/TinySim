@@ -1,0 +1,35 @@
+// model.h
+// ${MODELINFO_TEMPLATE}
+// Header file defining the data structures and functions used in the simulation model.
+#ifndef MODEL_H
+#define MODEL_H
+
+#include <time.h>
+
+// Structure to hold input and output data
+typedef struct {
+    ${DATATYPE_TEMPLATE}
+} DataType;
+
+// Structure to hold simulation state
+typedef struct {
+    int current_step;
+    long start_time;
+    double elapsed_time;
+    double total_time;
+    int status; // 0 = stopped, 1 = running
+} SimulationType;
+
+// Structure to encapsulate the entire model
+typedef struct {
+    DataType data;
+    SimulationType simulation;
+} ModelType;
+
+// Function prototypes
+long current_system_time();
+void init(ModelType *model);
+void term(ModelType *model);
+void step(ModelType *model);
+
+#endif

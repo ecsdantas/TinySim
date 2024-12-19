@@ -8,6 +8,7 @@ import uploadSVG from "../assets/icons/upload.svg"
 import fileSVG from "../assets/icons/file.svg"
 import CodeSVG from "../assets/icons/code.svg"
 import BoxSVG from "../assets/icons/box.svg"
+import CodeGeneration  from "../codeGeneration/core"
 import { Engine } from "../nodes/nodeModel"
 import Simulation from "../simulation/core"
 import JSZip from "jszip";
@@ -87,6 +88,10 @@ const FileMenu = () => {
     );
 };
 
+const CGen = () => {
+    const CodeGen = new CodeGeneration(Engine.getModel())
+    CodeGen.compileC()
+}
 
 export const Menubar = (props) => {
 
@@ -99,7 +104,7 @@ export const Menubar = (props) => {
             <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop" />
             <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step" />
             <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
-            {true && <img src={CodeSVG} {...iconSizes} onClick={ _ => alert('Comming soon...') } title="Code generation" />}
+            <img src={CodeSVG} {...iconSizes} onClick={ CGen } title="Code generation" />
         </div>
     )
 

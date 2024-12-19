@@ -119,11 +119,17 @@ class SimNodeModel extends DefaultNodeModel {
         };
     }
     
-
     deserialize(event) {
         super.deserialize(event);
     }
     
+    codeGen(){
+        const inputs = []
+        for (let i = 0; i < this.getInPorts().length; i++) {
+            inputs.push(this.getNodeByInput(i))
+        }
+        return {"class": this.constructor.name, "kind": this.kind, "name": this.codeGenName, "inputsNodes": inputs}
+    }
     
 }
 

@@ -8,6 +8,7 @@ class DisplayModel extends SimNodeModel {
     isTerminalBlock = true
     settings = null
     value = null;
+    codeGenName = 'out1'
         
     constructor(options = {}) {
         super({...options, name: 'display'});
@@ -44,6 +45,7 @@ class DisplayModel extends SimNodeModel {
         super.deserialize(event);
         this.value = event.data.value || null;
     }
+
     
 }
 

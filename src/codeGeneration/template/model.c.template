@@ -1,0 +1,37 @@
+// model.c
+// ${MODELINFO_TEMPLATE}
+// Contains functions to manage the simulation model, including initialization, simulation steps, and termination.
+#include "model.h"
+#include "libs.h"
+#include <time.h>
+
+// Get the current system time
+long current_system_time() {
+    return (long)time(NULL);
+}
+
+// Initialize the simulation model
+void init(ModelType *model){
+  model->simulation.current_step = 0;
+  model->simulation.start_time = current_system_time();
+  model->simulation.elapsed_time = 0;
+  model->simulation.total_time = 0;
+  model->simulation.status = 1; // Set to running
+}
+
+// Finalize the simulation and calculate total time
+void term(ModelType *model){
+  model->simulation.status = 0;
+  model->simulation.total_time = (double)(current_system_time() - model->simulation.start_time);
+}
+
+// Perform one simulation step
+void step(ModelType *model) {
+   
+    // Compute the model
+    ${COMPUTEMODEL_TEMPLATE}
+	
+    // Increase simulation information
+    model->simulation.current_step++;
+    model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+}

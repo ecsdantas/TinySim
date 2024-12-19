@@ -1,0 +1,12 @@
+// libs.h
+// Header file for mathematical utility functions.
+#ifndef LIBS_H
+#define LIBS_H
+
+double add(double a, double b);
+double subtract(double a, double b);
+double multiply(double a, double b);
+double divide(double a, double b);
+double modulus(double a, double b);
+
+#endif
