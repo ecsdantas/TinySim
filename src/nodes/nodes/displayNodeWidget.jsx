@@ -34,7 +34,7 @@ class DisplayNodeWidget extends React.Component {
                     { isFlip? <InPorts /> : <OutPorts /> }
                 </div>
                 <div className="element-label">
-                    <span>{node.kind}</span>
+                    <span>{node.CGenUID}</span>
                     {Settings && <button onClick={ Settings } className='settings-button' title={'Block Parameters (O)'}>⚙️</button>}
                 </div>
             </div>

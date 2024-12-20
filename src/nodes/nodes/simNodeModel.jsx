@@ -9,6 +9,7 @@ import { RightAnglePortModel } from '../ports/rightAnglePortModel'
 class SimNodeModel extends DefaultNodeModel {
 
     kind = 'generic'
+    CGenUID = 'g'              // Identificador unitário do bloco no CodeGeneration
     description = null         // Descrição do bloco
     isTerminalBlock = false    // Indica ao simulador que este bloco não é terminal
     lastStepSolved = null      // Help to avoid re-work
@@ -108,6 +109,7 @@ class SimNodeModel extends DefaultNodeModel {
             ...super.serialize(), // Serializa propriedades básicas do nó
             type: this.constructor.name, // Nome da classe como tipo
             kind: this.kind,
+            CGenUID: this.CGenUID,
             description: this.description,
             isTerminalBlock: this.isTerminalBlock,
             flip: this.flip
@@ -121,14 +123,6 @@ class SimNodeModel extends DefaultNodeModel {
     
     deserialize(event) {
         super.deserialize(event);
-    }
-    
-    codeGen(){
-        const inputs = []
-        for (let i = 0; i < this.getInPorts().length; i++) {
-            inputs.push(this.getNodeByInput(i))
-        }
-        return {"class": this.constructor.name, "kind": this.kind, "name": this.codeGenName, "inputsNodes": inputs}
     }
     
 }

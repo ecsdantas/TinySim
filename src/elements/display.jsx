@@ -5,11 +5,11 @@ import { SimNodeModel } from '../nodes/nodeModel'
 class DisplayModel extends SimNodeModel {
 
     kind = 'display'
+    CGenUID = 'out'
     isTerminalBlock = true
     settings = null
     value = null;
-    codeGenName = 'out1'
-        
+            
     constructor(options = {}) {
         super({...options, name: 'display'});
         this.createPort('in', true);

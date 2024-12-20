@@ -18,6 +18,15 @@ const DropElement = () => {
                 event.clientX - canvasRect.left - newNode.width / 2,
                 event.clientY - canvasRect.top - newNode.height / 2
             );
+
+            // Cria IDs unicos
+            const existingUIDs = new Set(Model.getNodes().map(n => n.CGenUID));
+            let i = 0;
+            while (existingUIDs.has(newNode.CGenUID + i)) {
+                i++;
+            }
+            newNode.CGenUID += i;
+
             Model.addNode(newNode);
             Engine.setModel(Model);
             Simulation.setModel(Model);
@@ -58,7 +67,7 @@ const DropElement = () => {
         };
     }, []);
 
-  
+
 };
 
 export { DropElement };

@@ -1,32 +1,5 @@
 // libs.c
 // Contains basic mathematical utility functions used in the simulation.
 #include "libs.h"
-#include <stdio.h>
 
-double add(double a, double b) {
-    return a + b;
-}
-
-double subtract(double a, double b) {
-    return a - b;
-}
-
-double multiply(double a, double b) {
-    return a * b;
-}
-
-double divide(double a, double b) {
-    if (b == 0) {
-        printf("Error: Division by zero\n");
-        return 0;
-    }
-    return a / b;
-}
-
-double modulus(double a, double b) {
-    if (b == 0) {
-        printf("Error: Modulus by zero\n");
-        return 0;
-    }
-    return (int)a % (int)b;
-}
+/* FUNCTION_IMPLEMENTATIONS */

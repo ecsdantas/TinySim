@@ -6,8 +6,8 @@ import { InputGroup } from '../components/inputGroup';
 class ConstantModel extends SimNodeModel {
 
     kind = 'constant'
+    CGenUID = 'in'
     value = 0
-    codeGenName = 'in1'
 
     constructor(options = {}, value = 10) {
         super({...options, name: 'constant'});
@@ -49,11 +49,6 @@ class ConstantModel extends SimNodeModel {
             return <div>
                 <p>This blocks outputs a constant.</p>
                     <InputGroup label={ 'Constant value' }  value={ getConstant } setValue={ e => setConstant(e) } />
-                    <code>
-                        <p>For code generation:</p>
-                        <InputGroup label={ 'Input port name:' }  value={ getCodeGenName } setValue={ e => setCodeGenName(e) } />
-                    </code>
-                    
                 </div>
         }
 

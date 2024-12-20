@@ -5,6 +5,7 @@ import { useModal } from '../components/modal';
 class AddModel extends SimNodeModel {
 
     kind = 'add'
+    CGenUID = 'add'
 
     constructor(options = {}) {
         super({...options, name: 'add'});

@@ -43,7 +43,14 @@ import TFlipFlopModel from "./Tflipflop";
 import JKFlipFlopModel from "./JKflipflop";
 import SRFlipFlopModel from "./SRflipflop";
 
+export { 
+    ConstantModel,
+    AddModel,
+    DisplayModel
+}
 
+
+/*
 export { 
     ConstantModel,
     AddModel,
@@ -90,3 +97,5 @@ export {
     JKFlipFlopModel,
     SRFlipFlopModel
 }
+
+*/
