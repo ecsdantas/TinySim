@@ -6,6 +6,7 @@ class AddModel extends SimNodeModel {
 
     kind = 'add'
     CGenUID = 'add'
+    tags = ['add','sum','plus']
 
     constructor(options = {}) {
         super({...options, name: 'add'});

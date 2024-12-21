@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class SubModel extends SimNodeModel {
 
     kind = 'sub'
+    CGenUID = 'sub'
+    tags = ['sub','minus','subtract']
     
     constructor(options = {}) {
         super({ ...options, name: 'sub' });

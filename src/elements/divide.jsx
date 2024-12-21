@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class DivideModel extends SimNodeModel {
 
     kind = 'divide'
+    CGenUID = 'div'
+    tags = ['divide', 'div']
 
     constructor(options = {}) {
         super({ ...options, name: 'divide' });

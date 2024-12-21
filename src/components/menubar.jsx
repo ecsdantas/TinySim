@@ -8,7 +8,7 @@ import uploadSVG from "../assets/icons/upload.svg"
 import fileSVG from "../assets/icons/file.svg"
 import CodeSVG from "../assets/icons/code.svg"
 import BoxSVG from "../assets/icons/box.svg"
-import CodeGeneration  from "../codeGeneration/core"
+import CodeGeneration  from "../codeGeneration/codeGen"
 import { Engine } from "../nodes/nodeModel"
 import Simulation from "../simulation/core"
 import JSZip from "jszip";

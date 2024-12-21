@@ -46,6 +46,9 @@ import SRFlipFlopModel from "./SRflipflop";
 export { 
     ConstantModel,
     AddModel,
+    SubModel,
+    DivideModel,
+    MultiplyModel,
     DisplayModel
 }
 

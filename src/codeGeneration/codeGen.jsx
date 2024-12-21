@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import { ModelActions } from './dict';
+import { ModelActions } from './modelActions';
 
 class CodeGeneration {
 
@@ -19,14 +19,16 @@ class CodeGeneration {
 
         // Generate model actions, ports, and required libraries
         const requiredLibs = [];
+        const includeLibs = [];
         const ports = [];
         const modelStep = [];
-        this.createModelStep(outputs, ports, requiredLibs, modelStep);
+        this.createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep);
         
         // Replace placeholders in templates
         const replacements = {
             "\\${MODELINFO_TEMPLATE}": `Generated using TinySim.vercel.app on ${new Date().toLocaleString()}`,
             "\\${COMPUTEMODEL_TEMPLATE}": modelStep.map(m => m + ';').join("\n\t"),
+            "\\${INCLUDE_LIBS}": includeLibs.map(p => `#include ${p}`).join("\n\t"),
             "\\${DATATYPE_TEMPLATE}": ports.map(p => `double ${p.name};`).join("\n\t"),
             "\\${SETINPUTS_TEMPLATE}": ports.filter(p => p.isInput).map(p => `model.data.${p.name} = ${p.value};`).join("\n\t"),
             "\\${SETPRINTSINPUTS_TEMPLATE}": ports.filter(p => p.isInput).map(p => `printf("\\tSET ${p.name}: %f\\n", model.data.${p.name});`).join("\n\t"),
@@ -48,30 +50,10 @@ class CodeGeneration {
         this.downloadZip(zipBlob, 'TinySim-CodeGen-output.zip');
     }
 
-    createModelStep(outputs, ports, requiredLibs, modelStep) {
+    createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep) {
 
-        ModelActions.addPort = (portName, isInput = 0, value = 0) => {
-            if (!ports.some(p => p.name === portName)) {
-                ports.push({ name: portName, isInput, value });
-            }
-        };
-
-        ModelActions.addLib = (lib) => {
-            if (!requiredLibs.some(existingLib => existingLib.name === lib.name)) {
-                requiredLibs.push(lib);
-            }
-        };
-
-        ModelActions.addStep = (st) => {
-            modelStep.push(st)
-        };
-
-        ModelActions.getNode = (node) => {
-            const action = ModelActions[node.constructor.name] || ModelActions.default;
-            return action(node);
-        }
-
-        return outputs.map(node => ModelActions.getNode(node))
+        const MA = new ModelActions(ports, requiredLibs, includeLibs, modelStep)
+        return outputs.map(node => MA.getNode(node))
         
     }
 
@@ -95,9 +77,9 @@ class CodeGeneration {
 
             if (fileName === "libs.c") {
                 const implementations = requiredLibs
-                    .map(lib => lib.implementation)
+                    .map(lib => lib.implementation.replace(/([ \t])+/g, '$1').trim())
                     .filter(Boolean)
-                    .join("\n");
+                    .join("\n") + '\n';
                 outputContent = outputContent.replace("/* FUNCTION_IMPLEMENTATIONS */", implementations);
             }
 

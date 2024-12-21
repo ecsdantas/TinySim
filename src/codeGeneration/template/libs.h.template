@@ -3,6 +3,7 @@
 #define LIBS_H
 
 #include <stdio.h>
+${INCLUDE_LIBS}
 
 /* FUNCTION_DECLARATIONS */
 

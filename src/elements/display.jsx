@@ -6,6 +6,7 @@ class DisplayModel extends SimNodeModel {
 
     kind = 'display'
     CGenUID = 'out'
+    tags = ['display','output','view']
     isTerminalBlock = true
     settings = null
     value = null;
