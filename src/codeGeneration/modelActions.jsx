@@ -2,12 +2,14 @@ import * as CModels from "./cmodels/index";
 
 class ModelActions {
     inUseVariables = [];
+    inUseGlobalVariables = [];
 
-    constructor(ports, requiredLibs, includeLibs, modelStep) {
+    constructor(ports, requiredLibs, includeLibs, modelStep, sharedModelVars) {
         this.ports = ports;
         this.requiredLibs = requiredLibs;
-        this.modelStep = modelStep;
         this.includeLibs = includeLibs;
+        this.modelStep = modelStep;
+        this.sharedModelVars = sharedModelVars;
 
         // Métodos ligados ao contexto da classe
         this.addPort = this.addPort.bind(this);
@@ -45,9 +47,15 @@ class ModelActions {
         this.modelStep.push(st);
     }
 
+    addSharedModelVar(v){
+        if (!this.sharedModelVars.some(sMV => sMV.name === v.name)){
+            this.sharedModelVars.push(v)
+        }
+    }
+
     getNode(node) {
         const action = this[node.constructor.name] || this.default;
-        return action.call(this, node); // Certifique-se de vincular o contexto
+        return action.call(this, node);
     }
 
     createNewVar(v) {

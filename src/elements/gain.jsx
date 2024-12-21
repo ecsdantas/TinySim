@@ -7,6 +7,8 @@ class GainModel extends SimNodeModel {
 
     kind = 'gain'
     gainValue = 1
+    CGenUID = 'g'
+    tags = ['gain','scale','multiply']   
 
     constructor(options = {}, gain = 0.5) {
         super({ ...options, name: 'gain' });

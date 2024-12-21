@@ -7,9 +7,11 @@ import { InputGroup } from '../components/inputGroup';
 class IntegratorModel extends SimNodeModel {
 
     kind = 'integrator'
+    CGenUID = 'int'
     initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null
+    tags = ['integrator','integral','1/s','laplace']
      
     constructor(options = {}, initialValue = 0) {
         super({...options, name: 'integrator'});

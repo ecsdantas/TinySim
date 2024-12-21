@@ -33,7 +33,6 @@ Modal.container = (props) => {
                         </svg>
                     </div>
                     {getState.content}
-                    
                 </section>
             </div>
         )

@@ -22,6 +22,7 @@ const DivideModel = function (node) {
         }`
     });
 
+    // Adiciona a biblioteca math.h por conta do NAN
     this.addIncludeLib('<math.h>')
 
     // Recupera os nós conectados como entradas

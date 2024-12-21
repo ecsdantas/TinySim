@@ -22,11 +22,14 @@ class CodeGeneration {
         const includeLibs = [];
         const ports = [];
         const modelStep = [];
-        this.createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep);
+        const sharedModelVars = [];
+        this.createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep, sharedModelVars);
         
         // Replace placeholders in templates
         const replacements = {
             "\\${MODELINFO_TEMPLATE}": `Generated using TinySim.vercel.app on ${new Date().toLocaleString()}`,
+            "\\${SHAREDMODELVARS_DECLARATION_TEMPLATE}": sharedModelVars.map(p => `${p.type? p.type : 'double'} ${p.name};`).join("\n\t"),
+            "\\${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}": sharedModelVars.map(p => `${p.name} = ${p.value}; // initial condition of ${p.ref}`).join("\n\t"),
             "\\${COMPUTEMODEL_TEMPLATE}": modelStep.map(m => m + ';').join("\n\t"),
             "\\${INCLUDE_LIBS}": includeLibs.map(p => `#include ${p}`).join("\n\t"),
             "\\${DATATYPE_TEMPLATE}": ports.map(p => `double ${p.name};`).join("\n\t"),
@@ -50,9 +53,9 @@ class CodeGeneration {
         this.downloadZip(zipBlob, 'TinySim-CodeGen-output.zip');
     }
 
-    createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep) {
+    createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep, sharedModelVars) {
 
-        const MA = new ModelActions(ports, requiredLibs, includeLibs, modelStep)
+        const MA = new ModelActions(ports, requiredLibs, includeLibs, modelStep, sharedModelVars)
         return outputs.map(node => MA.getNode(node))
         
     }

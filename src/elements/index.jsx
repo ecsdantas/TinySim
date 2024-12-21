@@ -49,7 +49,9 @@ export {
     SubModel,
     DivideModel,
     MultiplyModel,
-    DisplayModel
+    DisplayModel,
+    IntegratorModel,
+    GainModel
 }
 
 
