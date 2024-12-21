@@ -8,6 +8,9 @@ class DerivatorModel extends SimNodeModel {
     kind = 'derivator'
     previousInput = 0
     lastStepSolved = null
+    CGenUID = 'der'
+    tags = ['derivatior','derivate', 'limit','s','laplace']
+
 
     constructor(options = {}) {
         super({...options, name: 'derivator'});

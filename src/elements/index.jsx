@@ -42,6 +42,7 @@ import DFlipFlopModel from "./Dflipflop";
 import TFlipFlopModel from "./Tflipflop";
 import JKFlipFlopModel from "./JKflipflop";
 import SRFlipFlopModel from "./SRflipflop";
+import FirstOrderModel from "./firstOrder";
 
 export { 
     ConstantModel,
@@ -51,6 +52,8 @@ export {
     MultiplyModel,
     DisplayModel,
     IntegratorModel,
+    DerivatorModel,
+    FirstOrderModel,
     GainModel
 }
 
