@@ -1,6 +1,8 @@
 // libs.h
 #ifndef LIBS_H
 #define LIBS_H
+#define false 0
+#define true 1
 
 #include <stdio.h>
 ${INCLUDE_LIBS}

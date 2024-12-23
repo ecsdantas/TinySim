@@ -16,17 +16,20 @@ long current_system_time() {
 void init(ModelType *model){
   ${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}
 
+  model->simulation.mode = ${SIMULATION_MODE_TEMPLATE}; /* 0 = simulated, 1 = real time sync */
   model->simulation.current_step = 0;
+  model->simulation.sampling_time = ${SAMPLING_TIME_TEMPLATE};
+  model->simulation.simulated_time = 0;
+  model->simulation.stop_simulation_time = ${STOP_SIMULATION_TIME_TEMPLATE};
   model->simulation.start_time = current_system_time();
   model->simulation.elapsed_time = 0;
-  model->simulation.total_time = 0;
   model->simulation.status = 1; // Set to running
 }
 
 // Finalize the simulation and calculate total time
 void term(ModelType *model){
   model->simulation.status = 0;
-  model->simulation.total_time = (double)(current_system_time() - model->simulation.start_time);
+  model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
 }
 
 // Perform one simulation step
@@ -37,5 +40,6 @@ void step(ModelType *model) {
 	
     // Increase simulation information
     model->simulation.current_step++;
+    model->simulation.simulated_time = model->simulation.sampling_time * model->simulation.current_step;
     model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
 }

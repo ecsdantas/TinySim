@@ -10,10 +10,10 @@ const IntegratorModel = function (node) {
     
     this.addLib({
         name: "integrator",
-        declaration: `void integrator(double input, double* state, double timestep);`,
+        declaration: `void integrator(double input, double* state, double* timestep);`,
         implementation: `
-            void integrator(double input, double* state, double timestep) {
-                *state += input * timestep;
+            void integrator(double input, double* state, double* timestep) {
+                *state += input * *timestep;
             }
         `
     });
@@ -28,7 +28,7 @@ const IntegratorModel = function (node) {
     const input = this.getNode(node.getNodeByInput(0));
     
     // Inicialização do estado
-    this.addStep(`integrator(${input}, &${stateVar}, 0.01)`);
+    this.addStep(`integrator(${input}, &${stateVar}, &model->simulation.sampling_time)`);
     
     return stateVar;
 };

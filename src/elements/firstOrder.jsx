@@ -88,7 +88,8 @@ class FirstOrderModel extends SimNodeModel {
             }, [getDampingFactor]);
 
             return <div>
-                <p>The First Order block implements the equation 1 / (s + a). It combines an integrator with a damping factor to smooth the output response.</p>
+                <p>The First Order block implements the equation 1/(s + a). It combines an integrator with a damping factor to smooth the output response.</p>
+                <p>It's a numerical solution depending of sampling time.</p>
                 <InputGroup label={'Initial Condition'} value={getInitialValue} setValue={e => setInitialValue(e)} />
                 <InputGroup label={'Damping Factor (a)'} value={getDampingFactor} setValue={e => setDampingFactor(e)} />
             </div>;

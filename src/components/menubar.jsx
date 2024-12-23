@@ -89,7 +89,7 @@ const FileMenu = () => {
 };
 
 const CGen = () => {
-    const CodeGen = new CodeGeneration(Engine.getModel())
+    const CodeGen = new CodeGeneration(Engine.getModel(), Simulation)
     CodeGen.compileC()
 }
 

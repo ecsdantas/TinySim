@@ -4,10 +4,15 @@ import { ModelActions } from './modelActions';
 class CodeGeneration {
 
     #nodes = null;
+    #sim = [];
 
-    constructor(model) {
+    constructor(model, simulation) {
         if (!model || !model?.getNodes) throw new Error("Invalid model");
         this.#nodes = model.getNodes();
+        if (!simulation) throw new Error("Invalid model");
+        this.#sim.realTimeMode = simulation.realTimeMode ?? 0
+        this.#sim.stopTime = simulation.stopTime ?? 10
+        this.#sim.samplingTime = simulation.stepSize ?? 0.1 
     }
 
     // Run simulation and generate C files
@@ -28,6 +33,9 @@ class CodeGeneration {
         // Replace placeholders in templates
         const replacements = {
             "\\${MODELINFO_TEMPLATE}": `Generated using TinySim.vercel.app on ${new Date().toLocaleString()}`,
+            "\\${SIMULATION_MODE_TEMPLATE}": this.#sim.realTimeMode,
+            "\\${SAMPLING_TIME_TEMPLATE}": this.#sim.samplingTime,
+            "\\${STOP_SIMULATION_TIME_TEMPLATE}":this.#sim.stopTime,
             "\\${SHAREDMODELVARS_DECLARATION_TEMPLATE}": sharedModelVars.map(p => `${p.type? p.type : 'double'} ${p.name};`).join("\n\t"),
             "\\${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}": sharedModelVars.map(p => `${p.name} = ${p.value}; // initial condition of ${p.ref}`).join("\n\t"),
             "\\${COMPUTEMODEL_TEMPLATE}": modelStep.map(m => m + ';').join("\n\t"),

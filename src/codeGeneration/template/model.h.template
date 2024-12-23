@@ -14,9 +14,12 @@ typedef struct {
 // Structure to hold simulation state
 typedef struct {
     int current_step;
+    int mode; /* 0 = simulated, 1 = real time sync */
     long start_time;
     double elapsed_time;
-    double total_time;
+    double sampling_time;
+    double simulated_time;
+    double stop_simulation_time;
     int status; // 0 = stopped, 1 = running
 } SimulationType;
 

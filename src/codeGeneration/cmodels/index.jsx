@@ -8,5 +8,6 @@ import { IntegratorModel } from "./cmodel_integrator";
 import { DerivatorModel } from "./cmodel_derivator";
 import { FirstOrderModel } from "./cmodel_firstOrder";
 import { GainModel } from "./cmodel_gain";
+import { ZOHModel } from "./cmodel_zoh";
 
-export { AddModel, SubModel, ConstantModel, DisplayModel, DivideModel, MultiplyModel, IntegratorModel, DerivatorModel, GainModel, FirstOrderModel }
+export { AddModel, SubModel, ConstantModel, DisplayModel, DivideModel, MultiplyModel, IntegratorModel, DerivatorModel, GainModel, FirstOrderModel, ZOHModel }
