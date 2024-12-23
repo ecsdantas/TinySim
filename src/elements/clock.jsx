@@ -6,6 +6,8 @@ import { useModal } from '../components/modal';
 class ClockModel extends SimNodeModel {
 
     kind = 'clock'
+    CGenUID = 'clk'
+    tags = ['clk','time','clock','step','current']
     
     constructor(options = {}) {
         super({ ...options, name: 'clock' });

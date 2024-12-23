@@ -44,6 +44,7 @@ import JKFlipFlopModel from "./JKflipflop";
 import SRFlipFlopModel from "./SRflipflop";
 import FirstOrderModel from "./firstOrder";
 import ZOHModel from "./zoh";
+import ZeroOrderModel from "./zo";
 
 export { 
     ConstantModel,
@@ -51,10 +52,12 @@ export {
     SubModel,
     DivideModel,
     MultiplyModel,
+    ClockModel,
     DisplayModel,
     IntegratorModel,
     DerivatorModel,
     FirstOrderModel,
+    ZeroOrderModel,
     GainModel,
     ZOHModel    
 }
