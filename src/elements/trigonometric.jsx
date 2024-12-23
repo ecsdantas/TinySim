@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodeModel';
 import { useModal } from '../components/modal';
-import Simulation from '../simulation/core';
-import { InputGroup, SelectGroup } from '../components/inputGroup';
+import { SelectGroup } from '../components/inputGroup';
 
 class TrigonometricModel extends SimNodeModel {
   kind = 'trigonometric';
   functionType = 'sin'; // Default function
   value = 0;
+  CGenUID = 'trig';
+  tags = ['sine', 'cosine', 'tangente', 'arc', 'hyperbolic', 'angle', 'trigonometric'];
+
 
   constructor(options = {}) {
     super({ ...options, name: 'trigonometric' });

@@ -6,6 +6,9 @@ import { InputGroup } from '../components/inputGroup';
 class StandardDeviationModel extends SimNodeModel {
   kind = 'standardDeviation';
   values = [];
+  CGenUID = 'std';
+  tags = ['standard', 'deviation', 'average', 'media', 'statistics'];
+
 
   constructor(options = {}) {
     super({ ...options, name: 'Standard Deviation' });

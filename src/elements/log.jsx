@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class LogModel extends SimNodeModel {
 
     kind = 'log'
+    CGenUID = 'log'
+    tags = ['math','logarithm','exponential']
 
     constructor(options = {}) {
         super({ ...options, name: 'log' });

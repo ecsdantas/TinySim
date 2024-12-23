@@ -61,5 +61,9 @@ export {
     GainModel,
     ZOHModel,
     ExponentialModel,
-    MemoryModel    
+    MemoryModel,
+    LogModel,
+    AverageModel,
+    StandardDeviationModel,
+    TrigonometricModel    
 }

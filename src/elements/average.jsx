@@ -5,6 +5,9 @@ import { useModal } from '../components/modal';
 class AverageModel extends SimNodeModel {
   kind = 'average';
   values = [];
+  CGenUID = 'avg';
+  tags = ['avg', 'mean', 'average', 'media'];
+
 
   constructor(options = {}) {
     super({ ...options, name: 'Average' });
