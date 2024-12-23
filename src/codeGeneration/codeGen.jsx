@@ -12,7 +12,7 @@ class CodeGeneration {
         if (!simulation) throw new Error("Invalid model");
         this.#sim.realTimeMode = simulation.realTimeMode ?? 0
         this.#sim.stopTime = simulation.stopTime ?? 10
-        this.#sim.samplingTime = simulation.stepSize ?? 0.1 
+        this.#sim.samplingTime = simulation.stepSize ?? 0.1
     }
 
     // Run simulation and generate C files
@@ -63,6 +63,7 @@ class CodeGeneration {
 
     createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep, sharedModelVars) {
 
+        this.#nodes.forEach(node => node.isvisited = false);
         const MA = new ModelActions(ports, requiredLibs, includeLibs, modelStep, sharedModelVars)
         return outputs.map(node => MA.getNode(node))
         
