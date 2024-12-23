@@ -44,7 +44,7 @@ int main() {
   term(&model);
 
   // Print final simulation statistics
-  printf("\n==== Simulation ended. ====\nTotal time: %.2f seconds\n", model.simulation.elapsed_time);
+  printf("\n==== Simulation ended. ====\nElapsed time: %.2f seconds\n", model.simulation.elapsed_time);
   
   return 0;
 }

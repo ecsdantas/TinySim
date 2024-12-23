@@ -10,10 +10,10 @@ const FirstOrderModel = function (node) {
 
     this.addLib({
         name: "firstOrder",
-        declaration: `void firstOrder(double input, double* state, double* output, double dampingFactor, double timestep);`,
+        declaration: `void firstOrder(double input, double* state, double* output, double dampingFactor, double* timestep);`,
         implementation: `
-            void firstOrder(double input, double* state, double* output, double dampingFactor, double timestep) {
-                *state += (input - dampingFactor * *state) * timestep;
+            void firstOrder(double input, double* state, double* output, double dampingFactor, double* timestep) {
+                *state += (input - dampingFactor * *state) * *timestep;
                 *output = *state;
             }
         `
@@ -37,7 +37,7 @@ const FirstOrderModel = function (node) {
     });
 
     // Adiciona a chamada ao modelo de primeira ordem no passo
-    this.addStep(`firstOrder(${input}, &${stateVar}, &${outputVar}, ${dampingFactor}, 0.01)`);
+    this.addStep(`firstOrder(${input}, &${stateVar}, &${outputVar}, ${dampingFactor}, &model->simulation.sampling_time)`);
 
     return outputVar;
 };

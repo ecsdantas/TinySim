@@ -9,10 +9,10 @@ const DerivatorModel = function (node) {
 
     this.addLib({
         name: "derivator",
-        declaration: `void derivator(double input, double* previousInput, double* output, double timestep);`,
+        declaration: `void derivator(double input, double* previousInput, double* output, double* timestep);`,
         implementation: `
-            void derivator(double input, double* previousInput, double* output, double timestep) {
-                *output = (input - *previousInput) / timestep;
+            void derivator(double input, double* previousInput, double* output, double* timestep) {
+                *output = (input - *previousInput) / *timestep;
                 *previousInput = input;
             }
         `
@@ -36,7 +36,7 @@ const DerivatorModel = function (node) {
     });
 
     // Adiciona a chamada ao derivador no passo
-    this.addStep(`derivator(${input}, &${stateVar}, &${derivativeVar}, 0.01)`);
+    this.addStep(`derivator(${input}, &${stateVar}, &${derivativeVar}, &model->simulation.sampling_time)`);
 
     return derivativeVar;
 };

@@ -10,13 +10,13 @@ const ZOHModel = function (node) {
 
     this.addLib({
         name: "zoh",
-        declaration: `void zoh(double input, double* state, double* output, double sampleTime, double currentTime);`,
+        declaration: `void zoh(double input, double* state, double* output, double sampleTime, double* currentTime);`,
         implementation: `
-            void zoh(double input, double* state, double* output, double sampleTime, double currentTime) {
+            void zoh(double input, double* state, double* output, double sampleTime, double* currentTime) {
                 static double lastUpdateTime = 0.0;
-                if (fmod(currentTime, sampleTime) < 1e-6) {
+                if (fmod(*currentTime, sampleTime) < 1e-6) {
                     *state = input;
-                    lastUpdateTime = currentTime;
+                    lastUpdateTime = *currentTime;
                 }
                 *output = *state;
             }
@@ -45,7 +45,7 @@ const ZOHModel = function (node) {
     });
 
     // Adiciona a chamada ao modelo ZOH no passo
-    this.addStep(`zoh(${input}, &${stateVar}, &${outputVar}, ${sampleTime}, currentTime)`);
+    this.addStep(`zoh(${input}, &${stateVar}, &${outputVar}, ${sampleTime}, &model->simulation.simulated_time)`);
 
     return outputVar;
 };
