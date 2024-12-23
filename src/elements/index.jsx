@@ -65,5 +65,7 @@ export {
     LogModel,
     AverageModel,
     StandardDeviationModel,
-    TrigonometricModel    
+    TrigonometricModel,
+    TextModel,
+    PowModel    
 }

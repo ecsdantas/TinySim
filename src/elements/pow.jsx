@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class PowModel extends SimNodeModel {
 
     kind = 'pow'
+    CGenUID = 'pow'
+    tags = ['power','expoent']   
 
     constructor(options = {}) {
         super({ ...options, name: 'pow' });
@@ -37,11 +39,6 @@ class PowModel extends SimNodeModel {
         
         // Internal editor
         const ControlEditor = () => {
-
-            const AddPorts = () => {
-                // No additional ports needed for this model
-                this.component && this.component.forceUpdate();
-            }
 
             return <div>
                 <p>This block computes the power of Input 1 raised to Input 2.</p>

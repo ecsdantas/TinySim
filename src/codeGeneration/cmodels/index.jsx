@@ -17,6 +17,7 @@ import { LogModel } from "./cmodel_log";
 import { AverageModel } from "./cmodel_average";
 import { StandardDeviationModel } from "./cmodel_std";
 import { TrigonometricModel } from "./cmodel_trigonometric"
+import { PowModel } from "./cmodel_pow"
 
 
 export { 
@@ -38,5 +39,6 @@ export {
     StandardDeviationModel,
     MemoryModel,
     LogModel,
-    TrigonometricModel
+    TrigonometricModel,
+    PowModel
 }
