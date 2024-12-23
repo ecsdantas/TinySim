@@ -10,12 +10,14 @@ const ZeroOrderModel = function (node) {
     }
     node.isvisited = true;
 
+    console.log("SUCESSO")
+
     this.addLib({
         name: "zeroOrder",
-        declaration: `void zeroOrder(double input, double* state, double* output, double constantA, double timestep);`,
+        declaration: `void zeroOrder(double input, double* state, double* output, double constantA, double* timestep);`,
         implementation: `
-            void zeroOrder(double input, double* state, double* output, double constantA, double timestep) {
-                double derivative = (input - *state) / timestep;
+            void zeroOrder(double input, double* state, double* output, double constantA, double* timestep) {
+                double derivative = (input - *state) / *timestep;
                 *state = input;
                 *output = derivative + constantA * input;
             }
@@ -38,7 +40,7 @@ const ZeroOrderModel = function (node) {
     });
 
     // Adiciona a chamada ao modelo Zero Order no passo
-    this.addStep(`zeroOrder(${inputVar}, &${stateVar}, &${outputVar}, ${constantA}, model->simulation.timestep)`);
+    this.addStep(`zeroOrder(${inputVar}, &${stateVar}, &${outputVar}, ${constantA}, &model->simulation.sampling_time)`);
 
     return outputVar;
 };

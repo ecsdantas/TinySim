@@ -58,9 +58,11 @@ class ZeroOrderModel extends SimNodeModel {
     }
 
     icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="2" y="2" width="20" height="20" stroke="#000000" strokeWidth="1" />
-        <text x="6" y="12" fontFamily="Arial" fontSize="10" fill="#000000">s+a</text>
-    </svg>
+    <rect x="2" y="2" width="20" height="20" stroke="#000000" strokeWidth="1" />
+    <text x="9" y="20" fontFamily="Arial" fontSize="9" fill="#000000">1</text>
+    <line x1="6" x2="17" y1="12" y2="12" fontFamily="Arial" strokeWidth="1" stroke="#000000" />
+    <text x="4" y="11" fontFamily="Arial" fontSize="10" fill="#000000">s+a</text>
+</svg>
 
     settings = _ => {
 

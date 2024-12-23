@@ -36,7 +36,7 @@ class CodeGeneration {
             "\\${SIMULATION_MODE_TEMPLATE}": this.#sim.realTimeMode,
             "\\${SAMPLING_TIME_TEMPLATE}": this.#sim.samplingTime,
             "\\${STOP_SIMULATION_TIME_TEMPLATE}":this.#sim.stopTime,
-            "\\${SHAREDMODELVARS_DECLARATION_TEMPLATE}": sharedModelVars.map(p => `${p.type? p.type : 'double'} ${p.name};`).join("\n\t"),
+            "\\${SHAREDMODELVARS_DECLARATION_TEMPLATE}": sharedModelVars.map(p => `${p.type? p.type : 'double'} ${p.name};`).join("\n  "),
             "\\${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}": sharedModelVars.map(p => `${p.name} = ${p.value}; // initial condition of ${p.ref}`).join("\n\t"),
             "\\${COMPUTEMODEL_TEMPLATE}": modelStep.map(m => m + ';').join("\n\t"),
             "\\${INCLUDE_LIBS}": includeLibs.map(p => `#include ${p}`).join("\n\t"),
@@ -83,7 +83,7 @@ class CodeGeneration {
                 const declarations = requiredLibs
                     .map(lib => lib.declaration)
                     .filter(Boolean)
-                    .join("\n");
+                    .join("\n\n");
                 outputContent = outputContent.replace("/* FUNCTION_DECLARATIONS */", declarations);
             }
 

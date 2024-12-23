@@ -10,6 +10,9 @@ class MemoryModel extends SimNodeModel {
     initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null
+    CGenUID = 'mem'
+    tags = ['memory','z^-1','z-1','previous','delay']
+    
 
     constructor(options = {}, initialValue = 8) {
         super({ ...options, name: 'memory' });

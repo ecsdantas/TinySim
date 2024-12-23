@@ -59,56 +59,7 @@ export {
     FirstOrderModel,
     ZeroOrderModel,
     GainModel,
-    ZOHModel    
-}
-
-
-/*
-export { 
-    ConstantModel,
-    AddModel,
-    SubModel,
-    MultiplyModel,
-    DivideModel,
-    PowModel,
-    LogModel,
+    ZOHModel,
     ExponentialModel,
-    MinModel,
-    MaxModel,
-    GainModel,
-    MemoryModel,
-    ClockModel,
-    TrigonometricModel,
-    AverageModel,
-    StandardDeviationModel,
-    DisplayModel,
-    PlotModel,
-    HistogramModel,
-    TextModel,
-    IntegratorModel,
-    DerivatorModel,
-    SaturationModel,
-    SwitchModel,
-    LookupTableModel,
-    RandomNumberModel,
-    RoundModel,
-    RelationalOperatorModel,
-    CSVExportModel,
-    ImportCSVMode, 
-    GaugeModel,
-    PIDControllerModel,
-    TransferFunctionModel,
-    NotModel,
-    AndModel,
-    OrModel,
-    NandModel,
-    NorModel,
-    XorModel,
-    XnorModel,
-    DFlipFlopModel,
-    TFlipFlopModel,
-    JKFlipFlopModel,
-    SRFlipFlopModel
+    MemoryModel    
 }
-
-*/

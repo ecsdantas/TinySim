@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class ExponentialModel extends SimNodeModel {
 
     kind = 'exponential'
+    CGenUID = 'exp';
+    tags = ['exp', 'exponetial', 'euler', 'neperian', '2.71828'];
 
     constructor(options = {}) {
         super({ ...options, name: 'exponential' });

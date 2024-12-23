@@ -10,6 +10,9 @@ import { FirstOrderModel } from "./cmodel_firstOrder";
 import { GainModel } from "./cmodel_gain";
 import { ZOHModel } from "./cmodel_zoh";
 import { ClockModel } from "./cmodel_clock";
+import { ExponentialModel } from "./cmodel_exp";
+import { ZeroOrderModel } from "./cmodel_zeroOrder";
+import { MemoryModel } from "./cmodel_memory";
 
 export { 
     AddModel, 
@@ -22,6 +25,9 @@ export {
     IntegratorModel, 
     DerivatorModel, 
     GainModel, 
-    FirstOrderModel, 
-    ZOHModel
+    FirstOrderModel,
+    ZeroOrderModel, 
+    ZOHModel,
+    ExponentialModel,
+    MemoryModel
 }
