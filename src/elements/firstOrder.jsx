@@ -97,6 +97,25 @@ class FirstOrderModel extends SimNodeModel {
 
         useModal.configure(this, 'First Order Block', <ControlEditor />, true);
     };
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            lookupTable: this.lookupTable,
+            initialValue: this.initialValue,
+            memoryValue: this.memoryValue,
+            dampingFactor: this.dampingFactor
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.initialValue = event.data.initialValue;
+        this.memoryValue = event.data.memoryValue;
+        this.dampingFactor = event.data.dampingFactor;
+    }
+
 }
 
 export default FirstOrderModel;
