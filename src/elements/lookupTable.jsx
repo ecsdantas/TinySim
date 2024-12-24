@@ -11,11 +11,13 @@ class LookupTableModel extends SimNodeModel {
     lookupTable = [[10, 20], [15, 22], [18, 33]];
     interpolationMethod = 'nearest'; // Default interpolation method
 
-    constructor(options = {}, lookupTable = []) {
+    constructor(options = {}, lookupTable) {
         super({ ...options, name: 'lookupTable' });
 
         // Define the lookup table
-        this.lookupTable = lookupTable;
+        if(Array.isArray(lookupTable) && lookupTable.length > 0) {
+            this.lookupTable = lookupTable;
+        }
 
         // Create the ports of lookup table model
         this.createPort('out', false);
@@ -98,7 +100,8 @@ class LookupTableModel extends SimNodeModel {
             const [getTable, setTable] = useState(JSON.stringify(this.lookupTable));
             const [getInterpolation, setInterpolation] = useState(this.interpolationMethod);
             const [getError, setError] = useState(false);
-
+            console.dir(getTable)
+            
             useEffect(() => {
                 try {
                     const parsedTable = JSON.parse(getTable);
@@ -120,6 +123,7 @@ class LookupTableModel extends SimNodeModel {
             return (
                 <div>
                     <p>This block uses a lookup table to determine the output based on the input value.</p>
+                    <p>The input format is: [[x0, y0], [x1, y1], ..., [xn, yn]]</p>
                     <InputGroup label={'Table'} value={getTable} setValue={e => setTable(e)} />
                     <SelectGroup
                         label="Interpolation Method"
@@ -138,6 +142,25 @@ class LookupTableModel extends SimNodeModel {
 
         useModal.configure(this, 'Lookup Table Block', <ControlEditor />, true);
     };
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            lookupTable: this.lookupTable,
+            interpolationMethod: this.interpolationMethod,
+        };
+    }
+
+    deserialize(data, engine) {
+        super.deserialize(data, engine);
+        if (Array.isArray(data.lookupTable)) {
+            this.lookupTable = data.lookupTable;
+        }
+        if (typeof data.interpolationMethod === 'string') {
+            this.interpolationMethod = data.interpolationMethod;
+        }
+    }
 }
 
 export default LookupTableModel;
