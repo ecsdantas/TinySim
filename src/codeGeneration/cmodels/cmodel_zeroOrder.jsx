@@ -10,8 +10,6 @@ const ZeroOrderModel = function (node) {
     }
     node.isvisited = true;
 
-    console.log("SUCESSO")
-
     this.addLib({
         name: "zeroOrder",
         declaration: `void zeroOrder(double input, double* state, double* output, double constantA, double* timestep);`,

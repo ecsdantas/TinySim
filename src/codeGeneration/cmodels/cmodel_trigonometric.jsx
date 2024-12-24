@@ -17,18 +17,18 @@ const TrigonometricModel = function (node) {
         declaration: `double trigonometric(double value, const char* functionType);`,
         implementation: `
             double trigonometric(double value, const char* functionType) {
-                if (strcmp(functionType, "sin") == 0) return sin(value);
-                if (strcmp(functionType, "cos") == 0) return cos(value);
-                if (strcmp(functionType, "tan") == 0) return tan(value);
-                if (strcmp(functionType, "asin") == 0) return asin(value);
-                if (strcmp(functionType, "acos") == 0) return acos(value);
-                if (strcmp(functionType, "atan") == 0) return atan(value);
-                if (strcmp(functionType, "sinh") == 0) return sinh(value);
-                if (strcmp(functionType, "cosh") == 0) return cosh(value);
-                if (strcmp(functionType, "tanh") == 0) return tanh(value);
-                if (strcmp(functionType, "asinh") == 0) return asinh(value);
-                if (strcmp(functionType, "acosh") == 0) return acosh(value);
-                if (strcmp(functionType, "atanh") == 0) return atanh(value);
+                if (strcmp(functionType, "sin") == 0) { return sin(value); }
+                if (strcmp(functionType, "cos") == 0) { return cos(value); }
+                if (strcmp(functionType, "tan") == 0) { return tan(value); }
+                if (strcmp(functionType, "asin") == 0) { return asin(value); }
+                if (strcmp(functionType, "acos") == 0) { return acos(value); }
+                if (strcmp(functionType, "atan") == 0) { return atan(value); }
+                if (strcmp(functionType, "sinh") == 0) { return sinh(value); }
+                if (strcmp(functionType, "cosh") == 0) { return cosh(value); }
+                if (strcmp(functionType, "tanh") == 0) { return tanh(value); }
+                if (strcmp(functionType, "asinh") == 0) { return asinh(value); }
+                if (strcmp(functionType, "acosh") == 0) { return acosh(value); }
+                if (strcmp(functionType, "atanh") == 0) { return atanh(value); }
                 return sin(value); // Default to sin
             }
         `

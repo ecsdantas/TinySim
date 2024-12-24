@@ -39,7 +39,7 @@ class CodeGeneration {
             "\\${SHAREDMODELVARS_DECLARATION_TEMPLATE}": sharedModelVars.map(p => `${p.type? p.type : 'double'} ${p.name};`).join("\n  "),
             "\\${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}": sharedModelVars.map(p => `${p.name} = ${p.value}; // initial condition of ${p.ref}`).join("\n\t"),
             "\\${COMPUTEMODEL_TEMPLATE}": modelStep.map(m => m + ';').join("\n\t"),
-            "\\${INCLUDE_LIBS}": includeLibs.map(p => `#include ${p}`).join("\n\t"),
+            "\\${INCLUDE_LIBS}": includeLibs.map(p => `#include ${p}`).join("\n"),
             "\\${DATATYPE_TEMPLATE}": ports.map(p => `double ${p.name};`).join("\n\t"),
             "\\${SETINPUTS_TEMPLATE}": ports.filter(p => p.isInput).map(p => `model.data.${p.name} = ${p.value};`).join("\n\t"),
             "\\${SETPRINTSINPUTS_TEMPLATE}": ports.filter(p => p.isInput).map(p => `printf("\\tSET ${p.name}: %f\\n", model.data.${p.name});`).join("\n\t"),
@@ -81,17 +81,17 @@ class CodeGeneration {
 
             if (fileName === "libs.h") {
                 const declarations = requiredLibs
-                    .map(lib => lib.declaration)
+                    .map(lib => lib.declaration.trim())
                     .filter(Boolean)
-                    .join("\n\n");
+                    .join("\n");
                 outputContent = outputContent.replace("/* FUNCTION_DECLARATIONS */", declarations);
             }
 
             if (fileName === "libs.c") {
                 const implementations = requiredLibs
-                    .map(lib => lib.implementation.replace(/([ \t])+/g, '$1').trim())
+                    .map(lib => this.indentCCode(lib.implementation))
                     .filter(Boolean)
-                    .join("\n") + '\n';
+                    .join("\n\n");
                 outputContent = outputContent.replace("/* FUNCTION_IMPLEMENTATIONS */", implementations);
             }
 
@@ -116,6 +116,51 @@ class CodeGeneration {
         link.click();
         URL.revokeObjectURL(link.href);
     }
+
+
+    indentCCode(code) {
+        // Remove espaços em excesso antes e depois do código
+        const trimmedCode = code.trim();
+    
+        // Quebra o código em linhas e inicializa variáveis
+        const lines = trimmedCode.split("\n");
+        let indentedCode = "";
+        let indentLevel = 0;
+        const indent = "    "; // 4 espaços para indentação
+    
+        lines.forEach(line => {
+            // Remove espaços em excesso de cada linha
+            line = line.trim();
+    
+            // Trata chaves de fechamento ("}")
+            if (/^\}/.test(line)) {
+                indentLevel = Math.max(indentLevel - 1, 0);
+            }
+    
+            // Aplica a indentação atual
+            indentedCode += indent.repeat(indentLevel) + line + "\n";
+    
+            // Trata chaves de abertura ("{")
+            if (/\{$/.test(line)) {
+                indentLevel++;
+            }
+    
+            // Quebra instruções compactas (e.g., múltiplas instruções em uma única linha)
+            if (/;.*\S/.test(line) && !line.endsWith("}")) {
+                const instructions = line.split(";").filter(instr => instr.trim() !== "");
+                instructions.forEach((instr, index) => {
+                    if (index === 0) {
+                        indentedCode += indent.repeat(indentLevel) + instr.trim() + ";\n";
+                    } else {
+                        indentedCode += indent.repeat(indentLevel + 1) + instr.trim() + ";\n";
+                    }
+                });
+            }
+        });
+    
+        return indentedCode.trim();
+    }
+
 }
 
 export default CodeGeneration;
