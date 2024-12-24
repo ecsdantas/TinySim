@@ -18,7 +18,9 @@ import { AverageModel } from "./cmodel_average";
 import { StandardDeviationModel } from "./cmodel_std";
 import { TrigonometricModel } from "./cmodel_trigonometric"
 import { PowModel } from "./cmodel_pow"
-
+import { SwitchModel } from "./cmodel_switch";
+import { MaxModel } from "./cmodel_max";
+import { MinModel } from "./cmodel_min";
 
 export { 
     AddModel, 
@@ -40,5 +42,8 @@ export {
     MemoryModel,
     LogModel,
     TrigonometricModel,
-    PowModel
+    PowModel,
+    SwitchModel,
+    MaxModel,
+    MinModel
 }

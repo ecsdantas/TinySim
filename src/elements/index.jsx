@@ -67,5 +67,8 @@ export {
     StandardDeviationModel,
     TrigonometricModel,
     TextModel,
-    PowModel    
+    PowModel,
+    SwitchModel,
+    MinModel,
+    MaxModel    
 }

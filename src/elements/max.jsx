@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class MaxModel extends SimNodeModel {
 
     kind = 'max'
+    CGenUID = 'max'
+    tags = ['max','maximum']
 
     constructor(options = {}) {
         super({ ...options, name: 'max' });

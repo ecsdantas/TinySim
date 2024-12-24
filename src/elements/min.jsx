@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class MinModel extends SimNodeModel {
 
     kind = 'min'
+    CGenUID = 'min'
+    tags = ['min','minimum']
 
     constructor(options = {}) {
         super({ ...options, name: 'min' });

@@ -5,6 +5,8 @@ import { useModal } from '../components/modal';
 class SwitchModel extends SimNodeModel {
 
     kind = 'switch'
+    CGenUID = 'sw'
+    tags = ['switch','rele','relay','path','route']
 
     constructor(options = {}) {
         super({ ...options, name: 'switch' });
@@ -49,11 +51,6 @@ class SwitchModel extends SimNodeModel {
         
         // Internal editor
         const ControlEditor = () => {
-
-            const AddPorts = () => {
-                // No additional ports needed for this model
-                this.component && this.component.forceUpdate();
-            }
 
             return <div>
                 <p>This block outputs Input 1 if Input 2 is true, otherwise it outputs Input 3.</p>

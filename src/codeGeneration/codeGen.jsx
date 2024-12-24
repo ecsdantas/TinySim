@@ -119,46 +119,16 @@ class CodeGeneration {
 
 
     indentCCode(code) {
-        // Remove espaços em excesso antes e depois do código
-        const trimmedCode = code.trim();
-    
-        // Quebra o código em linhas e inicializa variáveis
-        const lines = trimmedCode.split("\n");
-        let indentedCode = "";
+
         let indentLevel = 0;
-        const indent = "    "; // 4 espaços para indentação
-    
-        lines.forEach(line => {
-            // Remove espaços em excesso de cada linha
-            line = line.trim();
-    
-            // Trata chaves de fechamento ("}")
-            if (/^\}/.test(line)) {
-                indentLevel = Math.max(indentLevel - 1, 0);
-            }
-    
-            // Aplica a indentação atual
-            indentedCode += indent.repeat(indentLevel) + line + "\n";
-    
-            // Trata chaves de abertura ("{")
-            if (/\{$/.test(line)) {
-                indentLevel++;
-            }
-    
-            // Quebra instruções compactas (e.g., múltiplas instruções em uma única linha)
-            if (/;.*\S/.test(line) && !line.endsWith("}")) {
-                const instructions = line.split(";").filter(instr => instr.trim() !== "");
-                instructions.forEach((instr, index) => {
-                    if (index === 0) {
-                        indentedCode += indent.repeat(indentLevel) + instr.trim() + ";\n";
-                    } else {
-                        indentedCode += indent.repeat(indentLevel + 1) + instr.trim() + ";\n";
-                    }
-                });
-            }
-        });
-    
-        return indentedCode.trim();
+        const lines = code.trim().split("\n");
+        return lines.map(line => {
+            line = '\t'.repeat(indentLevel) + line.trim(); 
+            /\{/.test(line) && indentLevel++;
+            /\}/.test(line) && indentLevel--;
+            return line
+        }).join("\n")
+
     }
 
 }
