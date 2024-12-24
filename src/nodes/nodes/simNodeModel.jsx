@@ -123,6 +123,8 @@ class SimNodeModel extends DefaultNodeModel {
     
     deserialize(event) {
         super.deserialize(event);
+        this.CGenUID = event.data.CGenUID
+        
     }
     
 }

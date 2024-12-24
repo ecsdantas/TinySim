@@ -152,15 +152,12 @@ class LookupTableModel extends SimNodeModel {
         };
     }
 
-    deserialize(data, engine) {
-        super.deserialize(data, engine);
-        if (Array.isArray(data.lookupTable)) {
-            this.lookupTable = data.lookupTable;
-        }
-        if (typeof data.interpolationMethod === 'string') {
-            this.interpolationMethod = data.interpolationMethod;
-        }
+    deserialize(event) {
+        super.deserialize(event);
+        this.lookupTable = event.data.lookupTable;
+        this.interpolationMethod = event.data.interpolationMethod;
     }
+    
 }
 
 export default LookupTableModel;
