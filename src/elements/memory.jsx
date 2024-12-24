@@ -14,7 +14,7 @@ class MemoryModel extends SimNodeModel {
     tags = ['memory','z^-1','z-1','previous','delay']
     
 
-    constructor(options = {}, initialValue = 8) {
+    constructor(options = {}, initialValue = 0) {
         super({ ...options, name: 'memory' });
 
         // Define the initial value

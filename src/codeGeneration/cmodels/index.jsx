@@ -21,6 +21,7 @@ import { PowModel } from "./cmodel_pow"
 import { SwitchModel } from "./cmodel_switch";
 import { MaxModel } from "./cmodel_max";
 import { MinModel } from "./cmodel_min";
+import { LookupTableModel } from "./cmodel_lookuptable";
 
 export { 
     AddModel, 
@@ -45,5 +46,6 @@ export {
     PowModel,
     SwitchModel,
     MaxModel,
-    MinModel
+    MinModel,
+    LookupTableModel
 }

@@ -70,5 +70,6 @@ export {
     PowModel,
     SwitchModel,
     MinModel,
-    MaxModel    
+    MaxModel,
+    LookupTableModel    
 }

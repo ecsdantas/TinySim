@@ -3,13 +3,13 @@ import * as Elements from "../elements";
 const ModelsArray = Object.entries(Elements)
 
 export const LibraryList = () => {
-    const handleDragStart = (event, index) => {
-        event.dataTransfer.setData('drag-block', index);
+    const handleDragStart = (event, modelName) => {
+        event.dataTransfer.setData('drag-block', modelName);
     };
 
-    const handleTouchStart = (event, index) => {
+    const handleTouchStart = (event, modelName) => {
         const touch = event.touches[0];
-        event.target.dataset.dragBlock = index;
+        event.target.dataset.dragBlock = modelName;
         
         // Store the initial touch position
         event.target.dataset.startX = touch.clientX;
@@ -31,8 +31,8 @@ export const LibraryList = () => {
 
     const handleTouchEnd = (event) => {
         const touch = event.changedTouches[0];
-        const index = event.target.dataset.dragBlock;
-        if (index !== undefined) {
+        const modelName = event.target.dataset.dragBlock;
+        if (modelName !== undefined) {
             // Simulate the drop event
             const dropEvent = new Event('drop', {
                 bubbles: true,
@@ -41,7 +41,7 @@ export const LibraryList = () => {
             dropEvent.clientX = touch.clientX;
             dropEvent.clientY = touch.clientY;
             dropEvent.dataTransfer = {
-                getData: () => index
+                getData: () => modelName
             };
             document.querySelector('.srd-diagram').dispatchEvent(dropEvent);
         }
@@ -53,20 +53,20 @@ export const LibraryList = () => {
     return (
         <div className='library'>
             {
-                ModelsArray.map(([type, ModelClass], index) => {
+                ModelsArray.map(([modelName, ModelClass]) => {
                     const Model = new ModelClass();
                     return (
                         <div
-                            key={`models-${Model.getModelName()}`}
+                            key={`models-${modelName}`}
                             className='library-modal'
                             draggable
-                            onDragStart={(event) => handleDragStart(event, index)}
-                            onTouchStart={(event) => handleTouchStart(event, index)}
+                            onDragStart={(event) => handleDragStart(event, modelName)}
+                            onTouchStart={(event) => handleTouchStart(event, modelName)}
                             onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
                         >
                             {Model.icon && <div style={{ margin: '0 auto' }}> {Model.icon()} </div>}
-                            {Model.kind && <div style={{ margin: '0 auto' }}> {Model.kind} </div>}
+                            {Model.kind && <div style={{ margin: '0 auto' }}> {Model.kind}</div>}
                         </div>
                     );
                 })
