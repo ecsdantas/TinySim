@@ -102,7 +102,6 @@ class FirstOrderModel extends SimNodeModel {
         const data = super.serialize();
         return {
             ...data,
-            lookupTable: this.lookupTable,
             initialValue: this.initialValue,
             memoryValue: this.memoryValue,
             dampingFactor: this.dampingFactor

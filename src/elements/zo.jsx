@@ -89,6 +89,21 @@ class ZeroOrderModel extends SimNodeModel {
 
         useModal.configure(this, 'Zero Order Block', <ControlEditor />, true);
     };
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            constantA: this.constantA,
+            memoryValue: this.memoryValue,
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.constantA = constantA,
+        this.memoryValue = memoryValue
+    }
 }
 
 export default ZeroOrderModel;
