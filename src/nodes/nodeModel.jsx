@@ -2,6 +2,7 @@ import createEngine, { DiagramModel, DefaultDiagramState, RightAngleLinkFactory 
 import { SimNodeModel } from './nodes/simNodeModel';
 import { SimNodeFactory } from './nodes/simNodeFactory';
 import * as Elements from '../elements/index';
+import { useModal } from '../components/modal';
 import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory'
 
 // Cria o motor do diagrama e o Modelo
@@ -37,6 +38,31 @@ Engine.getPortFactories().registerFactory(new RightAnglePortFactory());
 const Model = new DiagramModel();
 
 Engine.setModel(Model);
+
+
+// Permite utilizar atalhos
+const handleKeyDown = (event) => {  
+        if (useModal.getShow)
+            return
+        const selectedEntities = Engine.getModel().getSelectedEntities();
+        switch(event.key){
+            case 'i':
+                selectedEntities.forEach((entity) => {
+                    if ( typeof entity.flip === "boolean" ) {
+                        entity.flip = !entity.flip
+                        entity.update()
+                    }
+                })
+                break
+            case 'o':
+                Array.isArray(selectedEntities) && 
+                selectedEntities.filter(node => node.settings).map(node => node.settings())
+        }
+    }
+
+    // Add evento para monitorar os blocos
+window.addEventListener('keydown', event => handleKeyDown(event));
+
 
 export { Engine, Model, SimNodeModel };
 

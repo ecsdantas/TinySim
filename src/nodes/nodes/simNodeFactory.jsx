@@ -1,5 +1,4 @@
 import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
-import { useModal } from '../../components/modal';
 import { SimNodeModel } from './simNodeModel';
 import { DisplayNodeWidget } from './displayNodeWidget';
 
@@ -8,29 +7,6 @@ class SimNodeFactory extends AbstractReactFactory {
     constructor(type = 'sim-node') {
         super(type);
         this.type = type;
-        
-        // Add evento para monitorar os blocos
-        window.addEventListener('keydown', event => this.handleKeyDown(event));
-    }
-
-    // Aqui inveter os nós selecionados
-    handleKeyDown(event) {
-        if (useModal.getShow)
-            return
-        const selectedEntities = this.engine.getModel().getSelectedEntities();
-        switch(event.key){
-            case 'i':
-                selectedEntities.forEach((entity) => {
-                    if ( typeof entity.flip === "boolean" ) {
-                        entity.flip = !entity.flip
-                        entity.update()
-                    }
-                })
-                break
-            case 'o':
-                Array.isArray(selectedEntities) && 
-                selectedEntities.filter(node => node.settings).map(node => node.settings())
-        }
     }
 
     generateModel() {
