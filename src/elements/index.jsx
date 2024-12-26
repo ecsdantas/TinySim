@@ -30,7 +30,6 @@ import StandardDeviationModel from "./standardDeviation";
 import GaugeModel from "./gauge";
 import TrigonometricModel from "./trigonometric";
 import PIDControllerModel from "./PIDcontroller";
-import TransferFunctionModel from "./transferFunction";
 import NotModel from "./not";
 import AndModel from "./and";
 import OrModel from "./or";
@@ -73,5 +72,6 @@ export {
     MaxModel,
     LookupTableModel,
     RoundModel,
-    SaturationModel    
+    SaturationModel,
+    RandomNumberModel    
 }

@@ -9,6 +9,8 @@ class RandomNumberModel extends SimNodeModel {
     minValue = 0;
     maxValue = 1;
     distribution = 'uniform';
+    CGenUID = 'rand'
+    tags = ['random','generator','normal','uniform','input']
 
     constructor(options = {}, minValue = 0, maxValue = 1, distribution = 'uniform') {
         super({ ...options, name: 'randomNumber' });

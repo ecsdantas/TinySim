@@ -24,6 +24,7 @@ import { MinModel } from "./cmodel_min";
 import { LookupTableModel } from "./cmodel_lookuptable";
 import { RoundModel } from "./cmodel_round";
 import { SaturationModel } from "./cmodel_saturation";
+import { RandomNumberModel } from "./cmodel_random"
 
 export { 
     AddModel, 
@@ -51,5 +52,6 @@ export {
     MinModel,
     LookupTableModel,
     RoundModel,
-    SaturationModel
+    SaturationModel,
+    RandomNumberModel
 }

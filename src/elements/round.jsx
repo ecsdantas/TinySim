@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodeModel'
 import { useModal } from '../components/modal';
-import { InputGroup } from '../components/inputGroup';
+import { InputGroup, SelectGroup } from '../components/inputGroup';
 
 class RoundModel extends SimNodeModel {
 
@@ -80,16 +80,10 @@ class RoundModel extends SimNodeModel {
             }, [getRoundType]);
 
             return <div>
-                <p>This block rounds the input value to the specified number of decimal places and allows selecting the rounding type.</p>
+                <p>This block rounds the input value to the specified number of decimal places<br />and allows selecting the rounding type.</p>
                 <InputGroup label={'Decimal Places'} value={getDecimalPlaces} setValue={e => setDecimalPlaces(e)} />
-                <div>
-                    <label>Rounding Type</label>
-                    <select value={getRoundType} onChange={e => setRoundType(e.target.value)}>
-                        <option value="round">Round</option>
-                        <option value="ceil">Ceil</option>
-                        <option value="floor">Floor</option>
-                    </select>
-                </div>
+                <SelectGroup label={'Rounding Type'} value={getRoundType} setValue={e => setRoundType(e)} 
+                    options={[{ value: 'round', label: 'Round' }, { value: 'ceil', label: 'Ceil' }, { value: 'floor', label: 'Floor' }]} />
             </div>;
         };
 
