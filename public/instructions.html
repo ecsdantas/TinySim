@@ -7,25 +7,64 @@
     <body>
         <h4>Welcome to TinySim!</h4>
 
-        <p>TinySim is currently under development, which means it may have some bugs or malfunctions.</p>
-        
-        
-        <p>To get started, click on "<b>Library</b>" and drag some components onto the workspace. Connect the ports and run the simulation. Remember, all wires must be connected to ports; there are no connections allowed between wires.</p>
+        <p>TinySim is a powerful simulation tool currently under development. While it may still have some bugs or incomplete features, it's ready for you to explore and test its capabilities!</p>
 
-        <b>General tips</b>:
+        <p>To begin, click on "<b>Library</b>" and drag components onto the workspace. Connect the ports and run your simulation.
+        
+        <p>
+            <b>All wires must connect to ports</b><br />
+            Output ports can have more than one connection.<br />
+            Connections directly between wires are not supported.
+        </p>
+
+        <b>General Tips</b>:
         <ul>
-          <li><b>Delete items</b>: Select the desired item and press [delete] or [del] on the keyboard.</li>
-          <li><b>Flip horizontally</b>: Select the desired item and press [I] on the keyboard.</li>
-          <li><b>Configure block</b>: Select the desired block and press [O] on the keyboard, or click on the respective gear icon.</li>
-          <li><b>Zoom</b>: Rotate the scroll wheel.</li>
-          <li><b>Move item</b>: Select the desired item, click and hold the mouse while dragging.</li>
-          <li><b>Pan</b>: Click and hold on an empty area to move the entire circuit..</li>
+        <li><b>Delete items:</b> Select the item and press [delete] or [del] on your keyboard.</li>
+        <li><b>Flip horizontally:</b> Select the item and press [I] on your keyboard.</li>
+        <li><b>Configure block:</b> Select the block and press [O] on your keyboard, or click the gear icon.</li>
+        <li><b>Zoom:</b> Use the scroll wheel to zoom in or out.</li>
+        <li><b>Move item:</b> Click and hold the item, then drag it to the desired position.</li>
+        <li><b>Pan:</b> Click and hold on an empty area to move the entire workspace.</li>
         </ul>
-        
-        <p>You can simulate up to 10000 steps. All simulation data and circuit are processed client-side, and
-            we do not store any circuit on our servers.</p>
 
-        <p><small>TinySim is desktop only, and may do not work on mobile or tables.</small></p>
+        <p>You can simulate up to 10,000 steps. All simulations and circuit data are processed entirely on your device. We do not store any circuit data on our servers.</p>
+
+        <hr />
+
+        <h4>Export to C Code</h4>
+        <p>TinySim allows you to compile your project into C code, enabling further customization and integration into other systems. Keep the following in mind:</p>
+
+        <b>Important Considerations:</b>
+        <ul>
+        <li>Always use a <b>Display</b> block as the output port for the generated C code.</li>
+        <li>Always use a <b>Constant</b> block as the input port for the generated C code.</li>
+        <li>All settings and parameters are copied into the generated C code.</li>
+        <li>Real-time synchronization is not supported in the current version.</li>
+        <li>The generated C code is divided into several files:
+            <ul>
+            <li><b>main.c:</b> The entry point of your program. Customize this file as needed.</li>
+            <li><b>model.c:</b> Contains the main model structure representing your diagram.</li>
+            <li><b>model.h:</b> The header file for <i>model.c</i>, containing shared variables and functions.</li>
+            <li><b>libs.c:</b> Standard TinySim functions related to diagram blocks.</li>
+            <li><b>libs.h:</b> The header file for <i>libs.c</i>, containing shared variables and functions.</li>
+            </ul>
+        </li>
+        <li>To compile the code, use: <b>gcc *.c -o sim</b></li>
+        <li>To execute:
+            <ul>
+                <li><b>on windows</b>: sim.exe</li>
+                <li><b>on linux</b>: ./sim</li>
+            </ul>
+        </li>
+
+        </ul>
+
+        <hr />
+
+        <p>TinySim is for desktop use only.</p>
+
+        <p>TinySim is a free-time project, and as such, we currently lack the resources to provide support or assistance with individual projects. However, if you'd like to support our development efforts, feel free to reach out to us at <a href="mailto:evandson@live.com?subject=About%20TinySim%20Support">evandson@live.com</a> with the subject line: <b>About TinySim Support</b>.</p>
+
 
         To report bugs, ask for library or anything else: <a href="https://forms.gle/mcgY9cEUFtu916Hz8">Google Forms for TinySim</a>.
     </body>
