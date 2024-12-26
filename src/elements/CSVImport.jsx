@@ -3,6 +3,8 @@ import { SimNodeModel } from '../nodes/nodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 
+
+// BUG AO IMPORTAR, ELE PARA DE FUNCIONAR
 class ImportCSVModel extends SimNodeModel {
   kind = 'csvImport';
   isTerminalBlock = false;
@@ -20,6 +22,7 @@ class ImportCSVModel extends SimNodeModel {
 
   // Load CSV file and generate output ports
   loadCSV = (file, setColumnNames) => {
+    this.reset()
     const reader = new FileReader();
     reader.onload = (event) => {
       const text = event.target.result;
@@ -30,9 +33,14 @@ class ImportCSVModel extends SimNodeModel {
       setColumnNames(this.columnNames);
       this.values = rows.slice(1).map((row) => row.map((value) => parseFloat(value)));
 
+      const outports = this.getOutPorts();
+      outports.filter(outp => !this.columnNames.includes(outp.options.name)).forEach(outp => this.removePort(outp))
+    
       // Create output ports with column names
-      this.columnNames.forEach((name) => {
-        this.createPort(name, false);
+      this.columnNames
+        .filter((name) => !outports.some(outp => outp.options.name === name))
+        .forEach((name) => {
+          this.createPort(name, false);
       });
 
       if (this.component) {
@@ -41,6 +49,14 @@ class ImportCSVModel extends SimNodeModel {
     };
     reader.readAsText(file);
   };
+
+  reset(){
+    super.reset()
+    this.values = [];
+    this.columnNames = [];
+    this.component = null;
+  }
+
 
   // Main function of the block
   solution() {
@@ -147,6 +163,7 @@ class ImportCSVModel extends SimNodeModel {
   }
 
   deserialize(event) {
+    this.reset()
     super.deserialize(event);
     this.values = event.data.values || [];
     this.columnNames = event.data.columnNames || [];
