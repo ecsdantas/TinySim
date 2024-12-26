@@ -85,6 +85,21 @@ class ZOHModel extends SimNodeModel {
 
         useModal.configure(this, 'Zero Order Hold Block', <ControlEditor />, true);
     };
+
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            sampleTime: this.sampleTime
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.reset();
+        this.sampleTime = sampleTime;
+    }
 }
 
 export default ZOHModel;

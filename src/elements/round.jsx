@@ -7,13 +7,17 @@ class RoundModel extends SimNodeModel {
 
     kind = 'round'
     decimalPlaces = 0
+    CGenUID = 'rnd';
+    tags = ['round', 'ceil', 'floor'];
+    roundType = 'round';
 
-    constructor(options = {}, decimalPlaces = 0) {
-        super({...options, name: 'round'});
+    constructor(options = {}, decimalPlaces = 0, roundType = 'round') {
+        super({ ...options, name: 'round' });
 
-        // Define the initial decimal places
+        // Initialize properties
         this.decimalPlaces = decimalPlaces;
-        
+        this.roundType = roundType;
+
         // Create the ports of round model
         this.createPort('out', false);
         this.createPort('in', true);
@@ -25,30 +29,43 @@ class RoundModel extends SimNodeModel {
         if (inpt && inpt.solve) {
             const value = inpt.solve();
             const factor = Math.pow(10, this.decimalPlaces);
-            return {'out': Math.round(value * factor) / factor};
-        }
-        return {'out': NaN};
-    }
 
-    reset(){
-        super.reset();
+            // Apply rounding based on selected type
+            let result;
+            switch (this.roundType) {
+                case 'ceil':
+                    result = Math.ceil(value * factor) / factor;
+                    break;
+                case 'floor':
+                    result = Math.floor(value * factor) / factor;
+                    break;
+                default:
+                    result = Math.round(value * factor) / factor;
+            }
+
+            return { 'out': result };
+        }
+        return { 'out': NaN };
     }
 
     icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="10" stroke="#000000" strokeWidth="1" />
-        <text x="5" y="15" fontFamily="Arial" fontSize="8" fill="#000000">Rnd</text>
-    </svg>
+        <text x="5" y="15" fontFamily="Arial" fontSize="9" fill="#000000">
+            {
+                this.roundType.replace(/[ou]/g,"")
+            }
+            </text>
+    </svg>;
 
     settings = _ => {
 
-        const isNumber = (n) => {
-            return !isNaN(Number(n));
-        }
+        const isNumber = (n) => !isNaN(Number(n));
 
         // Internal editor
         const ControlEditor = () => {
 
             const [getDecimalPlaces, setDecimalPlaces] = useState(this.decimalPlaces);
+            const [getRoundType, setRoundType] = useState(this.roundType);
 
             useEffect(() => {
                 if (isNumber(getDecimalPlaces)) {
@@ -57,14 +74,42 @@ class RoundModel extends SimNodeModel {
                 }
             }, [getDecimalPlaces]);
 
+            useEffect(() => {
+                this.roundType = getRoundType;
+                this.component && this.component.forceUpdate();
+            }, [getRoundType]);
+
             return <div>
-                <p>This block rounds the input value to the specified number of decimal places.</p>
+                <p>This block rounds the input value to the specified number of decimal places and allows selecting the rounding type.</p>
                 <InputGroup label={'Decimal Places'} value={getDecimalPlaces} setValue={e => setDecimalPlaces(e)} />
-            </div>
-        }
+                <div>
+                    <label>Rounding Type</label>
+                    <select value={getRoundType} onChange={e => setRoundType(e.target.value)}>
+                        <option value="round">Round</option>
+                        <option value="ceil">Ceil</option>
+                        <option value="floor">Floor</option>
+                    </select>
+                </div>
+            </div>;
+        };
 
         useModal.configure(this, 'Round Block', <ControlEditor />, true);
 
+    };
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            decimalPlaces: this.decimalPlaces,
+            roundType: this.roundType
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.decimalPlaces = event.data.decimalPlaces;
+        this.roundType = event.data.roundType;
     }
     
 }

@@ -22,6 +22,7 @@ import { SwitchModel } from "./cmodel_switch";
 import { MaxModel } from "./cmodel_max";
 import { MinModel } from "./cmodel_min";
 import { LookupTableModel } from "./cmodel_lookuptable";
+import { RoundModel } from "./cmodel_round";
 
 export { 
     AddModel, 
@@ -47,5 +48,6 @@ export {
     SwitchModel,
     MaxModel,
     MinModel,
-    LookupTableModel
+    LookupTableModel,
+    RoundModel
 }

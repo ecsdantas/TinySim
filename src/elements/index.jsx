@@ -71,5 +71,6 @@ export {
     SwitchModel,
     MinModel,
     MaxModel,
-    LookupTableModel    
+    LookupTableModel,
+    RoundModel    
 }
