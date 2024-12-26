@@ -98,7 +98,7 @@ class ZOHModel extends SimNodeModel {
     deserialize(event) {
         super.deserialize(event);
         this.reset();
-        this.sampleTime = sampleTime;
+        this.sampleTime = event.data.sampleTime;
     }
 }
 

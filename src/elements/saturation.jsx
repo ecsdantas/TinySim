@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SimNodeModel } from '../nodes/nodeModel'
 import { useModal } from '../components/modal';
 import { InputGroup } from '../components/inputGroup';
@@ -6,6 +6,9 @@ import { InputGroup } from '../components/inputGroup';
 class SaturationModel extends SimNodeModel {
 
     kind = 'saturation'
+    CGenUID = 'sat';
+    tags = ['saturation', 'limit', 'max','min'];
+
 
     constructor(options = {}) {
         super({ ...options, name: 'saturation' });
@@ -44,6 +47,11 @@ class SaturationModel extends SimNodeModel {
             const [maxValue, setMaxValue] = useState(this.MaxValue);
             const [minValue, setMinValue] = useState(this.MinValue);
 
+            useEffect(()=>{
+                this.MaxValue = parseFloat(maxValue) ?? 10
+                this.MinValue = parseFloat(minValue) ?? 10
+            },[maxValue, minValue])
+
             return <div>
                 <p>This block constrains the output values between MinValue and MaxValue.</p>
                 <InputGroup label={ 'Max value'}  value={ maxValue } setValue={ e => setMaxValue(e) } />
@@ -52,6 +60,21 @@ class SaturationModel extends SimNodeModel {
         }
 
         useModal.configure(this, 'Saturation Block', <ControlEditor />, true);
+    }
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            MaxValue: this.MaxValue,
+            MinValue: this.MinValue,
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.MaxValue = event.data.MaxValue;
+        this.MinValue = event.data.MinValue;
     }
 }
 

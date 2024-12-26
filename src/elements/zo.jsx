@@ -101,8 +101,8 @@ class ZeroOrderModel extends SimNodeModel {
 
     deserialize(event) {
         super.deserialize(event);
-        this.constantA = constantA,
-        this.memoryValue = memoryValue
+        this.constantA = event.data.constantA,
+        this.memoryValue = event.data.memoryValue
     }
 }
 

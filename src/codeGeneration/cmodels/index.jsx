@@ -16,13 +16,14 @@ import { MemoryModel } from "./cmodel_memory";
 import { LogModel } from "./cmodel_log";
 import { AverageModel } from "./cmodel_average";
 import { StandardDeviationModel } from "./cmodel_std";
-import { TrigonometricModel } from "./cmodel_trigonometric"
-import { PowModel } from "./cmodel_pow"
+import { TrigonometricModel } from "./cmodel_trigonometric";
+import { PowModel } from "./cmodel_pow";
 import { SwitchModel } from "./cmodel_switch";
 import { MaxModel } from "./cmodel_max";
 import { MinModel } from "./cmodel_min";
 import { LookupTableModel } from "./cmodel_lookuptable";
 import { RoundModel } from "./cmodel_round";
+import { SaturationModel } from "./cmodel_saturation";
 
 export { 
     AddModel, 
@@ -49,5 +50,6 @@ export {
     MaxModel,
     MinModel,
     LookupTableModel,
-    RoundModel
+    RoundModel,
+    SaturationModel
 }

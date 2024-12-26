@@ -5,10 +5,17 @@ import Editor from 'react-simple-wysiwyg';
 import { useModal } from '../components/modal';
 
 const processText = (input) => {
+    // Adiciona um hook ao DOMPurify para forçar target="_blank" em todos os links
+    DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+        // Verifica se o nó é um link (tag <a>)
+        if (node.tagName === 'A') {
+            node.setAttribute('target', '_blank'); // Adiciona target="_blank"
+        }
+    });
+
     return input.split('\n').map((line, index) => {
-        line = line.replace(/https?:\/\/([^\s\n\<]+)/g, '<a href="http://$1" title="Go to...">$1</a>');
-        const sanitizedLine = DOMPurify.sanitize(line)
-        return <p key={index} dangerouslySetInnerHTML={{ __html: sanitizedLine }}></p>;
+        const sanitizedLine = DOMPurify.sanitize(line, { ADD_ATTR: ['target'] });
+        return <p key={`line_${index}`} dangerouslySetInnerHTML={{ __html: sanitizedLine }}></p>;
     });
 };
 
@@ -17,6 +24,7 @@ class TextModel extends SimNodeModel {
 
     kind = 'text'
     text = 'Annotation...'
+    CGenUID = 'txt';
     fontSize = 12
 
     constructor(options = {}) {
@@ -46,6 +54,19 @@ class TextModel extends SimNodeModel {
         
         useModal.configure(this, 'Annotation Block', <ControlEditor />, true);
     }
+    
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            content: this.text
+        };
+      }
+    
+      deserialize(event) {
+          super.deserialize(event);
+          this.text = event.data.content;
+      }
 
 }
 

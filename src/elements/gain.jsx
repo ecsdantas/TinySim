@@ -62,7 +62,6 @@ class GainModel extends SimNodeModel {
     serialize() {
         return {
             ...super.serialize(),
-            kind: this.kind,
             gainValue: this.gainValue
         };
     }

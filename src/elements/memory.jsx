@@ -94,8 +94,8 @@ class MemoryModel extends SimNodeModel {
 
     deserialize(event) {
         super.deserialize(event);
-        this.initialValue = initialValue,
-        this.memoryValue = memoryValue
+        this.initialValue = event.data.initialValue,
+        this.memoryValue = event.data.memoryValue
     }
 
 }

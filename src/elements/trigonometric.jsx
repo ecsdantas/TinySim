@@ -123,6 +123,20 @@ class TrigonometricModel extends SimNodeModel {
 
     useModal.configure(this, 'Trigonometric Block', <ControlEditor />, true);
   }
+
+  serialize() {
+    const data = super.serialize();
+    return {
+        ...data,
+        functionType: this.functionType
+    };
+  }
+
+  deserialize(event) {
+      super.deserialize(event);
+      this.functionType = event.data.functionType;
+  }
+
 }
 
 export default TrigonometricModel;

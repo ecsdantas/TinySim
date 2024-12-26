@@ -72,5 +72,6 @@ export {
     MinModel,
     MaxModel,
     LookupTableModel,
-    RoundModel    
+    RoundModel,
+    SaturationModel    
 }

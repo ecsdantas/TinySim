@@ -79,6 +79,19 @@ class IntegratorModel extends SimNodeModel {
         useModal.configure(this, 'Integrator Block', <ControlEditor />, true);
 
     }
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            initialValue: this.initialValue
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.initialValue = event.data.initialValue;
+    }
     
 }
 
