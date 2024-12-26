@@ -19,11 +19,11 @@ import DerivatorModel from "./derivator"
 import LookupTableModel from "./lookupTable";
 import RandomNumberModel from "./random";
 import RoundModel from "./round";
-import RelationalOperatorModel from "./relational";
+import RelationalOperatorModel from "./comparator";
 import MinModel from "./min";
 import MaxModel from "./max";
 import CSVExportModel from "./CSVExport";
-import ImportCSVMode from "./CSVImport"
+import ImportCSVModel from "./CSVImport"
 import HistogramModel from "./histogram";
 import AverageModel from "./average";
 import StandardDeviationModel from "./standardDeviation";
@@ -73,5 +73,7 @@ export {
     LookupTableModel,
     RoundModel,
     SaturationModel,
-    RandomNumberModel    
+    RandomNumberModel,
+    RelationalOperatorModel,
+    ImportCSVModel   
 }

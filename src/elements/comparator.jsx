@@ -7,6 +7,9 @@ class RelationalOperatorModel extends SimNodeModel {
 
     kind = 'comparator'
     operator = 'equal'
+    tags = ['comparator', 'greater', 'equal', 'lower', 'different'];
+    CGenUID = 'cmp';
+
 
     constructor(options = {}, operator = 'equal') {
         super({...options, name: 'comparator'});
@@ -114,6 +117,20 @@ class RelationalOperatorModel extends SimNodeModel {
 
         useModal.configure(this, 'Relational Operator Block', <ControlEditor />, true);
 
+    }
+
+    serialize() {
+        const data = super.serialize();
+        return {
+            ...data,
+            operator: this.operator
+        };
+    }
+
+    deserialize(event) {
+        super.deserialize(event);
+        this.operator = event.data.operator;
+        
     }
     
 }

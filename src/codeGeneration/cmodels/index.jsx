@@ -25,7 +25,8 @@ import { LookupTableModel } from "./cmodel_lookuptable";
 import { RoundModel } from "./cmodel_round";
 import { SaturationModel } from "./cmodel_saturation";
 import { RandomNumberModel } from "./cmodel_random"
-
+import { RelationalOperatorModel } from "./cmodel_comparator";
+import { ImportCSVModel } from "./cmodel_csvImport";
 export { 
     AddModel, 
     SubModel, 
@@ -53,5 +54,7 @@ export {
     LookupTableModel,
     RoundModel,
     SaturationModel,
-    RandomNumberModel
+    RandomNumberModel,
+    RelationalOperatorModel,
+    ImportCSVModel
 }
