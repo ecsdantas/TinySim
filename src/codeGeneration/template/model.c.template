@@ -5,7 +5,8 @@
 #include "libs.h"
 #include <time.h>
 
-${SHAREDMODELVARS_DECLARATION_TEMPLATE}
+// Model shared variables
+${MODEL_C__VARS_TEMPLATE}
 
 // Get the current system time
 long current_system_time() {
@@ -14,32 +15,41 @@ long current_system_time() {
 
 // Initialize the simulation model
 void init(ModelType *model){
-  ${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}
+  // Set model inicial conditions
+  ${MODEL_C__INIT_TEMPLATE}
 
-  model->simulation.mode = ${SIMULATION_MODE_TEMPLATE}; /* 0 = simulated, 1 = real time sync */
+  // Set simulation initial conditions
+  model->simulation.mode = ${MODEL_C__SIMULATION_MODE_TEMPLATE}; /* 0 = simulated, 1 = real time sync */
   model->simulation.current_step = 0;
-  model->simulation.sampling_time = ${SAMPLING_TIME_TEMPLATE};
+  model->simulation.sampling_time = ${MODEL_C__SAMPLING_TIME_TEMPLATE};
   model->simulation.simulated_time = 0;
-  model->simulation.stop_simulation_time = ${STOP_SIMULATION_TIME_TEMPLATE};
+  model->simulation.stop_simulation_time = ${MODEL_C__STOP_SIMULATION_TIME_TEMPLATE};
   model->simulation.start_time = current_system_time();
   model->simulation.elapsed_time = 0;
   model->simulation.status = 1; // Set to running
-}
-
-// Finalize the simulation and calculate total time
-void term(ModelType *model){
-  model->simulation.status = 0;
-  model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
 }
 
 // Perform one simulation step
 void step(ModelType *model) {
    
     // Compute the model
-    ${COMPUTEMODEL_TEMPLATE}
+    ${MODEL_C__STEP_TEMPLATE}
 	
     // Increase simulation information
     model->simulation.current_step++;
     model->simulation.simulated_time = model->simulation.sampling_time * model->simulation.current_step;
     model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+
+}
+
+// Finalize the simulation and calculate total time
+void term(ModelType *model){
+
+  // Finish main functions models
+  ${MODEL_C__TERM_TEMPLATE}
+
+  // Finish the simulation model
+  model->simulation.status = 0;
+  model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+
 }

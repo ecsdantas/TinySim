@@ -1,40 +1,42 @@
+// cmodel_divide.jsx
 const DivideModel = function (node) {
-    const inPorts = node.getInPorts();
-    const varname = `var_${node.CGenUID}_${inPorts.length}`;
+    const varname = `var_${node.CGenUID}_divide`;
 
     // Verifica se a variável já foi utilizada
-    if (this.inUseVariables.includes(varname)) {
+    if (node.isvisited) {
         return varname;
     }
 
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "divide",
-        declaration: `double divide(const double* array, int size);`,
-        implementation: `
-            double divide(const double* array, int size) {
-                double result = array[0];
-                for (int i = 1; i < size; i++) {
-                    if (array[i] == 0) return NAN; // Avoid division by zero
-                    result /= array[i];
-                }
-                return result;
-        }`
-    });
+    node.isvisited = true;
 
-    // Adiciona a biblioteca math.h por conta do NAN
-    this.addIncludeLib('<math.h>')
+    // Adiciona a biblioteca necessária para `NAN`
+    this.addLibsH__include('#include <math.h>');
+
+    // Adiciona a implementação da função `divide`
+    this.addLibsC__functions(`
+double divide(const double* array, int size) {
+    double result = array[0];
+    for (int i = 1; i < size; i++) {
+        if (array[i] == 0) return NAN; // Avoid division by zero
+        result /= array[i];
+    }
+    return result;
+}
+    `);
+
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`double divide(const double* array, int size);`);
 
     // Recupera os nós conectados como entradas
-    const inputs = inPorts.map((_, i) => this.getNode(node.getNodeByInput(i)));
+    const inputs = node.getInPorts().map((_, i) => this.getNode(node.getNodeByInput(i)));
 
     // Cria uma nova variável para os parâmetros do método
-    const add_param_var = this.createNewVar('div_param');
-    this.addStep(`double ${add_param_var}[] = {${inputs.join(',')}}`);
-    this.addStep(`double ${varname} = divide(${add_param_var}, ${inputs.length})`);
+    const div_param_var = this.addModelC__generateNewVar('div_param');
+    this.addModelC__step(`double ${div_param_var}[] = {${inputs.join(',')}};`);
 
-    // Registra a nova variável
-    this.inUseVariables.push(varname);
+    // Cria a variável de saída e adiciona o passo de execução
+    this.addModelC__vars(`double ${varname};`);
+    this.addModelC__step(`${varname} = divide(${div_param_var}, ${inputs.length});`);
 
     return varname;
 };

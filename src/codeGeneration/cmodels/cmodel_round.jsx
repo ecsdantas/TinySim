@@ -1,33 +1,34 @@
+// cmodel_round.jsx
 const RoundModel = function (node) {
-    const inPort = node.getInPorts()[0];
     const varname = `var_${node.CGenUID}_round`;
 
     // Verifica se a variável já foi utilizada
-    if (this.inUseVariables.includes(varname)) {
+    if (node.isvisited) {
         return varname;
     }
 
-    // Adiciona a biblioteca math.h por conta do exp
-    this.addIncludeLib('<math.h>')
-    this.addIncludeLib('<string.h>')
+    node.isvisited = true;
 
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "round",
-        declaration: `double round_value(double value, int decimal_places, const char* round_type);`,
-        implementation: `
-            double round_value(double value, int decimal_places, const char* round_type) {
-                double factor = pow(10, decimal_places);
-                if (strcmp(round_type, "ceil") == 0) {
-                    return ceil(value * factor) / factor;
-                } else if (strcmp(round_type, "floor") == 0) {
-                    return floor(value * factor) / factor;
-                } else {
-                    return round(value * factor) / factor;
-                }
-            }
-        `
-    });
+    // Adiciona as bibliotecas necessárias
+    this.addLibsH__include('#include <math.h>');
+    this.addLibsH__include('#include <string.h>');
+
+    // Adiciona a implementação da função `round_value`
+    this.addLibsC__functions(`
+double round_value(double value, int decimal_places, const char* round_type) {
+    double factor = pow(10, decimal_places);
+    if (strcmp(round_type, "ceil") == 0) {
+        return ceil(value * factor) / factor;
+    } else if (strcmp(round_type, "floor") == 0) {
+        return floor(value * factor) / factor;
+    } else {
+        return round(value * factor) / factor;
+    }
+}
+    `);
+
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`double round_value(double value, int decimal_places, const char* round_type);`);
 
     // Recupera o nó conectado como entrada
     const input = this.getNode(node.getNodeByInput(0));
@@ -36,11 +37,9 @@ const RoundModel = function (node) {
     const decimalPlaces = node.decimalPlaces || 0;
     const roundType = `"${node.roundType}"`;
 
-    // Cria a declaração e o cálculo da variável
-    this.addStep(`double ${varname} = round_value(${input}, ${decimalPlaces}, ${roundType})`);
-
-    // Registra a nova variável
-    this.inUseVariables.push(varname);
+    // Cria a variável de saída e adiciona o passo de execução
+    this.addModelC__vars(`double ${varname};`);
+    this.addModelC__step(`${varname} = round_value(${input}, ${decimalPlaces}, ${roundType});`);
 
     return varname;
 };

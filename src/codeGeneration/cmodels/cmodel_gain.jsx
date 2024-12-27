@@ -1,20 +1,24 @@
+// cmodel_gain.jsx
 const GainModel = function (node) {
     const varname = `var_${node.CGenUID}_gain`;
 
     // Verifica se a variável já foi utilizada
-    if (this.inUseVariables.includes(varname)) {
+    if (node.isvisited) {
         return varname;
     }
 
-    // Cria variáveis necessárias
+    // Recupera o nó conectado como entrada
     const input = this.getNode(node.getNodeByInput(0));
-    const gain = node.gainValue;
 
-    // Adiciona os passos de execução
-    this.addStep(`double ${varname} = ${input} * ${gain}`);
+    // Adiciona uma variável única para o ganho
+    const gain_var = this.addModelC__generateNewVar('gain_value');
+    this.addModelC__vars(`double ${gain_var} = ${node.gainValue};`);
 
-    // Registra a nova variável
-    this.inUseVariables.push(varname);
+    // Cria a variável de saída e adiciona o passo de execução
+    this.addModelC__vars(`double ${varname};`);
+    this.addModelC__step(`${varname} = ${input} * ${gain_var};`);
+
+    node.isvisited = true;
 
     return varname;
 };

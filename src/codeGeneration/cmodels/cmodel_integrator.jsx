@@ -1,37 +1,34 @@
+// cmodel_integrator.jsx
 const IntegratorModel = function (node) {
-    
-    const stateVar = `${node.CGenUID}_state`;
+    const stateVar = `var_${node.CGenUID}_state`;
 
-    if (node.isvisited || this.sharedModelVars.some(sMV => sMV.name === stateVar)){
-        // Add uma variável de inicialização no init
+    // Verifica se a variável já foi utilizada
+    if (node.isvisited) {
         return stateVar;
     }
-    node.isvisited = true
-    
-    this.addLib({
-        name: "integrator",
-        declaration: `void integrator(double input, double* state, double* timestep);`,
-        implementation: `
-            void integrator(double input, double* state, double* timestep) {
-                *state += input * *timestep;
-            }
-        `
-    });
-    
-    this.addSharedModelVar({
-        ref: node.CGenUID,
-        name: stateVar,
-        value: node.initialValue,
-        type: 'static double'
-    })
-    
+
+    node.isvisited = true;
+
+    // Adiciona a implementação da função `integrator`
+    this.addLibsC__functions(`
+void integrator(double input, double* state, double* timestep) {
+    *state += input * *timestep;
+}
+    `);
+
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`void integrator(double input, double* state, double* timestep);`);
+
+    // Recupera o nó conectado como entrada
     const input = this.getNode(node.getNodeByInput(0));
-    
-    // Inicialização do estado
-    this.addStep(`integrator(${input}, &${stateVar}, &model->simulation.sampling_time)`);
-    
+
+    // Cria a variável de estado
+    this.addModelC__vars(`static double ${stateVar} = ${node.initialValue || 0.0};`);
+
+    // Adiciona a chamada ao modelo Integrator no passo de execução
+    this.addModelC__step(`integrator(${input}, &${stateVar}, &model->simulation.sampling_time);`);
+
     return stateVar;
 };
-
 
 export { IntegratorModel };

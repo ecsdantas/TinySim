@@ -1,37 +1,36 @@
+// cmodel_pow.jsx
 const PowModel = function (node) {
-    const baseVar = this.getNode(node.getNodeByInput(0));
-    const exponentVar = this.getNode(node.getNodeByInput(1));
-    const outputVar = `${node.CGenUID}_output`;
+    const varname = `var_${node.CGenUID}_pow`;
 
-    if (node.isvisited || this.sharedModelVars.some(sMV => sMV.name === outputVar)) {
-        return outputVar;
+    // Verifica se a variável já foi utilizada
+    if (node.isvisited) {
+        return varname;
     }
+
     node.isvisited = true;
 
-    // Adiciona a biblioteca math.h para a função pow
-    this.addIncludeLib('<math.h>');
+    // Adiciona a biblioteca necessária para a função `pow`
+    this.addLibsH__include('#include <math.h>');
 
-    this.addLib({
-        name: "power",
-        declaration: `double power(double base, double exponent);`,
-        implementation: `
-            double power(double base, double exponent) {
-                return pow(base, exponent);
-            }
-        `
-    });
+    // Adiciona a implementação da função `power`
+    this.addLibsC__functions(`
+double power(double base, double exponent) {
+    return pow(base, exponent);
+}
+    `);
 
-    this.addSharedModelVar({
-        ref: node.CGenUID,
-        name: outputVar,
-        value: 0.0,
-        type: 'static double'
-    });
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`double power(double base, double exponent);`);
 
-    // Adiciona a chamada ao modelo Pow no passo
-    this.addStep(`double ${outputVar} = power(${baseVar}, ${exponentVar})`);
+    // Recupera os nós conectados como entradas
+    const baseVar = this.getNode(node.getNodeByInput(0));
+    const exponentVar = this.getNode(node.getNodeByInput(1));
 
-    return outputVar;
+    // Cria a variável de saída e adiciona o passo de execução
+    this.addModelC__vars(`double ${varname};`);
+    this.addModelC__step(`${varname} = power(${baseVar}, ${exponentVar});`);
+
+    return varname;
 };
 
 export { PowModel };

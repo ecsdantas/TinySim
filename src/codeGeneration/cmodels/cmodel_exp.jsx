@@ -1,16 +1,25 @@
+// cmodel_exponential.jsx
 const ExponentialModel = function (node) {
+    const varname = `var_${node.CGenUID}_exp`;
 
-    const inputVar = this.getNode(node.getNodeByInput(0));
-    
+    // Verifica se a variável já foi utilizada
     if (node.isvisited) {
-        return `exp(${inputVar})`;
+        return varname;
     }
+
     node.isvisited = true;
 
-    // Adiciona a biblioteca math.h por conta do exp
-    this.addIncludeLib('<math.h>')
+    // Adiciona a biblioteca necessária para funções matemáticas
+    this.addLibsH__include('#include <math.h>');
 
-    return `exp(${inputVar})`;
+    // Recupera o nó conectado como entrada
+    const inputVar = this.getNode(node.getNodeByInput(0));
+
+    // Cria a variável de saída e adiciona o passo de execução
+    this.addModelC__vars(`double ${varname};`);
+    this.addModelC__step(`${varname} = exp(${inputVar});`);
+
+    return varname;
 };
 
 export { ExponentialModel };

@@ -2,4 +2,4 @@
 // Contains basic mathematical utility functions used in the simulation.
 #include "libs.h"
 
-/* FUNCTION_IMPLEMENTATIONS */
+${LIBS_C__FUNCTIONS_TEMPLATE}

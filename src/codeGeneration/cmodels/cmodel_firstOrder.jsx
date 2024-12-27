@@ -1,43 +1,36 @@
+// cmodel_first_order.jsx
 const FirstOrderModel = function (node) {
-    
-    const stateVar = `${node.CGenUID}_state`;
+    const stateVar = `var_${node.CGenUID}_state`;
+    const outputVar = `var_${node.CGenUID}_output`;
     const dampingFactor = node.dampingFactor || 1.0; // Fator de amortecimento (a)
 
-    if (node.isvisited || this.sharedModelVars.some(sMV => sMV.name === stateVar)) {
-        return `${node.CGenUID}_output`;
+    // Verifica se a variável já foi utilizada
+    if (node.isvisited) {
+        return outputVar;
     }
+
     node.isvisited = true;
 
-    this.addLib({
-        name: "firstOrder",
-        declaration: `void firstOrder(double input, double* state, double* output, double dampingFactor, double* timestep);`,
-        implementation: `
-            void firstOrder(double input, double* state, double* output, double dampingFactor, double* timestep) {
-                *state += (input - dampingFactor * *state) * *timestep;
-                *output = *state;
-            }
-        `
-    });
+    // Adiciona a implementação da função `firstOrder`
+    this.addLibsC__functions(`
+void firstOrder(double input, double* state, double* output, double dampingFactor, double* timestep) {
+    *state += (input - dampingFactor * *state) * *timestep;
+    *output = *state;
+}
+    `);
 
-    this.addSharedModelVar({
-        ref: node.CGenUID,
-        name: stateVar,
-        value: node.initialValue || 0.0,
-        type: 'static double'
-    });
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`void firstOrder(double input, double* state, double* output, double dampingFactor, double* timestep);`);
 
+    // Recupera o nó conectado como entrada
     const input = this.getNode(node.getNodeByInput(0));
-    const outputVar = `${node.CGenUID}_output`;
 
-    this.addSharedModelVar({
-        ref: node.CGenUID,
-        name: outputVar,
-        value: 0.0,
-        type: 'static double'
-    });
+    // Cria as variáveis de estado e saída
+    this.addModelC__vars(`static double ${stateVar} = ${node.initialValue || 0.0};`);
+    this.addModelC__vars(`double ${outputVar};`);
 
-    // Adiciona a chamada ao modelo de primeira ordem no passo
-    this.addStep(`firstOrder(${input}, &${stateVar}, &${outputVar}, ${dampingFactor}, &model->simulation.sampling_time)`);
+    // Adiciona a chamada ao modelo de primeira ordem no passo de execução
+    this.addModelC__step(`firstOrder(${input}, &${stateVar}, &${outputVar}, ${dampingFactor}, &model->simulation.sampling_time);`);
 
     return outputVar;
 };

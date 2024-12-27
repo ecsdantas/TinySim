@@ -1,24 +1,25 @@
+// cmodel_saturation.jsx
 const SaturationModel = function (node) {
-    const inPort = node.getInPorts()[0];
     const varname = `var_${node.CGenUID}_saturation`;
 
     // Verifica se a variável já foi utilizada
-    if (this.inUseVariables.includes(varname)) {
+    if (node.isvisited) {
         return varname;
     }
 
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "saturation",
-        declaration: `double saturate_value(double value, double min_val, double max_val);`,
-        implementation: `
-            double saturate_value(double value, double min_val, double max_val) {
-                if (value < min_val) return min_val;
-                if (value > max_val) return max_val;
-                return value;
-            }
-        `
-    });
+    node.isvisited = true;
+
+    // Adiciona a implementação da função `saturate_value`
+    this.addLibsC__functions(`
+double saturate_value(double value, double min_val, double max_val) {
+    if (value < min_val) return min_val;
+    if (value > max_val) return max_val;
+    return value;
+}
+    `);
+
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`double saturate_value(double value, double min_val, double max_val);`);
 
     // Recupera o nó conectado como entrada
     const input = this.getNode(node.getNodeByInput(0));
@@ -27,11 +28,9 @@ const SaturationModel = function (node) {
     const minValue = node.MinValue || 0;
     const maxValue = node.MaxValue || 10;
 
-    // Cria a declaração e o cálculo da variável
-    this.addStep(`double ${varname} = saturate_value(${input}, ${minValue}, ${maxValue})`);
-
-    // Registra a nova variável
-    this.inUseVariables.push(varname);
+    // Cria a variável de saída e adiciona o passo de execução
+    this.addModelC__vars(`double ${varname};`);
+    this.addModelC__step(`${varname} = saturate_value(${input}, ${minValue}, ${maxValue});`);
 
     return varname;
 };

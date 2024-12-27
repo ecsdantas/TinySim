@@ -1,34 +1,31 @@
+// cmodel_clock.jsx
 const ClockModel = function (node) {
+    const varname = `var_${node.CGenUID}_clock`;
 
-    const outputVar = `${node.CGenUID}_output`;
-
-    if (node.isvisited || this.sharedModelVars.some(sMV => sMV.name === outputVar)) {
-        return outputVar;
+    // Verifica se a variável já foi utilizada
+    if (node.isvisited) {
+        return varname;
     }
+
     node.isvisited = true;
 
-    this.addLib({
-        name: "simClock",
-        declaration: `void simClock(double* output, double* currentTime);`,
-        implementation: `
-            void simClock(double* output, double* currentTime) {
-                *output = *currentTime;
-            }
-        `
-    });
+    // Adiciona a biblioteca necessária
+    this.addLibsC__functions(`
+void simClock(double* output, double* currentTime) {
+    *output = *currentTime;
+}
+    `);
 
-    // Adiciona variável compartilhada para a saída do clock
-    this.addSharedModelVar({
-        ref: node.CGenUID,
-        name: outputVar,
-        value: 0.0,
-        type: 'static double'
-    });
+    // Adiciona a declaração da função
+    this.addLibsH__declaration(`void simClock(double* output, double* currentTime);`);
+
+    // Adiciona a variável de saída para o Clock
+    this.addModelC__vars(`double ${varname};`);
 
     // Adiciona a chamada ao modelo Clock no passo
-    this.addStep(`simClock(&${outputVar}, &model->simulation.simulated_time)`);
+    this.addModelC__step(`simClock(&${varname}, &model->simulation.simulated_time);`);
 
-    return outputVar;
+    return varname;
 };
 
 export { ClockModel };

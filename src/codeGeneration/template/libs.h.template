@@ -1,12 +1,15 @@
 // libs.h
 #ifndef LIBS_H
+/* Defines */
 #define LIBS_H
 #define false 0
 #define true 1
+${LIBS_H__DEFINES_TEMPLATE}
 
-#include <stdio.h>
-${INCLUDE_LIBS}
+/* Includes */
+${LIBS_H__INCLUDES_TEMPLATE}
 
-/* FUNCTION_DECLARATIONS */
+/* Functions declarations */
+${LIBS_H__DECLARATION_TEMPLATE}
 
 #endif

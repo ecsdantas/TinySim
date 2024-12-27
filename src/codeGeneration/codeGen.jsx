@@ -23,27 +23,49 @@ class CodeGeneration {
         this.#nodes.filter(node => node.isTerminalBlock).forEach(node => outputs.push(node));
 
         // Generate model actions, ports, and required libraries
-        const requiredLibs = [];
-        const includeLibs = [];
-        const ports = [];
-        const modelStep = [];
-        const sharedModelVars = [];
-        this.createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep, sharedModelVars);
+        const cstruct = {}
+        cstruct.replacements = []; // { placement: 'FUNCTION_DECLARATIONS', content: 'void myFunction(double *input, double *output);' }
+
+        // Reseta compilações anteriores
+        this.#nodes.forEach(node => node.isvisited = false);
+        // Define novos actions
+        const MA = new ModelActions(cstruct)
+        outputs.map(node => MA.getNode(node))
         
+        // Obtém os replacements
+        const getPlacement = (placement, clue, alternative) => cstruct.replacements.filter(p => p.placement === placement).map(p => p.content).join(clue) || alternative;
+
         // Replace placeholders in templates
         const replacements = {
-            "\\${MODELINFO_TEMPLATE}": `Generated using TinySim.vercel.app on ${new Date().toLocaleString()}`,
-            "\\${SIMULATION_MODE_TEMPLATE}": this.#sim.realTimeMode,
-            "\\${SAMPLING_TIME_TEMPLATE}": this.#sim.samplingTime,
-            "\\${STOP_SIMULATION_TIME_TEMPLATE}":this.#sim.stopTime,
-            "\\${SHAREDMODELVARS_DECLARATION_TEMPLATE}": sharedModelVars.map(p => `${p.type? p.type : 'double'} ${p.name}${p.inlineValue? ' = ' + p.inlineValue : ''};`).join("\n"),
-            "\\${SHAREDMODELVARS_INITIALIZATION_TEMPLATE}": sharedModelVars.filter(p => p.value).map(p => `${p.name} = ${p.value}; // initial condition of ${p.ref}`).join("\n\t"),
-            "\\${COMPUTEMODEL_TEMPLATE}": modelStep.map(m => m + ';').join("\n\t"),
-            "\\${INCLUDE_LIBS}": includeLibs.map(p => `#include ${p}`).join("\n"),
-            "\\${DATATYPE_TEMPLATE}": ports.map(p => `double ${p.name};`).join("\n\t"),
-            "\\${SETINPUTS_TEMPLATE}": ports.filter(p => p.isInput).map(p => `model.data.${p.name} = ${p.value};`).join("\n\t"),
-            "\\${SETPRINTSINPUTS_TEMPLATE}": ports.filter(p => p.isInput).map(p => `printf("\\tSET ${p.name}: %f\\n", model.data.${p.name});`).join("\n\t"),
-            "\\${SETPRINTSOUTPUTS_TEMPLATE}": ports.filter(p => !p.isInput).map(p => `printf("\\tGET ${p.name}: %f\\n", model.data.${p.name});`).join("\n\t"),
+            "\\${MODELINFO_TEMPLATE}": `Generated using tinysim.vercel.app on ${new Date().toLocaleString()}`,
+            "\\${MAIN_C__INCLUDES_TEMPLATE}": getPlacement('MAIN_C__INCLUDES_TEMPLATE','\n',''),
+            "\\${MAIN_C__BEFORE_MAIN_TEMPLATE}": getPlacement('MAIN_C__BEFORE_MAIN_TEMPLATE','\n',''),
+            "\\${MAIN_C__BEFORE_INIT_MODEL_TEMPLATE}": getPlacement('MAIN_C__BEFORE_INIT_MODEL_TEMPLATE','\n',''),
+            "\\${MAIN_C__AFTER_INIT_MODEL_TEMPLATE}": getPlacement('MAIN_C__AFTER_INIT_MODEL_TEMPLATE','\n',''),
+            "\\${MAIN_C__MAIN_LOOP_BEFORE_STEP_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_BEFORE_STEP_TEMPLATE','\n',''),
+            "\\${MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE','\n',''),
+            "\\${MAIN_C__MAIN_LOOP_SET_VARS_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_SET_VARS_TEMPLATE','\n\t','// No inputs to set'),
+            "\\${MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE','\n\t',''),
+            "\\${MAIN_C__BEFORE_TERM_MODEL_TEMPLATE}": getPlacement('MAIN_C__BEFORE_TERM_MODEL_TEMPLATE','\n',''),
+            "\\${MAIN_C__AFTER_TERM_MODEL_TEMPLATE}": getPlacement('MAIN_C__AFTER_TERM_MODEL_TEMPLATE','\n',''),
+            
+            "\\${LIBS_H__INCLUDES_TEMPLATE}": getPlacement('LIBS_H__INCLUDES_TEMPLATE','\n','// No includes to add'),
+            "\\${LIBS_H__DEFINES_TEMPLATE}": getPlacement('LIBS_H__DEFINES_TEMPLATE','\n','// No defines to include'),
+            "\\${LIBS_H__DECLARATION_TEMPLATE}": getPlacement('LIBS_H__DECLARATION_TEMPLATE','\n','// No functions to declare'),
+            
+            "\\${LIBS_C__FUNCTIONS_TEMPLATE}": getPlacement('LIBS_C__FUNCTIONS_TEMPLATE','\n','// No Library functions to implement'),
+
+            "\\${MODEL_H__DATATYPE_TEMPLATE}": getPlacement('MODEL_H__DATATYPE_TEMPLATE','\n\t','// No new data types is required'),
+            "\\${MODEL_H__FUNCTIONS_TEMPLATE}": getPlacement('MODEL_H__FUNCTIONS_TEMPLATE','\n\n','// No shared model functions is required'),
+            "\\${MODEL_H__VARIABLES_TEMPLATE}": getPlacement('MODEL_H__VARIABLES_TEMPLATE','\n\n','// No shared model variables is required'),
+
+            "\\${MODEL_C__VARS_TEMPLATE}": getPlacement('MODEL_C__VARS_TEMPLATE','\n','// No new model variables is required'),
+            "\\${MODEL_C__INIT_TEMPLATE}": getPlacement('MODEL_C__INIT_TEMPLATE','\n\t','// No model initialization procedures is required'),
+            "\\${MODEL_C__TERM_TEMPLATE}": getPlacement('MODEL_C__TERM_TEMPLATE','\n\t','// No model termination procedures is required'),
+            "\\${MODEL_C__STEP_TEMPLATE}": getPlacement('MODEL_C__STEP_TEMPLATE','\n\t','// No new steps procedures is required'),
+            "\\${MODEL_C__SIMULATION_MODE_TEMPLATE}": this.#sim.realTimeMode,
+            "\\${MODEL_C__SAMPLING_TIME_TEMPLATE}": this.#sim.samplingTime,
+            "\\${MODEL_C__STOP_SIMULATION_TIME_TEMPLATE}": this.#sim.stopTime,
         };
 
         // Generate and zip files
@@ -54,22 +76,14 @@ class CodeGeneration {
             "libs.h": await import('./template/libs.h.template?raw').then(module => module.default),
             "libs.c": await import('./template/libs.c.template?raw').then(module => module.default)
         };
-        const outputFiles = this.generateFiles(templates, replacements, requiredLibs);
+        const outputFiles = this.generateFiles(templates, replacements);
         const zipBlob = await this.createZip(outputFiles);
 
         // Trigger download
         this.downloadZip(zipBlob, 'TinySim-CodeGen-output.zip');
     }
 
-    createModelStep(outputs, ports, requiredLibs, includeLibs, modelStep, sharedModelVars) {
-
-        this.#nodes.forEach(node => node.isvisited = false);
-        const MA = new ModelActions(ports, requiredLibs, includeLibs, modelStep, sharedModelVars)
-        return outputs.map(node => MA.getNode(node))
-        
-    }
-
-    generateFiles(templates, replacements, requiredLibs) {
+    generateFiles(templates, replacements) {
         const outputFiles = {};
 
         for (const [fileName, templateContent] of Object.entries(templates)) {
@@ -77,22 +91,6 @@ class CodeGeneration {
 
             for (const [placeholder, value] of Object.entries(replacements)) {
                 outputContent = outputContent.replace(new RegExp(placeholder, "g"), value);
-            }
-
-            if (fileName === "libs.h") {
-                const declarations = requiredLibs
-                    .map(lib => lib.declaration.trim())
-                    .filter(Boolean)
-                    .join("\n");
-                outputContent = outputContent.replace("/* FUNCTION_DECLARATIONS */", declarations);
-            }
-
-            if (fileName === "libs.c") {
-                const implementations = requiredLibs
-                    .map(lib => this.indentCCode(lib.implementation))
-                    .filter(Boolean)
-                    .join("\n\n");
-                outputContent = outputContent.replace("/* FUNCTION_IMPLEMENTATIONS */", implementations);
             }
 
             outputFiles[fileName] = outputContent;
@@ -115,20 +113,6 @@ class CodeGeneration {
         link.download = fileName;
         link.click();
         URL.revokeObjectURL(link.href);
-    }
-
-
-    indentCCode(code) {
-
-        let indentLevel = 0;
-        const lines = code.trim().split("\n");
-        return lines.map(line => {
-            line = '\t'.repeat(indentLevel) + line.trim(); 
-            /\{/.test(line) && indentLevel++;
-            /\}/.test(line) && indentLevel--;
-            return line
-        }).join("\n")
-
     }
 
 }
