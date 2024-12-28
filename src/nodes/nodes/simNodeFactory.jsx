@@ -23,6 +23,7 @@ class SimNodeFactory extends AbstractReactFactory {
         return {
             ...super.serialize(),
             type: this.constructor.name,
+            flip: this.flip,
             kind: this.kind,
             value: this.value
         };
@@ -30,6 +31,7 @@ class SimNodeFactory extends AbstractReactFactory {
 
     deserialize(event) {
         super.deserialize(event);
+        this.flip = event.data.flip || false;
         this.value = event.data.value || 0;
     }
     // =======================================

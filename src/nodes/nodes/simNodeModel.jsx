@@ -9,13 +9,14 @@ import { RightAnglePortModel } from '../ports/rightAnglePortModel'
 class SimNodeModel extends DefaultNodeModel {
 
     kind = 'generic'
-    CGenUID = 'g'              // Identificador unitário do bloco no CodeGeneration
-    description = null         // Descrição do bloco
-    isTerminalBlock = false    // Indica ao simulador que este bloco não é terminal
-    lastStepSolved = null      // Help to avoid re-work
-    icon = null                // Icone do bloco (deve ser uma React SVG _ => <svg>...</svg>)
-    settings = null            // Página de configuração do bloco (deve ser uma React SVG _ => <svg>...</svg>)
-    flip = false               // Mirror the block 180 degree
+    CGenUID = 'g'                   // Identificador unitário do bloco no CodeGeneration
+    tags = ['generic', 'default']   // Tags para pesquisa
+    description = null              // Descrição do bloco
+    isTerminalBlock = false         // Indica ao simulador que este bloco não é terminal
+    lastStepSolved = null           // Help to avoid re-work
+    icon = null                     // Icone do bloco (deve ser uma React SVG _ => <svg>...</svg>)
+    settings = null                 // Página de configuração do bloco (deve ser uma React SVG _ => <svg>...</svg>)
+    flip = false                    // Mirror the block 180 degree
 
     constructor(options = {}) {
         super({...options, type: 'sim-node'});

@@ -8,6 +8,7 @@ import Simulation from '../simulation/core';
 class ImportCSVModel extends SimNodeModel {
   kind = 'csvImport';
   isTerminalBlock = false;
+  mapValues = new Map();
   values = [];
   columnNames = [];
   CGenUID = 'csvImp';
@@ -32,6 +33,17 @@ class ImportCSVModel extends SimNodeModel {
       this.columnNames = rows[0];
       setColumnNames(this.columnNames);
       this.values = rows.slice(1).map((row) => row.map((value) => parseFloat(value)));
+      
+      // Create a map with column names and values
+      this.columnNames.map(colName => {
+        const valArr = []
+        rows.slice(1).map((row) => row.map((value,index) => {
+          if (rows[0][index] === colName) {
+            valArr.push(parseFloat(value))
+          }
+        }));
+        this.mapValues.set(colName,  valArr);
+      })
 
       const outports = this.getOutPorts();
       outports.filter(outp => !this.columnNames.includes(outp.options.name)).forEach(outp => this.removePort(outp))

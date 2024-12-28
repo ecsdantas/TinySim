@@ -1,183 +1,197 @@
+// cmodel_import_csv.jsx
 const ImportCSVModel = function (node) {
-    
-    this.addIncludeLib('<stdlib.h>')
-    this.addIncludeLib('<string.h>')
+    const calledPort = node.calledPort.options.label; // Nome da porta ao qual foi chamado
+    const tableVar = `var_${node.CGenUID}_${calledPort}_table`;
+    const outputVar = `var_${node.CGenUID}_${calledPort}_output`;
 
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "csv_import_structs",
-        declaration: `
-        #define BUFFER_SIZE 1024
+    if(node.isvisited && node.outputVars && node.outputVars.includes(outputVar)){
+        return outputVar;
+    }
+    node.isvisited = true;
+    if(!node.outputVars){
+        node.outputVars = [];
+    }
+    node.outputVars.push(outputVar);
 
-        typedef struct {
-            char* name;
-            double* value;
-            int length;
-        } DataColumn;
+    // Adiciona as bibliotecas necessárias
+    this.addLibsH__include('#include <math.h>');
+    this.addLibsH__include('#include <string.h>');
+    this.addLibsH__include('#include <stdio.h>');
+    this.addLibsH__include('#include <stdlib.h>');
 
-        typedef struct {
-            DataColumn* columns;
-            int columnCount;
-        } CSVData;`,
-        implementation: ''
-    });
-
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "csv_import_freeCSV",
-        declaration: `void freeCSV(CSVData* csv);`,
-        implementation: `
-            void freeCSV(CSVData* csv) {
-                if (csv->columns) {
-                    for (int i = 0; i < csv->columnCount; i++) {
-                        free(csv->columns[i].name);
-                        free(csv->columns[i].value);
-                    }
-                    free(csv->columns);
-                    csv->columns = NULL;
-                    csv->columnCount = 0;
-                }
-            }
-        `
-    });
-
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "csv_import_trimCSV",
-        declaration: `void trim(char* str);`,
-        implementation: `
-            void trim(char* str) {
-                char* end = str + strlen(str) - 1;
-                while (end > str && (*end == '\\n' || *end == '\\r' || *end == ' ')) {
-                    *end-- = '\\0';
-                }
-                memmove(str, str + strspn(str, " "), strlen(str));
-            }
-        `
-    });
-
-    // Adiciona a biblioteca necessária
-    this.addLib({
-        name: "csv_import_loadCSV",
-        declaration: `void loadCSV(const char* filePath, CSVData* csv);`,
-        implementation: `
-            void loadCSV(const char* filePath, CSVData* csv) {
-                FILE* file = fopen(filePath, "r");
-                if (!file) {
-                    perror("Failed to open file");
-                    return;
-                }
-
-                char line[BUFFER_SIZE];
-                if (!fgets(line, BUFFER_SIZE, file)) {
-                    perror("Failed to read header");
-                    fclose(file);
-                    return;
-                }
-
-                char* token = strtok(line, ",");
-                csv->columnCount = 0;
-                while (token) {
-                    csv->columnCount++;
-                    token = strtok(NULL, ",");
-                }
-
-                csv->columns = calloc(csv->columnCount, sizeof(DataColumn));
-                if (!csv->columns) {
-                    perror("Memory allocation failed");
-                    fclose(file);
-                    return;
-                }
-
-                rewind(file);
-                fgets(line, BUFFER_SIZE, file);
-                token = strtok(line, ",");
-                for (int i = 0; token && i < csv->columnCount; i++) {
-                    trim(token);
-                    csv->columns[i].name = strdup(token);
-                    csv->columns[i].length = 0;
-                    token = strtok(NULL, ",");
-                }
-
-                size_t rowCapacity = 16;
-                size_t rowCount = 0;
-                double** tempValues = calloc(csv->columnCount, sizeof(double*));
-
-                for (int i = 0; i < csv->columnCount; i++) {
-                    tempValues[i] = malloc(rowCapacity * sizeof(double));
-                }
-
-                while (fgets(line, BUFFER_SIZE, file)) {
-                    if (rowCount == rowCapacity) {
-                        rowCapacity *= 2;
-                        for (int i = 0; i < csv->columnCount; i++) {
-                            tempValues[i] = realloc(tempValues[i], rowCapacity * sizeof(double));
-                        }
-                    }
-
-                    token = strtok(line, ",");
-                    for (int i = 0; token && i < csv->columnCount; i++) {
-                        trim(token);
-                        tempValues[i][rowCount] = strtod(token, NULL);
-                        token = strtok(NULL, ",");
-                    }
-                    rowCount++;
-                }
-
-                for (int i = 0; i < csv->columnCount; i++) {
-                    csv->columns[i].value = malloc(rowCount * sizeof(double));
-                    memcpy(csv->columns[i].value, tempValues[i], rowCount * sizeof(double));
-                    csv->columns[i].length = rowCount;
-                    free(tempValues[i]);
-                }
-
-                free(tempValues);
-                fclose(file);
-            }
-        `
-    });
-
-
-    const varnames = [];
-
-    // Verifica se as variáveis já foram utilizadas
-    node.columnNames.forEach((colName, index) => {
-        const varname = `var_${node.CGenUID}_${colName.replace(/\W+/g,"")}`;
-        if (!this.inUseVariables.includes(varname)) {
-            this.inUseVariables.push(varname);
+    // Adiciona a implementação da função `lookup_csv`
+    this.addLibsC__functions(`
+void lookup_csv(const double* table, double currentTime, double* output) {
+    int timeIndex = -1;
+    int size = sizeof(table) / sizeof(table[0]);
+    for (int i = 0; i < size; i++) {
+        if (table[i] <= currentTime) {
+            timeIndex = i;
+        } else {
+            break;
         }
-        varnames.push(varname);
-    });
+    }
 
-    this.addInit(`loadCSV(const char* filePath, CSVData* csv);`)
-    this.addTerm(`freeCSV(CSVData* csv);`)
+    if (timeIndex == -1) {
+        timeIndex = 0; // Use o primeiro valor se nenhum anterior existir
+    }
 
-    /*
-    
+    *output = table[timeIndex];
+} else {
+            break;
+        }
+    }
 
-    // Declara o carregamento de dados
-    const csvDataVar = `csv_data_${node.CGenUID}`;
-    const rowsVar = `csv_rows_${node.CGenUID}`;
-    const colsVar = `csv_cols_${node.CGenUID}`;
-    const filePath = `"${node.filePath || "data.csv"}"`;
+    if (timeIndex == -1) {
+        timeIndex = 0; // Use o primeiro valor se nenhum anterior existir
+    }
 
-    this.addStep(`double* ${csvDataVar} = NULL;`);
-    this.addStep(`int ${rowsVar} = 0, ${colsVar} = 0;`);
-    this.addStep(`load_csv(${filePath}, &${csvDataVar}, &${rowsVar}, &${colsVar});`);
+    *output = table[timeIndex];
+}`);
 
-    // Gera as variáveis de saída
-    varnames.forEach((varname, index) => {
-        const colIndex = index;
-        this.addStep(`double ${varname} = (${csvDataVar} != NULL) ? ${csvDataVar}[currentStep * ${colsVar} + ${colIndex}] : 0;`);
-    });
+    this.addLibsC__functions(`
+int validate_csv_header(const char* filename, const char* portNames, int portCount) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Failed to open file");
+        return 0;
+    }
 
-    // Limpa memória após o uso
-    this.addStep(`if (${csvDataVar} != NULL) free(${csvDataVar});`);
+    char line[1024];
+    if (fgets(line, sizeof(line), file) == NULL) {
+        fclose(file);
+        perror("Failed to read header line");
+        return 0;
+    }
 
-    return varnames;
-    */
+    fclose(file);
 
-    return 'ops';
+    char* token = strtok(line, ",");
+    int index = 0;
+    while (token != NULL && index < portCount) {
+        // Remove trailing newline or spaces
+        char* newline = strchr(token, '\\n');
+        if (newline) *newline = '\\0';
+        char* space = strchr(token, ' ');
+        if (space) *space = '\\0';
+
+        if (strcmp(token, portNames[index]) != 0) {
+            fprintf(stderr, "Header mismatch: expected %s but found %s\\n", portNames[index], token);
+            return 0;
+        }
+        token = strtok(NULL, ",");
+        index++;
+    }
+
+    return index == portCount;
+}`);
+
+    this.addLibsC__functions(`
+void load_csv(const char* filename, double** table, const char* header) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        perror("Failed to open file");
+        return;
+    }
+
+    char line[1024];
+    int colIndex = -1;
+    int capacity = 10; // Initial capacity
+    int row = 0;
+
+    *table = (double*)malloc(capacity * sizeof(double));
+    if (*table == NULL) {
+        perror("Failed to allocate memory for table");
+        fclose(file);
+        return;
+    }
+
+    if (fgets(line, sizeof(line), file) != NULL) {
+        char* token = strtok(line, ",");
+        int col = 0;
+        while (token != NULL) {
+            // Remove trailing newline or spaces
+            char* newline = strchr(token, '\\n');
+            if (newline) *newline = '\\0';
+            char* space = strchr(token, ' ');
+            if (space) *space = '\\0';
+
+            if (strcmp(token, header) == 0) {
+                colIndex = col;
+                break;
+            }
+            token = strtok(NULL, ",");
+            col++;
+        }
+    }
+
+    if (colIndex == -1) {
+        fprintf(stderr, "Header %s not found in CSV file.\\n", header);
+        fclose(file);
+        free(*table);
+        *table = NULL;
+        return;
+    }
+
+    while (fgets(line, sizeof(line), file)) {
+        if (row >= capacity) {
+            capacity *= 2;
+            double* resizedTable = (double*)realloc(*table, capacity * sizeof(double));
+            if (resizedTable == NULL) {
+                perror("Failed to reallocate memory for table");
+                free(*table);
+                *table = NULL;
+                fclose(file);
+                return;
+            }
+            *table = resizedTable;
+        }
+
+        char* token = strtok(line, ",");
+        int col = 0;
+        while (token != NULL) {
+            if (col == colIndex) {
+                (*table)[row] = atof(token);
+                break;
+            }
+            token = strtok(NULL, ",");
+            col++;
+        }
+        row++;
+    }
+
+    fclose(file);
+}
+`);
+
+    // Adiciona a declaração das funções
+    this.addLibsH__declaration(`void lookup_csv(const double* table, double currentTime, double* output);`);
+    this.addLibsH__declaration(`void load_csv(const char* filename, double* table, const char* header);`);
+    this.addLibsH__declaration(`int validate_csv_header(const char* filename, const char* portNames, int portCount);`);
+
+    // Verifica se a tabela de busca está definida
+    const lookupTable = Array.isArray(node.lookupTable) ? node.lookupTable.flat() : [0];
+    const rows = Array.isArray(node.lookupTable) ? node.lookupTable.length : 1;
+
+    // Define a tabela com zeros para cada saída
+    this.addModelC__vars(`static double ${tableVar}[] = { ${node.mapValues.get(calledPort) } };`);
+    this.addModelC__vars(`static double ${outputVar};`);
+    this.addModelC__vars(`static char* ${node.CGenUID}_portNames[] = {${node.getOutPorts().map(port => `"${port.options.name}"`).join(', ')}};`);
+
+    // Adiciona a validação do cabeçalho no init
+    this.addModelC__init(`
+    if (!validate_csv_header("data.csv", csvImp0_portNames, 1)) {
+      fprintf(stderr, "CSV header validation failed.\\n");
+      exit(EXIT_FAILURE);
+    }`);
+
+    // Adiciona a inicialização para carregar os dados do arquivo CSV
+    this.addModelC__init(`load_csv("data.csv", ${tableVar}, "${calledPort}");`);
+
+    // Adiciona a lógica de retorno condicional no passo de execução
+    this.addModelC__step(`lookup_csv(${tableVar}, model->simulation.simulated_time, &${outputVar});`);
+
+    return outputVar;
 };
 
 export { ImportCSVModel };
