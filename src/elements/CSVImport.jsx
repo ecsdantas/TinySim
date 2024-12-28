@@ -3,106 +3,99 @@ import { SimNodeModel } from '../nodes/nodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 
+const generateSampleCSV = () => {
+  const sampleData = `Time,Sensor1,Sensor2,Sensor3\n0,10.5,20.1,5.0\n1,12.3,21.5,5.5\n2,14.8,19.8,5.7\n3,15.0,18.6,6.0\n4,16.5,22.0,6.2`;
+  const blob = new Blob([sampleData], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'sample.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
-// BUG AO IMPORTAR, ELE PARA DE FUNCIONAR
 class ImportCSVModel extends SimNodeModel {
   kind = 'csvImport';
   isTerminalBlock = false;
   mapValues = new Map();
-  values = [];
   columnNames = [];
   CGenUID = 'csvImp';
   tags = ['csv', 'data', 'inport', 'load', 'sheet', 'excel'];
 
   constructor(options = {}) {
     super({ ...options, name: 'Import CSV' });
-    this.values = [];
-    this.columnNames = [];
-    this.component = null;
+    this.mapValues = new Map();
+
+    this.loadCSV = this.loadCSV.bind(this);
+    this.reset = this.reset.bind(this);
+    this.buildOutputs = this.buildOutputs.bind(this);
+    this.solution = this.solution.bind(this);
   }
 
   // Load CSV file and generate output ports
-  loadCSV = (file, setColumnNames) => {
-    this.reset()
+  loadCSV(file, setColumns) {
+
+    if (!file.name.endsWith('.csv')) {
+      alert('Please upload a valid CSV file.');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (event) => {
-      const text = event.target.result;
-      const rows = text.split('\n').map((row) => row.split(','));
+      const rows = event.target.result.split('\n').map((row) => row.split(','));
 
-      // Extract column names from the first row
-      this.columnNames = rows[0];
-      setColumnNames(this.columnNames);
-      this.values = rows.slice(1).map((row) => row.map((value) => parseFloat(value)));
-      
       // Create a map with column names and values
+      this.columnNames = rows[0];
       this.columnNames.map(colName => {
         const valArr = []
-        rows.slice(1).map((row) => row.map((value,index) => {
+        rows.slice(1).map((row) => row.map((value, index) => {
           if (rows[0][index] === colName) {
-            if(!isNaN(parseFloat(value))){
+            if (!isNaN(parseFloat(value))) {
               valArr.push(parseFloat(value))
             }
           }
         }));
-        this.mapValues.set(colName,  valArr);
+        this.mapValues.set(colName, valArr);
       })
 
-      const outports = this.getOutPorts();
-      outports.filter(outp => !this.columnNames.includes(outp.options.name)).forEach(outp => this.removePort(outp))
-    
-      // Create output ports with column names
-      this.columnNames
-        .filter((name) => !outports.some(outp => outp.options.name === name))
-        .forEach((name) => {
-          this.createPort(name, false);
-      });
+      setColumns([...this.columnNames]);
+      this.buildOutputs()
 
-      if (this.component) {
-        this.component.forceUpdate();
-      }
     };
     reader.readAsText(file);
   };
 
-  reset(){
-    super.reset()
-    this.values = [];
-    this.columnNames = [];
-    this.component = null;
+
+  buildOutputs() {
+    const outports = this.getOutPorts();
+    outports.filter(outp => !this.columnNames.includes(outp.options.name)).forEach(outp => this.removePort(outp));
+    this.columnNames
+      .filter((name) => !outports.some(outp => outp.options.name === name))
+      .forEach((name) => {
+        this.createPort(name, false);
+      });
+    if (this.component) {
+      this.component.forceUpdate();
+    }
+
   }
 
 
   // Main function of the block
   solution() {
     const currentTime = Simulation.getCurrentTime();
-    const timeColumnIndex = this.columnNames.indexOf('Time');
-
-    if (timeColumnIndex === -1) {
+    if (!this.columnNames.includes('Time')) {
       throw new Error('The CSV must include a Time column.');
     }
+    
+    const time = this.mapValues.get('Time');
+    let timeIndex = time.findIndex(t => t > currentTime) - 1;
+    timeIndex = timeIndex < -1? time.length - 1 : timeIndex;
 
-    // Find the closest previous or equal time value
-    const times = this.values.map(row => row[timeColumnIndex]);
-    let closestIndex = -1;
-    for (let i = 0; i < times.length; i++) {
-      if (times[i] <= currentTime) {
-        closestIndex = i;
-      } else {
-        break;
-      }
-    }
-
-    // If no previous value exists, use the first row
-    if (closestIndex === -1) {
-      closestIndex = 0;
-    }
-
-    const colValues = this.values[closestIndex] || [];
     const outputs = {};
-
-    colValues.forEach((value, index) => {
-      const portName = this.columnNames[index];
-      outputs[portName] = value;
+    this.columnNames.forEach((name) => {
+      outputs[name] = this.mapValues.get(name)[timeIndex];
     });
 
     return outputs;
@@ -120,41 +113,24 @@ class ImportCSVModel extends SimNodeModel {
 
   settings = _ => {
     const ControlEditor = () => {
-      const [file, setFile] = useState(null);
-      const [columnNames, setColumnNames] = useState([]);
 
-      useEffect(() => {
-        setColumnNames(this.columnNames);
-      }, [this.columnNames]);
+      const [columns, setColumns] = useState([]);
 
       const handleFileChange = (event) => {
-        const selectedFile = event.target.files[0];
-        setFile(selectedFile);
-        this.loadCSV(selectedFile, setColumnNames);
-      };
-
-      const generateSampleCSV = () => {
-        const sampleData = `Time,Sensor1,Sensor2,Sensor3\n0,10.5,20.1,5.0\n1,12.3,21.5,5.5\n2,14.8,19.8,5.7\n3,15.0,18.6,6.0\n4,16.5,22.0,6.2`;
-        const blob = new Blob([sampleData], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'sample.csv';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        this.loadCSV(event.target.files[0], setColumns)
       };
 
       return (
         <div>
           <p>This block imports values from a CSV file. Each column generates an output port.</p>
+          <p>You must have a column named "Time" in your CSV file</p>
           <input type="file" accept=".csv" className="btn" onChange={handleFileChange} />
-          { !columnNames.length && <button className="btn" onClick={generateSampleCSV}>Get a sample CSV</button> }
-          {columnNames.length > 0 && (
+          {!columns.length && <button className="btn" onClick={generateSampleCSV}>Get a sample CSV</button>}
+          {columns.length > 0 && (
             <div>
               <h4>Generated Output Ports:</h4>
               <ul>
-                {columnNames.map((name, index) => (
+                {columns.map((name, index) => (
                   <li key={index}>{`Output ${index + 1}: ${name}`}</li>
                 ))}
               </ul>
@@ -171,19 +147,16 @@ class ImportCSVModel extends SimNodeModel {
     const data = super.serialize();
     return {
       ...data,
-      values: this.values,
       columnNames: this.columnNames,
-      mapValues: this.mapValues
+      mapValues: Array.from(this.mapValues.entries())
     };
   }
 
   deserialize(event) {
-    this.reset()
-    super.deserialize(event);
-    //this.mapValues = event.data.mapValues || new Map();
-    this.values = event.data.values || [];
     this.columnNames = event.data.columnNames || [];
+    this.mapValues = new Map(event.data.mapValues || []);
   }
+
 }
 
 export default ImportCSVModel;
