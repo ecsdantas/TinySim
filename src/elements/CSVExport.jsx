@@ -9,6 +9,8 @@ class CSVExportModel extends SimNodeModel {
   isTerminalBlock = true;
   values = [];
   columnNames = [];
+  CGenUID = 'csvExp';
+  tags = ['csv', 'data', 'export', 'save', 'sheet', 'excel'];
 
   constructor(options = {}) {
     super({ ...options, name: 'CSV Export' });

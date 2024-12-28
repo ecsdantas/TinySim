@@ -75,5 +75,6 @@ export {
     SaturationModel,
     RandomNumberModel,
     RelationalOperatorModel,
-    ImportCSVModel   
+    ImportCSVModel,
+    CSVExportModel   
 }

@@ -1,13 +1,12 @@
 // cmodel_import_csv.jsx
 
-
-// Falta remover o 4 e colocar de acordo com o tamanho da tabela lida do arquivo CSV na linha 141.
-// Falta resolver o problema de carregamento do Sensor3, pois o código não está lendo a última coluna do arquivo CSV.
 const ImportCSVModel = function (node) {
     const calledPort = node.calledPort.options.label; // Nome da porta ao qual foi chamado
-    const tableVar = `var_${node.CGenUID}_${calledPort}_table`;
-    const tableSize = `var_${node.CGenUID}_${calledPort}_length`;
-    const outputVar = `var_${node.CGenUID}_${calledPort}_output`;
+    const tableVar = `csv_${node.CGenUID}_${calledPort}_table`;
+    const tableSize = `csv_${node.CGenUID}_${calledPort}_length`;
+    const outputVar = `csv_${node.CGenUID}_${calledPort}_output`;
+    const timeVar = `csv_${node.CGenUID}_Time_reference_output`;
+    const timeSize = `csv_${node.CGenUID}_Time_reference_length`;
 
     if(!node.isvisited){
         node.outputVars = [];
@@ -151,25 +150,35 @@ void load_csv(const char* filename, double** table, size_t* length, const char* 
     this.addLibsH__declaration(`int validate_csv_header(const char* filename, const char* portNames[], size_t portCount);`);
     this.addLibsH__declaration(`void load_csv(const char* filename, double** table, size_t* length, const char* header);`);
 
+    // Adiciona a validação do cabeçalho no init
+    this.addModelC__init(`
+    if (!validate_csv_header(var_${node.CGenUID}_csvFilename, ${node.CGenUID}_portNames, ${node.getOutPorts().length})) {
+        fprintf(stderr, "CSV header validation failed.\\n");
+        exit(EXIT_FAILURE);
+    }`);
+        
     // Define a tabela com zeros para cada saída
+    if(!node.outputVars.includes(timeVar)){
+        this.addModelC__vars(`double* ${timeVar} = NULL;`);
+        this.addModelC__vars(`static size_t ${timeSize};`);
+        this.addModelC__init(`load_csv(var_${node.CGenUID}_csvFilename, &${timeVar}, &${timeSize}, "Time");`);
+        this.addModelC__term(`if (${timeVar}) free(${timeVar}), ${timeVar} = NULL;`);
+        node.outputVars.push(timeVar);
+    }
     this.addModelC__vars(`double* ${tableVar} = NULL;`); // [] = { ${node.mapValues.get(calledPort) } };
     this.addModelC__vars(`static double ${outputVar};`);
     this.addModelC__vars(`static size_t ${tableSize};`);
     this.addModelC__vars(`const char* ${node.CGenUID}_portNames[] = {${node.getOutPorts().map(port => `"${port.options.name}"`).join(', ')}};`);
     this.addModelC__vars(`const char* var_${node.CGenUID}_csvFilename = "data.csv";`);
 
-    // Adiciona a validação do cabeçalho no init
-    this.addModelC__init(`
-    if (!validate_csv_header(var_${node.CGenUID}_csvFilename, ${node.CGenUID}_portNames, ${node.getOutPorts().length})) {
-      fprintf(stderr, "CSV header validation failed.\\n");
-      exit(EXIT_FAILURE);
-    }`);
-
     // Adiciona a inicialização para carregar os dados do arquivo CSV
     this.addModelC__init(`load_csv(var_${node.CGenUID}_csvFilename, &${tableVar}, &${tableSize}, "${calledPort}");`);
 
     // Adiciona a lógica de retorno condicional no passo de execução
-    this.addModelC__step(`lookup_csv(var_${node.CGenUID}_Time_table,${tableVar}, &${tableSize}, model->simulation.simulated_time, &${outputVar});`);
+    this.addModelC__step(`lookup_csv(${timeVar},${tableVar}, &${tableSize}, model->simulation.simulated_time, &${outputVar});`);
+
+    // Adiciona a liberação de memória no término da execução
+    this.addModelC__term(`if (${tableVar}) free(${tableVar}), ${tableVar} = NULL;`);
 
     return outputVar;
 };

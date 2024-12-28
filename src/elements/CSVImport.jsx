@@ -12,7 +12,7 @@ class ImportCSVModel extends SimNodeModel {
   values = [];
   columnNames = [];
   CGenUID = 'csvImp';
-  tags = ['csv', 'data', 'inport', 'excel'];
+  tags = ['csv', 'data', 'inport', 'load', 'sheet', 'excel'];
 
   constructor(options = {}) {
     super({ ...options, name: 'Import CSV' });
