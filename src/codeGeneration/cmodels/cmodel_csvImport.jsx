@@ -1,4 +1,8 @@
 // cmodel_import_csv.jsx
+
+
+// Falta remover o 4 e colocar de acordo com o tamanho da tabela lida do arquivo CSV na linha 141.
+// Falta resolver o problema de carregamento do Sensor3, pois o código não está lendo a última coluna do arquivo CSV.
 const ImportCSVModel = function (node) {
     const calledPort = node.calledPort.options.label; // Nome da porta ao qual foi chamado
     const tableVar = `var_${node.CGenUID}_${calledPort}_table`;
@@ -133,7 +137,6 @@ void load_csv(const char* filename, double** table, const char* header) {
     this.addModelC__init(`load_csv("data.csv", &${tableVar}, "${calledPort}");`);
 
     // Adiciona a lógica de retorno condicional no passo de execução
-    // this.addModelC__step(`lookup_csv(${tableVar}, model->simulation.simulated_time, &${outputVar});`);
     this.addModelC__step(`lookup_csv(${tableVar}, 4, model->simulation.simulated_time, &${outputVar});`);
 
     return outputVar;
