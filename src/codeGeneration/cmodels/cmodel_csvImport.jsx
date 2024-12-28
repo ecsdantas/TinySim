@@ -6,15 +6,16 @@
 const ImportCSVModel = function (node) {
     const calledPort = node.calledPort.options.label; // Nome da porta ao qual foi chamado
     const tableVar = `var_${node.CGenUID}_${calledPort}_table`;
+    const tableSize = `var_${node.CGenUID}_${calledPort}_length`;
     const outputVar = `var_${node.CGenUID}_${calledPort}_output`;
 
+    if(!node.isvisited){
+        node.outputVars = [];
+    }
     if(node.isvisited && node.outputVars && node.outputVars.includes(outputVar)){
         return outputVar;
     }
     node.isvisited = true;
-    if(!node.outputVars){
-        node.outputVars = [];
-    }
     node.outputVars.push(outputVar);
 
     // Adiciona as bibliotecas necessárias
@@ -25,12 +26,12 @@ const ImportCSVModel = function (node) {
 
     // Adiciona a implementação da função `lookup_csv`
     this.addLibsC__functions(`
-void lookup_csv(const double* table, int size, double currentTime, double* output) {
+void lookup_csv(const double* time, const double* table, size_t* size, double currentTime, double* output) {
     int timeIndex = -1;
 
     // Localiza o índice mais próximo do tempo atual
-    for (int i = 0; i < size; i++) {
-        if (table[i] <= currentTime) {
+    for (size_t i = 0; i < *size; i++) {
+        if (time[i] <= currentTime) {
             timeIndex = i;
         } else {
             break;
@@ -86,58 +87,89 @@ int validate_csv_header(const char* filename, const char* portNames[], size_t po
 }`);
 
     this.addLibsC__functions(`
-void load_csv(const char* filename, double** table, const char* header) {
+void load_csv(const char* filename, double** table, size_t* length, const char* header) {
     FILE* file = fopen(filename, "r");
     if (!file) return;
 
     char line[1024];
     int colIndex = -1, row = 0, capacity = 10;
     *table = malloc(capacity * sizeof(double));
-    if (!*table) return fclose(file), perror("Memory allocation failed"), (void)0;
-
-    if (fgets(line, sizeof(line), file)) {
-        for (int col = 0; (colIndex == -1) && (col < sizeof(line)); col++, line[strcspn(line, "\\n")] = '\\0')
-            if (!strcmp(strtok(col ? NULL : line, ","), header)) colIndex = col;
+    if (!*table) {
+        fclose(file);
+        return;
     }
-    if (colIndex == -1) return fclose(file), free(*table), (void)(*table = NULL);
 
-    while (fgets(line, sizeof(line), file)) {
-        if (row >= capacity && !(*table = realloc(*table, (capacity *= 2) * sizeof(double)))) break;
-        for (int col = 0; col <= colIndex; col++) {
-            char* token = strtok(col ? NULL : line, ",");
-            if (col == colIndex) (*table)[row++] = atof(token);
+    // Processar o cabeçalho
+    if (fgets(line, sizeof(line), file)) {
+        char* token = strtok(line, ",");
+        for (int col = 0; token; col++, token = strtok(NULL, ",")) {
+            token[strcspn(token, "\\n")] = '\\0'; // Remove newline
+            if (strcmp(token, header) == 0) {
+                colIndex = col;
+                break;
+            }
         }
     }
+
+    if (colIndex == -1) {
+        free(*table);
+        *table = NULL;
+        fclose(file);
+        return;
+    }
+
+    // Processar os dados
+    while (fgets(line, sizeof(line), file)) {
+        if (row >= capacity) {
+            capacity *= 2;
+            double* resizedTable = realloc(*table, capacity * sizeof(double));
+            if (!resizedTable) {
+                free(*table);
+                *table = NULL;
+                fclose(file);
+                return;
+            }
+            *table = resizedTable;
+        }
+
+        char* token = strtok(line, ",");
+        for (int col = 0; token; col++, token = strtok(NULL, ",")) {
+            if (col == colIndex) {
+                (*table)[row++] = atof(token);
+                break;
+            }
+        }
+    }
+
+    *length = row;
     fclose(file);
 }
 `);
 
     // Adiciona a declaração das funções
-    this.addLibsH__declaration(`void lookup_csv(const double* table, int size, double currentTime, double* output);`);
-    this.addLibsH__declaration(`void load_csv(const char* filename, double** table, const char* header);`);
+    this.addLibsH__declaration(`void lookup_csv(const double* time, const double* table, size_t* size, double currentTime, double* output);`);
     this.addLibsH__declaration(`int validate_csv_header(const char* filename, const char* portNames[], size_t portCount);`);
-
-    // Verifica se a tabela de busca está definida
-    const lookupTable = Array.isArray(node.lookupTable) ? node.lookupTable.flat() : [0];
-    const rows = Array.isArray(node.lookupTable) ? node.lookupTable.length : 1;
+    this.addLibsH__declaration(`void load_csv(const char* filename, double** table, size_t* length, const char* header);`);
 
     // Define a tabela com zeros para cada saída
     this.addModelC__vars(`double* ${tableVar} = NULL;`); // [] = { ${node.mapValues.get(calledPort) } };
     this.addModelC__vars(`static double ${outputVar};`);
+    this.addModelC__vars(`static size_t ${tableSize};`);
     this.addModelC__vars(`const char* ${node.CGenUID}_portNames[] = {${node.getOutPorts().map(port => `"${port.options.name}"`).join(', ')}};`);
+    this.addModelC__vars(`const char* var_${node.CGenUID}_csvFilename = "data.csv";`);
 
     // Adiciona a validação do cabeçalho no init
     this.addModelC__init(`
-    if (!validate_csv_header("data.csv", ${node.CGenUID}_portNames, ${node.getOutPorts().length})) {
+    if (!validate_csv_header(var_${node.CGenUID}_csvFilename, ${node.CGenUID}_portNames, ${node.getOutPorts().length})) {
       fprintf(stderr, "CSV header validation failed.\\n");
       exit(EXIT_FAILURE);
     }`);
 
     // Adiciona a inicialização para carregar os dados do arquivo CSV
-    this.addModelC__init(`load_csv("data.csv", &${tableVar}, "${calledPort}");`);
+    this.addModelC__init(`load_csv(var_${node.CGenUID}_csvFilename, &${tableVar}, &${tableSize}, "${calledPort}");`);
 
     // Adiciona a lógica de retorno condicional no passo de execução
-    this.addModelC__step(`lookup_csv(${tableVar}, 4, model->simulation.simulated_time, &${outputVar});`);
+    this.addModelC__step(`lookup_csv(var_${node.CGenUID}_Time_table,${tableVar}, &${tableSize}, model->simulation.simulated_time, &${outputVar});`);
 
     return outputVar;
 };

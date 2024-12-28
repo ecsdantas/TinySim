@@ -50,7 +50,7 @@ class CodeGeneration {
             "\\${MAIN_C__AFTER_TERM_MODEL_TEMPLATE}": getPlacement('MAIN_C__AFTER_TERM_MODEL_TEMPLATE','\n',''),
             
             "\\${LIBS_H__INCLUDES_TEMPLATE}": getPlacement('LIBS_H__INCLUDES_TEMPLATE','\n','// No includes to add'),
-            "\\${LIBS_H__DEFINES_TEMPLATE}": getPlacement('LIBS_H__DEFINES_TEMPLATE','\n','// No defines to include'),
+            "\\${LIBS_H__DEFINES_TEMPLATE}": getPlacement('LIBS_H__DEFINES_TEMPLATE','\n','// No more defines to include'),
             "\\${LIBS_H__DECLARATION_TEMPLATE}": getPlacement('LIBS_H__DECLARATION_TEMPLATE','\n','// No functions to declare'),
             
             "\\${LIBS_C__FUNCTIONS_TEMPLATE}": getPlacement('LIBS_C__FUNCTIONS_TEMPLATE','\n','// No Library functions to implement'),

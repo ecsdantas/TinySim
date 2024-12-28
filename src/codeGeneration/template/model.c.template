@@ -10,46 +10,46 @@ ${MODEL_C__VARS_TEMPLATE}
 
 // Get the current system time
 long current_system_time() {
-    return (long)time(NULL);
+	return (long)time(NULL);
 }
 
 // Initialize the simulation model
 void init(ModelType *model){
-  // Set model inicial conditions
-  ${MODEL_C__INIT_TEMPLATE}
+	// Set model inicial conditions
+	${MODEL_C__INIT_TEMPLATE}
 
-  // Set simulation initial conditions
-  model->simulation.mode = ${MODEL_C__SIMULATION_MODE_TEMPLATE}; /* 0 = simulated, 1 = real time sync */
-  model->simulation.current_step = 0;
-  model->simulation.sampling_time = ${MODEL_C__SAMPLING_TIME_TEMPLATE};
-  model->simulation.simulated_time = 0;
-  model->simulation.stop_simulation_time = ${MODEL_C__STOP_SIMULATION_TIME_TEMPLATE};
-  model->simulation.start_time = current_system_time();
-  model->simulation.elapsed_time = 0;
-  model->simulation.status = 1; // Set to running
+	// Set simulation initial conditions
+	model->simulation.mode = ${MODEL_C__SIMULATION_MODE_TEMPLATE}; /* 0 = simulated, 1 = real time sync */
+	model->simulation.current_step = 0;
+	model->simulation.sampling_time = ${MODEL_C__SAMPLING_TIME_TEMPLATE};
+	model->simulation.simulated_time = 0;
+	model->simulation.stop_simulation_time = ${MODEL_C__STOP_SIMULATION_TIME_TEMPLATE};
+	model->simulation.start_time = current_system_time();
+	model->simulation.elapsed_time = 0;
+	model->simulation.status = 1; // Set to running
 }
 
 // Perform one simulation step
 void step(ModelType *model) {
    
-    // Compute the model
-    ${MODEL_C__STEP_TEMPLATE}
+	// Compute the model
+	${MODEL_C__STEP_TEMPLATE}
 	
-    // Increase simulation information
-    model->simulation.current_step++;
-    model->simulation.simulated_time = model->simulation.sampling_time * model->simulation.current_step;
-    model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+	// Increase simulation information
+	model->simulation.current_step++;
+	model->simulation.simulated_time = model->simulation.sampling_time * model->simulation.current_step;
+	model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
 
 }
 
 // Finalize the simulation and calculate total time
 void term(ModelType *model){
 
-  // Finish main functions models
-  ${MODEL_C__TERM_TEMPLATE}
+	// Finish main functions models
+	${MODEL_C__TERM_TEMPLATE}
 
-  // Finish the simulation model
-  model->simulation.status = 0;
-  model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+	// Finish the simulation model
+	model->simulation.status = 0;
+	model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
 
 }
