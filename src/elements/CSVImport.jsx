@@ -39,7 +39,9 @@ class ImportCSVModel extends SimNodeModel {
         const valArr = []
         rows.slice(1).map((row) => row.map((value,index) => {
           if (rows[0][index] === colName) {
-            valArr.push(parseFloat(value))
+            if(!isNaN(parseFloat(value))){
+              valArr.push(parseFloat(value))
+            }
           }
         }));
         this.mapValues.set(colName,  valArr);
@@ -170,13 +172,15 @@ class ImportCSVModel extends SimNodeModel {
     return {
       ...data,
       values: this.values,
-      columnNames: this.columnNames
+      columnNames: this.columnNames,
+      mapValues: this.mapValues
     };
   }
 
   deserialize(event) {
     this.reset()
     super.deserialize(event);
+    //this.mapValues = event.data.mapValues || new Map();
     this.values = event.data.values || [];
     this.columnNames = event.data.columnNames || [];
   }
