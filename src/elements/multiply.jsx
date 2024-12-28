@@ -5,7 +5,8 @@ import { useModal } from '../components/modal';
 class MultiplyModel extends SimNodeModel {
 
     kind = 'multiply'
-    tags = ['multiply', 'times']
+    tags = ['multiply', 'times', 'product', 'arithmetic', 'math', 'operation']
+    CGenUID = 'mul'
 
     constructor(options = {}) {
         super({ ...options, name: 'multiply' });

@@ -4,20 +4,16 @@ import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
 
-class CSVExportModel extends SimNodeModel {
+class ExportCSVModel extends SimNodeModel {
   kind = 'csvExport';
   isTerminalBlock = true;
-  values = [];
+  mapValues = new Map();
   columnNames = [];
   CGenUID = 'csvExp';
-  tags = ['csv', 'data', 'export', 'save', 'sheet', 'excel'];
+  tags = ['csv', 'data', 'export', 'save', 'sheet', 'excel', 'download', 'file', 'spreadsheet', 'output', 'report'];
 
   constructor(options = {}) {
-    super({ ...options, name: 'CSV Export' });
-    this.createPort('in1', true);
-    this.values = [];
-    this.columnNames = ['Input 1'];
-    this.component = null;
+    super({ ...options, name: 'CSV Export' })
   }
 
   // Main function of the block
@@ -26,26 +22,37 @@ class CSVExportModel extends SimNodeModel {
     ports.forEach((_, index) => {
       const inpt = this.getNodeByInput(index);
       if (inpt && inpt.solve) {
-        if (!this.values[index]) {
-          this.values[index] = [];
-        }
-        this.values[index].push(inpt.solve());
+        const value = inpt.solve()
+        this.mapValues.set(this.columnNames[index], [...(this.mapValues.get(this.columnNames[index]) || []), value]);
       }
     });
   }
 
   reset() {
-    super.reset();
-    this.values = [];
+    this.mapValues = new Map([]);
+  }
+
+  buildInputs() {
+    const inports = this.getInPorts();
+    inports.filter(inport => !this.columnNames.includes(inport.options.name)).forEach(inport => this.removePort(inport));
+    this.columnNames
+      .filter((name) => !inports.some(inport => inport.options.name === name))
+      .forEach((name) => {
+        this.createPort(name, true);
+      });
+    if (this.component) {
+      this.component.forceUpdate();
+    }
+
   }
 
   generateCSV = () => {
     const time = Simulation.getTotalTimeArray();
     const rows = [['Time', ...this.columnNames]];
 
-    for (let i = 0; i < time.length; i++) {
+    for (let i = 0; i < time.length - 1; i++) {
       const row = [time[i]];
-      this.values.forEach(valueArray => {
+      this.mapValues.forEach(valueArray => {
         row.push(valueArray[i] !== undefined ? valueArray[i] : '');
       });
       rows.push(row);
@@ -74,29 +81,13 @@ class CSVExportModel extends SimNodeModel {
 
   settings = _ => {
     const ControlEditor = () => {
-      const [ports, setPorts] = useState(this.getInPorts().length);
+      
       const [names, setNames] = useState([...this.columnNames]);
 
-      const AddPorts = () => {
-        const portCount = this.getInPorts().length + 1;
-        this.createPort(`in${portCount}`, true);
-        setPorts(portCount);
-        setNames([...names, `Input ${portCount}`]);
-        this.columnNames = [...names, `Input ${portCount}`];
-        this.component && this.component.forceUpdate();
-      }
-
-      const handleNameChange = (index, newName) => {
-        const newNames = [...names];
-        newNames[index] = newName;
-        setNames(newNames);
-        this.columnNames[index] = newName;
-        this.component && this.component.forceUpdate();
-      }
-
       useEffect(() => {
-        setNames([...this.columnNames]);
-      }, [ports]);
+        this.columnNames = names;
+        this.buildInputs();
+      }, [names]);
 
       return (
         <div>
@@ -106,10 +97,10 @@ class CSVExportModel extends SimNodeModel {
               key={index}
               label={`Column ${index + 1} name`}
               value={name}
-              setValue={e => handleNameChange(index, e.target.value)}
+              setValue={e => setNames( old => old.map(n => n === name? e : n ))}
             />
           ))}
-          <button className='btn' onClick={AddPorts}>Add port</button>
+          <button className='btn' onClick={ () => setNames(old => [...old, `Input ${this.columnNames.length}`]) }>Add port</button>
           <button className='btn' onClick={this.generateCSV}>Download CSV</button>
         </div>
       );
@@ -117,6 +108,23 @@ class CSVExportModel extends SimNodeModel {
 
     useModal.configure(this, 'CSV Export Block', <ControlEditor />, true);
   }
+
+  serialize() {
+    const data = super.serialize();
+    return {
+      ...data,
+      columnNames: this.columnNames,
+      mapValues: Array.from(this.mapValues.entries())
+    };
+  }
+
+  deserialize(event) {
+    this.columnNames = event.data.columnNames || [];
+    this.mapValues = new Map(event.data.mapValues || []);
+    this.buildInputs();
+  }
+
+
 }
 
-export default CSVExportModel;
+export default ExportCSVModel;

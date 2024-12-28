@@ -11,7 +11,7 @@ class IntegratorModel extends SimNodeModel {
     initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null
-    tags = ['integrator','integral','1/s','laplace']
+    tags = ['integrator', 'integral', '1/s', 'laplace', 'math', 'calculus', 'signal processing', 'control systems', 'differential equations']
      
     constructor(options = {}, initialValue = 0) {
         super({...options, name: 'integrator'});

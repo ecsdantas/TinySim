@@ -6,7 +6,7 @@ class SubModel extends SimNodeModel {
 
     kind = 'sub'
     CGenUID = 'sub'
-    tags = ['sub','minus','subtract']
+    tags = ['sub', 'minus', 'subtract', 'math', 'operation', 'arithmetic', 'calculation']
     
     constructor(options = {}) {
         super({ ...options, name: 'sub' });

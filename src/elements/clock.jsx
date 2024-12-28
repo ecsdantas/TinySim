@@ -7,7 +7,7 @@ class ClockModel extends SimNodeModel {
 
     kind = 'clock'
     CGenUID = 'clk'
-    tags = ['clk','time','clock','step','current']
+    tags = ['clk','time','clock','step','current', 'simulation', 'timer', 'simTime', 'simClock']
     
     constructor(options = {}) {
         super({ ...options, name: 'clock' });

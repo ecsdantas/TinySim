@@ -27,7 +27,8 @@ import { SaturationModel } from "./cmodel_saturation";
 import { RandomNumberModel } from "./cmodel_random"
 import { RelationalOperatorModel } from "./cmodel_comparator";
 import { ImportCSVModel } from "./cmodel_csvImport";
-import { CSVExportModel } from "./cmodel_csvExport";
+import { ExportCSVModel } from "./cmodel_csvExport";
+import { GaugeModel } from "./cmodel_gauge";
 
 
 export { 
@@ -60,5 +61,6 @@ export {
     RandomNumberModel,
     RelationalOperatorModel,
     ImportCSVModel,
-    CSVExportModel
+    ExportCSVModel,
+    GaugeModel
 }

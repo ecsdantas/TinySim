@@ -11,10 +11,10 @@ class ZOHModel extends SimNodeModel {
     lastValue = 0;
     lastStepSolved = null;
     sampleTime = 1; // Default sample time in seconds
-    tags = ['zoh', 'zero_order_hold', 'sample_and_hold'];
+    tags = ['zoh', 'zero order hold', 'sample and hold', 'digital control', 'signal processing', 'discrete systems'];
 
     constructor(options = {}, sampleTime = 1) {
-        super({ ...options, name: 'zero_order_hold' });
+        super({ ...options, name: 'zero-order-hold' });
 
         // Define valores iniciais
         this.sampleTime = sampleTime;

@@ -24,6 +24,7 @@ class TextModel extends SimNodeModel {
 
     kind = 'text'
     text = 'Annotation...'
+    tags = ['text', 'annotation', 'note', 'comment', 'label', 'description', 'block']
     CGenUID = 'txt';
     fontSize = 12
 

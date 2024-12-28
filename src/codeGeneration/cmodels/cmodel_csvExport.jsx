@@ -1,6 +1,6 @@
 // cmodel_csvExport.jsx
 
-const CSVExportModel = function (node) {
+const ExportCSVModel = function (node) {
     const outputFileName = `csv_${node.CGenUID}_filename`;
     const columnNames = node.columnNames;
 
@@ -61,4 +61,4 @@ void csv_write_row(const char* filename, const double* data, size_t data_length)
     return null; // Este bloco não tem saída específica
 };
 
-export { CSVExportModel };
+export { ExportCSVModel };

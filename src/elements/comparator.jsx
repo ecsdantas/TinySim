@@ -7,7 +7,7 @@ class RelationalOperatorModel extends SimNodeModel {
 
     kind = 'comparator'
     operator = 'equal'
-    tags = ['comparator', 'greater', 'equal', 'lower', 'different'];
+    tags = ['comparator', 'greater', 'equal', 'lower', 'different', 'comparison', 'relational', 'operator'];
     CGenUID = 'cmp';
 
 

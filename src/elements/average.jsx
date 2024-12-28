@@ -6,7 +6,7 @@ class AverageModel extends SimNodeModel {
   kind = 'average';
   values = [];
   CGenUID = 'avg';
-  tags = ['avg', 'mean', 'average', 'media'];
+  tags = ['avg', 'mean', 'average', 'media', 'arithmetic', 'calculation', 'math', 'statistics'];
 
 
   constructor(options = {}) {

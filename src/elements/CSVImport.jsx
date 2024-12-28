@@ -21,7 +21,7 @@ class ImportCSVModel extends SimNodeModel {
   mapValues = new Map();
   columnNames = [];
   CGenUID = 'csvImp';
-  tags = ['csv', 'data', 'inport', 'load', 'sheet', 'excel'];
+  tags = ['csv', 'data', 'inport', 'load', 'sheet', 'excel', 'import', 'file', 'parser', 'columns', 'rows', 'values'];
 
   constructor(options = {}) {
     super({ ...options, name: 'Import CSV' });
@@ -91,7 +91,7 @@ class ImportCSVModel extends SimNodeModel {
     
     const time = this.mapValues.get('Time');
     let timeIndex = time.findIndex(t => t > currentTime) - 1;
-    timeIndex = timeIndex < -1? time.length - 1 : timeIndex;
+    timeIndex = timeIndex < -1? time.length - 1 : Math.max(0,timeIndex);
 
     const outputs = {};
     this.columnNames.forEach((name) => {

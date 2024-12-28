@@ -7,7 +7,7 @@ class LookupTableModel extends SimNodeModel {
 
     kind = 'lookupTable';
     CGenUID = 'luk';
-    tags = ['lookup', 'table', 'map', 'fit'];
+    tags = ['lookup', 'table', 'map', 'fit', 'interpolation', 'data', 'model', 'block'];
     lookupTable = [[10, 20], [15, 22], [18, 33]];
     interpolationMethod = 'nearest'; // Default interpolation method
 

@@ -12,6 +12,8 @@ class PlotModel extends SimNodeModel {
   datasetSettings = [];
   plotWidth = 'auto';
   plotHeight = 'auto';
+  CGenUID = 'plot';
+  tags = ['plot', 'chart', 'data', 'display', 'graph', 'line', 'plot'];
 
   constructor(options = {}) {
     super({ ...options, name: 'plot' });

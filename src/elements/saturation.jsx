@@ -7,7 +7,7 @@ class SaturationModel extends SimNodeModel {
 
     kind = 'saturation'
     CGenUID = 'sat';
-    tags = ['saturation', 'limit', 'max','min'];
+    tags = ['saturation', 'limit', 'max', 'min', 'constraint', 'clamp', 'range', 'bound', 'threshold'];
 
 
     constructor(options = {}) {

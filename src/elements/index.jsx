@@ -22,7 +22,7 @@ import RoundModel from "./round";
 import RelationalOperatorModel from "./comparator";
 import MinModel from "./min";
 import MaxModel from "./max";
-import CSVExportModel from "./CSVExport";
+import ExportCSVModel from "./CSVExport";
 import ImportCSVModel from "./CSVImport"
 import HistogramModel from "./histogram";
 import AverageModel from "./average";
@@ -76,5 +76,6 @@ export {
     RandomNumberModel,
     RelationalOperatorModel,
     ImportCSVModel,
-    CSVExportModel   
+    ExportCSVModel,
+    GaugeModel   
 }

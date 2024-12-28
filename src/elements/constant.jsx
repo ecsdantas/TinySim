@@ -7,7 +7,7 @@ class ConstantModel extends SimNodeModel {
 
     kind = 'constant'
     CGenUID = 'in'
-    tags = ['constant','fix','input']
+    tags = ['constant', 'fix', 'input', 'number', 'static', 'value']
     value = 0
 
     constructor(options = {}, value = 10) {

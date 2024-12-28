@@ -6,7 +6,7 @@ class LogModel extends SimNodeModel {
 
     kind = 'log'
     CGenUID = 'log'
-    tags = ['math','logarithm','exponential']
+    tags = ['math', 'logarithm', 'exponential', 'function', 'calculation', 'base', 'value', 'operation']
 
     constructor(options = {}) {
         super({ ...options, name: 'log' });

@@ -6,7 +6,7 @@ class DivideModel extends SimNodeModel {
 
     kind = 'divide'
     CGenUID = 'div'
-    tags = ['divide', 'div']
+    tags = ['divide', 'div', 'math', 'arithmetic', 'operation', 'division']
 
     constructor(options = {}) {
         super({ ...options, name: 'divide' });

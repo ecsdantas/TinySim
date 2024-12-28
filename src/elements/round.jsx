@@ -8,7 +8,7 @@ class RoundModel extends SimNodeModel {
     kind = 'round'
     decimalPlaces = 0
     CGenUID = 'rnd';
-    tags = ['round', 'ceil', 'floor'];
+    tags = ['round', 'ceil', 'floor', 'math', 'number', 'decimal', 'precision', 'arithmetic'];
     roundType = 'round';
 
     constructor(options = {}, decimalPlaces = 0, roundType = 'round') {

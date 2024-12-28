@@ -6,7 +6,7 @@ class MaxModel extends SimNodeModel {
 
     kind = 'max'
     CGenUID = 'max'
-    tags = ['max','maximum']
+    tags = ['max', 'maximum', 'math', 'comparison', 'operation', 'input', 'output']
 
     constructor(options = {}) {
         super({ ...options, name: 'max' });

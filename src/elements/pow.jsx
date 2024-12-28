@@ -6,7 +6,7 @@ class PowModel extends SimNodeModel {
 
     kind = 'pow'
     CGenUID = 'pow'
-    tags = ['power','expoent']   
+    tags = ['power', 'exponent', 'math', 'operation', 'arithmetic', 'calculation', 'function']
 
     constructor(options = {}) {
         super({ ...options, name: 'pow' });

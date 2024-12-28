@@ -11,6 +11,8 @@ class GaugeModel extends SimNodeModel {
     value = 0;
     minValue = 0;
     maxValue = 100;
+    CGenUID = 'gau';
+    tags = ['gauge', 'display', 'value', 'indicator', 'meter'];
 
     constructor(options = {}) {
         super({ ...options, name: 'gauge' });

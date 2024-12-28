@@ -9,7 +9,7 @@ class DerivatorModel extends SimNodeModel {
     previousInput = 0
     lastStepSolved = null
     CGenUID = 'der'
-    tags = ['derivatior','derivate', 'limit','s','laplace']
+    tags = ['derivatior', 'derivate', 'limit', 's', 'laplace', 'differentiation', 'calculus', 'math', 'signal processing', 'rate of change']
 
 
     constructor(options = {}) {

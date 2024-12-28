@@ -8,7 +8,7 @@ class TrigonometricModel extends SimNodeModel {
   functionType = 'sin'; // Default function
   value = 0;
   CGenUID = 'trig';
-  tags = ['sine', 'cosine', 'tangente', 'arc', 'hyperbolic', 'angle', 'trigonometric'];
+  tags = ['sine', 'cosine', 'tangente', 'arc', 'hyperbolic', 'angle', 'trigonometric', 'math', 'function', 'calculation', 'geometry', 'trig', 'trigonometry'];
 
 
   constructor(options = {}) {

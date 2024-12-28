@@ -7,7 +7,7 @@ class StandardDeviationModel extends SimNodeModel {
   kind = 'standardDeviation';
   values = [];
   CGenUID = 'std';
-  tags = ['standard', 'deviation', 'average', 'media', 'statistics'];
+  tags = ['standard', 'deviation', 'average', 'media', 'statistics', 'math', 'calculation', 'data', 'analysis', 'variance', 'spread', 'distribution'];
 
 
   constructor(options = {}) {

@@ -6,7 +6,7 @@ class SwitchModel extends SimNodeModel {
 
     kind = 'switch'
     CGenUID = 'sw'
-    tags = ['switch','rele','relay','path','route']
+    tags = ['switch', 'rele', 'relay', 'path', 'route', 'toggle', 'control', 'logic', 'conditional', 'flow']
 
     constructor(options = {}) {
         super({ ...options, name: 'switch' });

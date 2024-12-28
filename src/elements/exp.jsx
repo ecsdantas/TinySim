@@ -6,7 +6,7 @@ class ExponentialModel extends SimNodeModel {
 
     kind = 'exponential'
     CGenUID = 'exp';
-    tags = ['exp', 'exponetial', 'euler', 'neperian', '2.71828'];
+    tags = ['exp', 'exponential', 'euler', 'neperian', '2.71828', 'math', 'function', 'growth', 'logarithm', 'natural log'];
 
     constructor(options = {}) {
         super({ ...options, name: 'exponential' });

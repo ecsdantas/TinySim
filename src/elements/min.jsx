@@ -6,7 +6,7 @@ class MinModel extends SimNodeModel {
 
     kind = 'min'
     CGenUID = 'min'
-    tags = ['min','minimum']
+    tags = ['min', 'minimum', 'math', 'calculation', 'comparison', 'numeric', 'operation']
 
     constructor(options = {}) {
         super({ ...options, name: 'min' });

@@ -12,6 +12,8 @@ class HistogramModel extends SimNodeModel {
   datasetSettings = [];
   plotWidth = 'auto';
   plotHeight = 'auto';
+  CGenUID = 'hist';
+  tags = ['histogram', 'plot', 'chart', 'data', 'display', 'graph', 'bar', 'hist', 'histogram'];
 
   constructor(options = {}) {
     super({ ...options, name: 'histogram' });

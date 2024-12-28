@@ -12,7 +12,7 @@ class FirstOrderModel extends SimNodeModel {
     memoryValue = this.initialValue;
     dampingFactor = 1; // Correspondente ao 'a' em 1/(s+a)
     lastStepSolved = null;
-    tags = ['first_order', '1/(s+a)', 'laplace'];
+    tags = ['first_order', '1/(s+a)', 'laplace', 'control_system', 'dynamics', 'simulation', 'transfer_function'];
 
     constructor(options = {}, initialValue = 0, dampingFactor = 1) {
         super({ ...options, name: 'first_order' });

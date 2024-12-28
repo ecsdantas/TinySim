@@ -11,7 +11,7 @@ class ZeroOrderModel extends SimNodeModel {
     memoryValue = 0;
     constantA = 1.0; // Correspondente ao 'a' em (s + a)
     lastStepSolved = null;
-    tags = ['zero_order', 's+a', 'laplace'];
+    tags = ['zero order', 's+a', 'laplace', 'simulation', 'control system', 'numerical analysis'];
 
     constructor(options = {}, constantA = 1.0) {
         super({ ...options, name: 'zero_order' });
