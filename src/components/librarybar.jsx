@@ -1,8 +1,11 @@
 import React from "react";
 import * as Elements from "../elements";
+
 const ModelsArray = Object.entries(Elements)
 
 export const LibraryList = () => {
+    const [getSearch, setSearch] = React.useState('');
+
     const handleDragStart = (event, modelName) => {
         event.dataTransfer.setData('drag-block', modelName);
     };
@@ -51,26 +54,37 @@ export const LibraryList = () => {
     };
 
     return (
-        <div className='library'>
-            {
-                ModelsArray.map(([modelName, ModelClass]) => {
+        <div className="library-container">
+            <input className="search" value={getSearch} onChange={(e) => setSearch(e.target.value)}/>
+            <div className="library">
+                {ModelsArray.filter(([modelName, ModelClass]) => {
+                    const Model = new ModelClass();
+                    const tags = Model.tags || []; // Garante que tags é um array ou vazio
+    
+                    // Verifica se o termo de busca aparece no nome do modelo ou nas tags
+                    return (
+                        modelName.toLowerCase().includes(getSearch.toLowerCase()) ||
+                        tags.some((tag) => tag.toLowerCase().includes(getSearch.toLowerCase()))
+                    );
+                }).map(([modelName, ModelClass]) => {
                     const Model = new ModelClass();
                     return (
                         <div
                             key={`models-${modelName}`}
-                            className='library-modal'
+                            className="library-modal"
                             draggable
                             onDragStart={(event) => handleDragStart(event, modelName)}
                             onTouchStart={(event) => handleTouchStart(event, modelName)}
                             onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}
                         >
-                            {Model.icon && <div style={{ margin: '0 auto' }}> {Model.icon()} </div>}
-                            {Model.kind && <div style={{ margin: '0 auto' }}> {Model.kind}</div>}
+                            {Model.icon && <div style={{ margin: "0 auto" }}>{Model.icon()}</div>}
+                            {Model.kind && <div style={{ margin: "0 auto" }}>{Model.kind}</div>}
                         </div>
                     );
-                })
-            }
+                })}
+            </div>
         </div>
     );
+    
 };

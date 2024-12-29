@@ -12,8 +12,10 @@ const SidebarTitle = (props) => {
     const {Side, closeFcn} = props
     return (<>
         <div className="flex-container">
-            <span>{ Content[Side].title ?? 'Unknown' }</span>
-            <img className="close" src={ closeSVG } width={ 26 } height={ 26 }  onClick={ closeFcn }/>
+            <h4>{ Content[Side].title ?? 'Unknown' }</h4>
+            <button onClick={ closeFcn } title="close">
+                <img className="close" src={ closeSVG } width={ 26 } height={ 26 } />
+            </button>
         </div>
     </>)
 }

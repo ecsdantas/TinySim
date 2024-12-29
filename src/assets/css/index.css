@@ -7,13 +7,10 @@
   height: 100vh;
   top:0;
   left: 0;  
+  z-index: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 200;
 }
-
-
-
-
-
-
 
 @keyframes kf-btn {
   0%, 100% {
@@ -33,6 +30,34 @@
   color: #eeeeee;
   cursor: pointer;
   animation: kf-btn 2s infinite;
+}
+
+.btn .btn-clean {
+  background: none;
+  padding: 6px 8px;
+  color: #eeeeee;
+  cursor: pointer;
+}
+
+.btn-professional {
+  border: 1px solid #007bff;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  padding: 10px 20px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.btn-professional:hover {
+  background: linear-gradient(90deg, #0056b3, #007bff);
+  transform: scale(1.05);
+}
+
+.btn-professional:active {
+  background: linear-gradient(90deg, #004085, #0056b3);
+  transform: scale(0.95);
 }
 
 
