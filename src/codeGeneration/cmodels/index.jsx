@@ -30,6 +30,7 @@ import { ImportCSVModel } from "./cmodel_csvImport";
 import { ExportCSVModel } from "./cmodel_csvExport";
 import { GaugeModel } from "./cmodel_gauge";
 import { PlotModel } from "./cmodel_plot";
+import { PiModel } from "./cmodel_constantPI";
 
 
 export { 
@@ -64,5 +65,6 @@ export {
     ImportCSVModel,
     ExportCSVModel,
     GaugeModel,
-    PlotModel
+    PlotModel,
+    PiModel
 }

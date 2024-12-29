@@ -44,9 +44,11 @@ import SRFlipFlopModel from "./SRflipflop";
 import FirstOrderModel from "./firstOrder";
 import ZOHModel from "./zoh";
 import ZeroOrderModel from "./zo";
+import PiModel from "./constantPI";
 
 export { 
     ConstantModel,
+    PiModel,
     AddModel,
     SubModel,
     DivideModel,
