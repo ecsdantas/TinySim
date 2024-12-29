@@ -51,10 +51,6 @@ class RelationalOperatorModel extends SimNodeModel {
         return {'out': NaN};
     }
 
-    reset(){
-        super.reset();
-    }
-
     icon = () => {
         let operatorSymbol;
         switch(this.operator) {

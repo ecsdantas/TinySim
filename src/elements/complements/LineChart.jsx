@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const LineChart = ({ time, datasets, plotWidth, plotHeight }) => {
-  const containerRef = useRef(null);
-  const [chartInstance, setChartInstance] = useState(null);
+const LineChart = (props) => {
+
+const { time, datasets, plotWidth, plotHeight } = props;
+
+const containerRef = useRef(null);
+
+const [chartInstance, setChartInstance] = props.setChartInstance ? [props.chartInstance, props.setChartInstance] : useState(null);
 
   useEffect(() => {
     let Chart;
@@ -34,6 +38,7 @@ const LineChart = ({ time, datasets, plotWidth, plotHeight }) => {
               },
             },
             maintainAspectRatio: false,
+            animation: false,
           },
         });
 
@@ -50,8 +55,6 @@ const LineChart = ({ time, datasets, plotWidth, plotHeight }) => {
     };
   }, [time, datasets, plotWidth, plotHeight]);
   
-  
-
   return (
     <div ref={containerRef} />
   );

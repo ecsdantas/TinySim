@@ -77,5 +77,6 @@ export {
     RelationalOperatorModel,
     ImportCSVModel,
     ExportCSVModel,
-    GaugeModel   
+    GaugeModel,
+    PlotModel   
 }

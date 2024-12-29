@@ -29,6 +29,7 @@ import { RelationalOperatorModel } from "./cmodel_comparator";
 import { ImportCSVModel } from "./cmodel_csvImport";
 import { ExportCSVModel } from "./cmodel_csvExport";
 import { GaugeModel } from "./cmodel_gauge";
+import { PlotModel } from "./cmodel_plot";
 
 
 export { 
@@ -62,5 +63,6 @@ export {
     RelationalOperatorModel,
     ImportCSVModel,
     ExportCSVModel,
-    GaugeModel
+    GaugeModel,
+    PlotModel
 }
