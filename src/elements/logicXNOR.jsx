@@ -4,12 +4,14 @@ import { useModal } from '../components/modal';
 
 class XnorModel extends SimNodeModel {
 
-    kind = 'xnor';
+    kind = 'XNOR';
+    CGenUID = 'xnor';
+    tags = ['logic', 'xnor', 'operation', 'value', 'boolean'];
 
     constructor(options = {}) {
         super({ ...options, name: 'xnor' });
 
-        // Create the ports of the XNOR model
+        // Create the ports of the XOR model
         this.createPort('out', false);
         this.createPort('in1', true);
         this.createPort('in2', true);
@@ -21,18 +23,17 @@ class XnorModel extends SimNodeModel {
         for (let i = 0; i < this.getInPorts().length; i++) {
             const input = this.getNodeByInput(i);
             if (input && input.solve) {
-                result = result ^ input.solve();
+                result = result ^ (input.solve() > 0);
             }
         }
         return { 'out': !result };
     }
 
     icon = () => (
-        <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="20" height="20" rx="10" stroke="#000000" strokeWidth={1} />
-            <path d="M 6 12 C 6 8 10 6 12 6 C 14 6 18 8 18 12 C 18 16 14 18 12 18 C 10 18 6 16 6 12 Z" fill="#000000" />
-            <path d="M 8 12 C 8 9 10 8 12 8 C 14 8 16 9 16 12 C 16 15 14 16 12 16 C 10 16 8 15 8 12 Z" fill="#FFFFFF" />
-            <circle cx="17" cy="12" r="2" fill="#000000" />
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="1" xmlns="http://www.w3.org/2000/svg">
+            <path d="m 3.6,5.2 c 12.7,0 14.2,7.3 14.2,7.3 v 0 c -1.6,8.6 -14.2,7.2 -14.2,7.2 6,-7.3 0,-14.5 0,-14.5 z"/>
+            <path d="m 1.3,19.6 c 6.3,-7.3 0,-14.4 0,-14.4"/>
+            <circle cx="20.5" cy="12.4" r="2.6" />
         </svg>
     );
 
@@ -48,13 +49,13 @@ class XnorModel extends SimNodeModel {
 
             return (
                 <div>
-                    <p>This block performs an XNOR operation on the values from all input ports.<br />You can add new ports.</p>
+                    <p>This block performs an XOR operation on the values from all input ports.<br />You can add new ports.</p>
                     <button className='btn' onClick={AddPorts}>Add port</button>
                 </div>
             );
         };
 
-        useModal.configure(this, 'XNOR Block', <ControlEditor />, true);
+        useModal.configure(this, 'XOR Block', <ControlEditor />, true);
     }
 }
 

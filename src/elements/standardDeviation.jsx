@@ -4,7 +4,7 @@ import { useModal } from '../components/modal';
 import { InputGroup } from '../components/inputGroup';
 
 class StandardDeviationModel extends SimNodeModel {
-  kind = 'standardDeviation';
+  kind = 'deviation';
   values = [];
   CGenUID = 'std';
   tags = ['standard', 'deviation', 'average', 'media', 'statistics', 'math', 'calculation', 'data', 'analysis', 'variance', 'spread', 'distribution'];

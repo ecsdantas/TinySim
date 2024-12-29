@@ -4,7 +4,9 @@ import { useModal } from '../components/modal';
 
 class AndModel extends SimNodeModel {
 
-    kind = 'and';
+    kind = 'AND';
+    CGenUID = 'and';
+    tags = ['logic', 'and', 'operation', 'value', 'boolean'];
 
     constructor(options = {}) {
         super({ ...options, name: 'and' });
@@ -29,8 +31,7 @@ class AndModel extends SimNodeModel {
 
     icon = () => (
         <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="20" height="20" rx="10" stroke="#000000" strokeWidth={1} />
-            <path d="M 6 12 L 12 6 L 12 18 L 6 12 Z" fill="#000000" />
+            <path d="M22 15c0-5.523-4.477-10-10-10h-8v18h8c5.523 0 10-4.477 10-10z" stroke="#000000" strokeWidth={1} fill="none" />
         </svg>
     );
 

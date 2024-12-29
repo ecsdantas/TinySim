@@ -4,7 +4,9 @@ import { useModal } from '../components/modal';
 
 class NotModel extends SimNodeModel {
 
-    kind = 'not';
+    kind = 'NOT';
+    CGenUID = 'not';
+    tags = ['logic', 'not', 'operation', 'value', 'boolean'];
 
     constructor(options = {}) {
         super({ ...options, name: 'not' });
@@ -18,16 +20,15 @@ class NotModel extends SimNodeModel {
     solution() {
         const input = this.getNodeByInput(0);
         if (input && input.solve) {
-            return { 'out': !input.solve() };
+            return { 'out': (input.solve() > 0)? 0 : 1 };
         }
         return { 'out': 1 }; // default output when no input
     }
 
     icon = () => (
-        <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="20" height="20" rx="10" stroke="#000000" strokeWidth={1} />
-            <path d="M 6 12 L 14 6 L 14 18 L 6 12 Z" fill="#000000" />
-            <circle cx="17" cy="12" r="2" fill="#000000" />
+        <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke='#000' strokeWidth={1}>
+            <path d="M 3,12 V 4 L 15,12 3,20 v -12" />
+            <path d="m 22,12 a 3.5,3.5 0 1 1 -7,0 3.5,3.5 0 1 1 7,0 z" />
         </svg>
     );
 

@@ -31,6 +31,7 @@ import { ExportCSVModel } from "./cmodel_csvExport";
 import { GaugeModel } from "./cmodel_gauge";
 import { PlotModel } from "./cmodel_plot";
 import { PiModel } from "./cmodel_constantPI";
+import { SqrtModel } from "./cmodel_sqrt";
 
 
 export { 
@@ -40,6 +41,7 @@ export {
     DisplayModel, 
     DivideModel, 
     MultiplyModel,
+    SqrtModel,
     ClockModel, 
     IntegratorModel, 
     DerivatorModel, 

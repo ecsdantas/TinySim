@@ -10,23 +10,30 @@ class ConstantModel extends SimNodeModel {
     tags = ['constant', 'fix', 'input', 'number', 'static', 'value']
     value = 0
 
-    constructor(options = {}, value = 10) {
-        super({...options, name: 'constant'});
-        
+    constructor(options = {}, value = 22456) {
+        super({ ...options, name: 'constant' });
+
         // Create the ports of add model
         this.createPort('out', false);
         this.value = value
     }
 
     // Função principal do bloco
-    solution() { 
-        return {'out': this.value}
+    solution() {
+        return { 'out': this.value }
     }
 
-    icon = _ => <svg width={ 32 } height={ 32 } viewBox={`0 0 100 100`} fill="none" xmlns="http://www.w3.org/2000/svg" >
-        <rect x={5} y={5} width={ 90 } height={ 90 } stroke="#000000" strokeWidth={1.8} strokeLinejoin="round" />
-        <text x="50" y="65" fontFamily="Arial" fontSize={ 40 - 2*this.value.toString().slice(0,5).length } textAnchor="middle" fill="#000000">{this.value.toString().slice(0,5)}</text>
-    </svg>
+    icon = () => {
+        const text = this.value.toString()
+        const selector = text.length - 1;
+        const fontSize = [12, 12, 11, 9, 7].at(selector) ?? 7;
+        return (<svg width="40" height="32" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" strokeWidth={1} strokeLinejoin="round">
+            <rect x="1" y="1" width="27" height="21" />
+            <text x={14.2} y={15} fontFamily="Segoe UI" fontSize={fontSize} textAnchor="middle" stroke='none' fill="#000000">
+                { selector > 4? text.slice(0, 4) + '...' : text }
+            </text>
+        </svg>)
+    }
 
     settings = _ => {
 
@@ -39,7 +46,7 @@ class ConstantModel extends SimNodeModel {
 
             const [getCodeGenName, setCodeGenName] = useState(this.codeGenName)
             const [getConstant, setConstant] = useState(this.value)
-            useEffect(()=>{
+            useEffect(() => {
                 if (isNumber(getConstant)) {
                     this.value = Number(getConstant)
                     this.component && this.component.forceUpdate();
@@ -49,8 +56,8 @@ class ConstantModel extends SimNodeModel {
 
             return <div>
                 <p>This blocks outputs a constant.</p>
-                    <InputGroup label={ 'Constant value' }  value={ getConstant } setValue={ e => setConstant(e) } />
-                </div>
+                <InputGroup label={'Constant value'} value={getConstant} setValue={e => setConstant(e)} />
+            </div>
         }
 
         useModal.configure(this, 'Add Block', <ControlEditor />, true);

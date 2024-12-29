@@ -30,13 +30,14 @@ import StandardDeviationModel from "./standardDeviation";
 import GaugeModel from "./gauge";
 import TrigonometricModel from "./trigonometric";
 import PIDControllerModel from "./PIDcontroller";
-import NotModel from "./not";
-import AndModel from "./and";
-import OrModel from "./or";
-import NandModel from "./nand";
-import NorModel from "./nor";
-import XorModel from "./xor";
-import XnorModel from './xnor'
+import NotModel from "./logicNOT";
+import AndModel from "./logicAND";
+import OrModel from "./logicOR";
+import NandModel from "./logicNAND";
+import NorModel from "./logicNOR";
+import XorModel from "./logicXOR";
+import XnorModel from "./logicXNOR";
+
 import DFlipFlopModel from "./Dflipflop";
 import TFlipFlopModel from "./Tflipflop";
 import JKFlipFlopModel from "./JKflipflop";
@@ -45,6 +46,7 @@ import FirstOrderModel from "./firstOrder";
 import ZOHModel from "./zoh";
 import ZeroOrderModel from "./zo";
 import PiModel from "./constantPI";
+import SqrtModel from "./sqrt";
 
 export { 
     ConstantModel,
@@ -53,6 +55,7 @@ export {
     SubModel,
     DivideModel,
     MultiplyModel,
+    SqrtModel,
     ClockModel,
     DisplayModel,
     IntegratorModel,
@@ -80,5 +83,12 @@ export {
     ImportCSVModel,
     ExportCSVModel,
     GaugeModel,
-    PlotModel   
+    PlotModel,
+    AndModel,
+    OrModel,
+    NotModel,
+    NorModel,
+    NandModel,
+    XorModel,
+    XnorModel,
 }

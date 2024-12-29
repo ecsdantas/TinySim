@@ -2,14 +2,16 @@ import React from 'react';
 import { SimNodeModel } from '../nodes/nodeModel';
 import { useModal } from '../components/modal';
 
-class OrModel extends SimNodeModel {
+class NandModel extends SimNodeModel {
 
-    kind = 'or';
+    kind = 'NAND';
+    CGenUID = 'nand';
+    tags = ['logic', 'nand', 'operation', 'value', 'boolean'];
 
     constructor(options = {}) {
-        super({ ...options, name: 'or' });
+        super({ ...options, name: 'nand' });
 
-        // Create the ports of the OR model
+        // Create the ports of the NAND model
         this.createPort('out', false);
         this.createPort('in1', true);
         this.createPort('in2', true);
@@ -17,20 +19,20 @@ class OrModel extends SimNodeModel {
 
     // Main function of the block
     solution() {
-        let result = 0;
+        let result = 1;
         for (let i = 0; i < this.getInPorts().length; i++) {
             const input = this.getNodeByInput(i);
             if (input && input.solve) {
-                result = result || input.solve();
+                result = result && (input.solve() > 0);
             }
         }
-        return { 'out': result };
+        return { 'out': !result };
     }
 
     icon = () => (
-        <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="20" height="20" rx="10" stroke="#000000" strokeWidth={1} />
-            <path d="M 6 12 C 6 8 10 6 12 6 C 14 6 18 8 18 12 C 18 16 14 18 12 18 C 10 18 6 16 6 12 Z" fill="#000000" />
+        <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"  stroke="#000000" strokeWidth={1}>
+            <path d="M16 13c0-2-2-10-10-10h-4v18h4c5 0 10-5 10-10z" />
+            <circle cx="20" cy="12" r="3.5" />
         </svg>
     );
 
@@ -46,14 +48,14 @@ class OrModel extends SimNodeModel {
 
             return (
                 <div>
-                    <p>This block performs an OR operation on the values from all input ports.<br />You can add new ports.</p>
+                    <p>This block performs a NAND operation on the values from all input ports.<br />You can add new ports.</p>
                     <button className='btn' onClick={AddPorts}>Add port</button>
                 </div>
             );
         };
 
-        useModal.configure(this, 'OR Block', <ControlEditor />, true);
+        useModal.configure(this, 'NAND Block', <ControlEditor />, true);
     }
 }
 
-export default OrModel;
+export default NandModel;
