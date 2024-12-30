@@ -123,12 +123,13 @@ const handleKeyDown = (event) => {
             selectedEntities.filter(node => node.settings).forEach(node => node.settings());
             break;
 
-        case 'y':
+        case 'x':
             event.ctrlKey && stackManager.redoLastAction();
             break;
 
         case 'z':
-            event.ctrlKey && stackManager.undoLastAction();
+            event.ctrlKey && !event.shiftKey && stackManager.undoLastAction();
+            event.ctrlKey && event.shiftKey && stackManager.redoLastAction();
             break;
 
         case '3':

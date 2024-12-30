@@ -113,6 +113,10 @@ export const Zoombar = () => {
                 <circle cx="12" cy="12" r="8" stroke="#000000" fill={ control.showInfo? "#000000" : "none" } strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M12 16V12M12 8H12.01" stroke={ control.showInfo? "#FFFFFF" : "#000000" } strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </SVG>
+            <SVG onClick={() => window.open("./instructions.html", '_blank')} title="Help" >
+                <circle cx="12" cy="12" r="8" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <text x="12" y="17" textAnchor="middle" fill="#000000" >?</text>
+            </SVG>
         </div>
     );
 };

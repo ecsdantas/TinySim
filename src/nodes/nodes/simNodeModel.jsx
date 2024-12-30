@@ -45,7 +45,7 @@ class SimNodeModel extends DefaultNodeModel {
 
     // Creates a new port
     createPort(label, isInput = false) {
-        const port = new RightAnglePortModel({
+        const port = new DefaultPortModel({
             in: isInput,
             name: label,
         });

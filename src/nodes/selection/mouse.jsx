@@ -58,17 +58,22 @@ export const SelectionBox = () => {
 
         const selectionRect = selectionBox.getBoundingClientRect();
 
-        // Seleciona os nós dentro do retângulo
-        const Model = Engine.getModel()
-        Model.getNodes().map(node => {
-            const isInside = (p) => p.x > selectionRect.left &&
+        const isInside = (p) => p.x > selectionRect.left &&
                 p.x < selectionRect.right &&
                 p.y > selectionRect.top &&
                 p.y < selectionRect.bottom;
 
+        // Seleciona os nós dentro do retângulo
+        const Model = Engine.getModel()
+        Model.getNodes().map(node => {
             const nodePoints = node.getBoundingBox().getPoints()
             const fit = nodePoints.some(p => isInside(p))
             node.setSelected(fit)
+        })
+
+        Model.getLinks().map(link => {
+            const linkPoints = link.getBoundingBox().getPoints()
+            link.setSelected(linkPoints.some(p => isInside(p)))
         })
 
         canvas.removeChild(selectionBox); // Remove o elemento do canvas
