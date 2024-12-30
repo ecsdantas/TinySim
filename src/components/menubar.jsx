@@ -102,9 +102,9 @@ export const Menubar = (props) => {
         <div className='menubar'>
             <FileMenu />
             <img src={LibrarySVG} {...iconSizes} onClick={LeftbarToogle} title="Library" />
-            <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop" />
-            <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step" />
-            <img src={ResetSVG} {...iconSizes} onClick={Reset} title="Reset Simulation" />
+            <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop  ([ALT] + [1])" />
+            <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step ([ALT] + [2])" />
+            <img src={ResetSVG} {...iconSizes} onClick={Reset} title="Reset Simulation  ([ALT] + [3])" />
             <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
             <img src={CodeSVG} {...iconSizes} onClick={ CGen } title="Code generation" />
         </div>

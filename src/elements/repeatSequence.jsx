@@ -17,7 +17,6 @@ class RepeatingSequenceModel extends SimNodeModel {
 
     // Create the ports of add model
    this.createPort('out', false);
-
    this.solution = this.solution.bind(this);
 
   }
@@ -55,7 +54,6 @@ class RepeatingSequenceModel extends SimNodeModel {
           <p>This block generates a repeating sequence of values.<br />
             <span>Values must be separated by commas.</span>
           </p>
-          
           <InputGroup label="Sequence" value={sequence} setValue={ e => setSequence(e) } />
         </div>
       );

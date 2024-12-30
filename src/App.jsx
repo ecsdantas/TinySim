@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Sidebar } from './components/sidebar';
 import { Menubar } from './components/menubar';
 import { CanvasWidget } from '@projectstorm/react-canvas-core';
-import { Model, Engine } from './nodes/nodeModel'
+import { Engine } from './nodes/nodeModel'
 import Simulation from './simulation/core';
 import { DropElement } from './components/dropElement';
 import Modal from './components/modal';
@@ -31,14 +31,17 @@ const App = () => {
 
     useEffect(() => {
 
-        const HelloWorld = () => (
-            <div>
-                <p>Welcome to <b>TinySim!</b></p>
-                <p>To get started, read the <a href="/instructions.html" target="_blank">instructions</a>.</p>
-            </div>
-        )
-        toast.info(<HelloWorld />, { autoClose: 15000, closeOnClick: false, closeButton: true })
-
+        if ( !sessionStorage.getItem('started') ){
+            const HelloWorld = () => (
+                <div>
+                    <p>Welcome to <b>TinySim!</b></p>
+                    <p>To get started, read the <a href="/instructions.html" target="_blank">instructions</a>.</p>
+                </div>
+            )
+            toast.info(<HelloWorld />, { autoClose: 15000, closeOnClick: false, closeButton: true })
+            sessionStorage.setItem('started',1)
+        }
+        
     }, [])
 
     return <>

@@ -40,10 +40,12 @@ export const SelectionBox = () => {
         selectionStart = { x: event.clientX, y: event.clientY };
 
         selectionBox = document.createElement("div");
-        selectionBox.style.position = "absolute";
-        selectionBox.style.border = "1px dashed #000";
-        selectionBox.style.backgroundColor = "rgba(0, 0, 255, 0.2)";
-        selectionBox.style.pointerEvents = "none";
+        Object.assign(selectionBox.style, {
+            position: "absolute",
+            border: "1px dashed #000",
+            backgroundColor: "rgba(0, 0, 255, 0.2)",
+            pointerEvents: "none"
+        });
         canvas.appendChild(selectionBox);
     });
 
@@ -55,14 +57,14 @@ export const SelectionBox = () => {
         if (!canvas) return;
 
         const selectionRect = selectionBox.getBoundingClientRect();
-        
+
         // Seleciona os nós dentro do retângulo
         const Model = Engine.getModel()
-        Model.getNodes().map( node => {            
+        Model.getNodes().map(node => {
             const isInside = (p) => p.x > selectionRect.left &&
-            p.x < selectionRect.right &&
-            p.y > selectionRect.top &&
-            p.y < selectionRect.bottom;
+                p.x < selectionRect.right &&
+                p.y > selectionRect.top &&
+                p.y < selectionRect.bottom;
 
             const nodePoints = node.getBoundingBox().getPoints()
             const fit = nodePoints.some(p => isInside(p))
@@ -73,4 +75,5 @@ export const SelectionBox = () => {
         selectionBox = null;
         isDragging = false;
     });
+
 };

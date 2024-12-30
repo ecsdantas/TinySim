@@ -6,6 +6,8 @@ import { useModal } from '../components/modal';
 import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory';
 import Simulation from '../simulation/core';
 import { SelectionBox } from './selection/mouse';
+import Stack from './stack/stack';
+
 
 // Cria o motor do diagrama e o Modelo
 const Engine = createEngine();
@@ -54,6 +56,9 @@ Engine.getPortFactories().registerFactory(new RightAnglePortFactory());
 const Model = new DiagramModel();
 
 Engine.setModel(Model);
+
+// Permite fazer o Undo e Redos
+const stackManager = new Stack(Engine, Simulation);
 
 
 // Passa os parâmetros necessários para o SelectionBox
@@ -116,6 +121,26 @@ const handleKeyDown = (event) => {
         case 'o':
             Array.isArray(selectedEntities) && 
             selectedEntities.filter(node => node.settings).forEach(node => node.settings());
+            break;
+
+        case 'y':
+            event.ctrlKey && stackManager.redoLastAction();
+            break;
+
+        case 'z':
+            event.ctrlKey && stackManager.undoLastAction();
+            break;
+
+        case '3':
+            event.altKey && Simulation.resetSimulation()
+            break;
+
+        case '2':
+            event.altKey && Simulation.runStep()
+            break;
+    
+        case '1':
+            event.altKey && Simulation.run()
             break;
     }
 };

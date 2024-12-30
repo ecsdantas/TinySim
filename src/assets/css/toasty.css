@@ -26,3 +26,7 @@
 .ts-toast-progress {
     background: #91fb18;
 }
+
+.Toastify__progress-bar--warning {
+    background: #fbc500;
+}
