@@ -1,3 +1,4 @@
+import { DiagramModel } from "@projectstorm/react-diagrams";
 import { toast } from "react-toastify";
 
 class Stack {
@@ -25,9 +26,10 @@ class Stack {
 
     updateModel() {
         const modelData = this.stacks[this.selectedStack];
-        const EngModel = this.Engine.getModel();
+        const EngModel = new DiagramModel();
         EngModel.deserializeModel(modelData, this.Engine);
-        this.Simulation.setModel(this.Engine.getModel());
+        this.Engine.setModel(EngModel);
+        this.Simulation.setModel(EngModel);
         this.Simulation.resetSimulation();
         this.Engine.repaintCanvas();
     }

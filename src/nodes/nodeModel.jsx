@@ -7,6 +7,7 @@ import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory';
 import Simulation from '../simulation/core';
 import { SelectionBox } from './selection/mouse';
 import Stack from './stack/stack';
+import { toast } from 'react-toastify';
 
 
 // Cria o motor do diagrama e o Modelo
@@ -46,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ModelsArray[type] = ModelClass;
     });
     // console.log('Fábricas registradas:', Object.keys(Engine.getNodeFactories().factories));
+    // Passa os parâmetros necessários para o SelectionBox
+    SelectionBox()
+
 });
 
 // Registra demais blocos
@@ -53,16 +57,12 @@ Engine.getNodeFactories().registerFactory(new SimNodeFactory());
 Engine.getLinkFactories().registerFactory(new RightAngleLinkFactory());
 Engine.getPortFactories().registerFactory(new RightAnglePortFactory());
 
+// Cria o digrama e o modelo
 const Model = new DiagramModel();
-
 Engine.setModel(Model);
 
 // Permite fazer o Undo e Redos
-const stackManager = new Stack(Engine, Simulation);
-
-
-// Passa os parâmetros necessários para o SelectionBox
-SelectionBox()
+// const stackManager = new Stack(Engine, Simulation);
 
 // Permite utilizar atalhos
 const handleKeyDown = (event) => {  
@@ -124,12 +124,13 @@ const handleKeyDown = (event) => {
             break;
 
         case 'x':
-            event.ctrlKey && stackManager.redoLastAction();
+            // event.ctrlKey && stackManager.redoLastAction();
             break;
 
         case 'z':
-            event.ctrlKey && !event.shiftKey && stackManager.undoLastAction();
-            event.ctrlKey && event.shiftKey && stackManager.redoLastAction();
+            // event.ctrlKey && !event.shiftKey && stackManager.undoLastAction();
+            // event.ctrlKey && event.shiftKey && stackManager.redoLastAction();
+            event.ctrlKey && toast.info("We don't have undo or redo yet.")
             break;
 
         case '3':
