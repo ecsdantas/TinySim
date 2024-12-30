@@ -53,7 +53,10 @@ class RepeatingSequenceModel extends SimNodeModel {
 
       return (
         <div>
-          <p>This block generates a repeating sequence of values.</p>
+          <p>This block generates a repeating sequence of values.<br />
+            <span>Values must be separated by commas.</span>
+          </p>
+          
           <InputGroup label="Sequence" value={sequence} setValue={ e => setSequence(e) } />
         </div>
       );
@@ -71,6 +74,7 @@ class RepeatingSequenceModel extends SimNodeModel {
   }
 
   deserialize(event) {
+    super.deserialize(event);
     this.sequence = event.data.sequence || [];
   }
 }
