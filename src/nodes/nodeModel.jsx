@@ -71,11 +71,11 @@ const handleKeyDown = (event) => {
                 const modelNames = JSON.parse(sessionStorage.getItem("blocks"));
                 const EngModel = Engine.getModel()
                 const canvasRect = event.target.getBoundingClientRect();
-                modelNames.forEach(modelName => {
+                modelNames.forEach((modelName, index) => {
                     const newNode = new ModelsArray[modelName]();
                     newNode.setPosition(
-                        MousePosition.x - canvasRect.left - newNode.width / 2,
-                        MousePosition.y - canvasRect.top - newNode.height / 2
+                        MousePosition.x - canvasRect.left - newNode.width / 2 + 50 * index,
+                        MousePosition.y - canvasRect.top - newNode.height / 2 + 50 * index
                     );
 
                     // Cria IDs unicos

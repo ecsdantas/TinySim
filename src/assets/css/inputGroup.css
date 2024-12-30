@@ -31,17 +31,6 @@
   outline: none;
 }
 
-/* Frame group */
-.group-frame {
-  border: 3px dotted rgb(220, 220, 220);
-  padding: 4px;
-  border-radius: 8px;
-}
-
-.group-frame h3 {
-  padding: 0 0 6px 0;
-  margin: 0;
-}
 
 /* SELECT */
 .select-group {
@@ -81,9 +70,7 @@
 
 /* Frame group */
 .group-frame {
-  border: 3px dotted rgb(220, 220, 220);
-  padding: 4px;
-  border-radius: 8px;
+  padding: 4px 10px;
 }
 
 .group-frame h3 {
