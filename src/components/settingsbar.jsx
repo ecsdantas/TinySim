@@ -32,7 +32,7 @@ export const SettingsList = (props) => {
     const handleNumber = (text, func) => {
         const match = text.match(/^\d*\.?\d*$/);
         if (match) {
-            console.dir("set: " + Number(match[0]))
+            // console.dir("set: " + Number(match[0]))
             func( match[0] )
         }
     }

@@ -30,10 +30,9 @@ class RepeatingSequenceModel extends SimNodeModel {
   }
 
   icon = () => (
-    <svg viewBox="0 0 64 64" width="30" height="40" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="32" cy="32" r="30" fill="#4CAF50" />
-      <path fill="#FFFFFF" d="M 20,32 A 1,1 0 0,1 32,20 A 1,1 0 0,1 44,32 A 1,1 0 0,1 32,44 A 1,1 0 0,1 20,32 M 28,32 A 1,1 0 0,0 32,28 A 1,1 0 0,0 36,32 A 1,1 0 0,0 32,36 A 1,1 0 0,0 28,32" />
-      <path fill="#FFFFFF" d="M 32,10 L 32,20 M 32,44 L 32,54 M 10,32 L 20,32 M 44,32 L 54,32" stroke="#FFFFFF" strokeWidth="2" />
+    <svg width="64" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="62" height="30" stroke="#000000" strokeWidth="1" />
+      <polyline points="8,24 16,8 24,24 32,8 40,24 48,8 56,24" stroke="#000000" strokeWidth="1" fill="none" />
     </svg>
   );
 
