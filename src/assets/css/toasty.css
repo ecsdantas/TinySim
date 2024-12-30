@@ -19,6 +19,10 @@
     color: rgb(190, 251, 76);
 }
 
+.ts-toast-container .Toastify__close-button {
+    color: rgb(215, 220, 225);
+}
+
 .ts-toast-progress {
     background: #91fb18;
 }
