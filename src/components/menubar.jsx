@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import LibrarySVG from "../assets/icons/library-white.svg"
 import PlaySVG from "../assets/icons/play-white.svg"
+import ResetSVG from "../assets/icons/reset.svg"
 import PlayStepSVG from "../assets/icons/playStep-white.svg"
 import SettingsSVG from "../assets/icons/settings-white.svg"
 import downloadSVG from "../assets/icons/download.svg"
@@ -95,7 +96,7 @@ const CGen = () => {
 
 export const Menubar = (props) => {
 
-    const { LeftbarToogle, RightbarToogle, Run, RunStep } = props
+    const { LeftbarToogle, RightbarToogle, Run, RunStep, Reset } = props
 
     return (
         <div className='menubar'>
@@ -103,6 +104,7 @@ export const Menubar = (props) => {
             <img src={LibrarySVG} {...iconSizes} onClick={LeftbarToogle} title="Library" />
             <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop" />
             <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step" />
+            <img src={ResetSVG} {...iconSizes} onClick={Reset} title="Reset Simulation" />
             <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
             <img src={CodeSVG} {...iconSizes} onClick={ CGen } title="Code generation" />
         </div>

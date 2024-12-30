@@ -1,3 +1,5 @@
+import { toast } from "react-toastify"
+
 class SimulationEngine {
 
     currentStep = 0
@@ -13,7 +15,7 @@ class SimulationEngine {
     emergencyStop = false
     isSimulationRunning = false
 
-    constructor(model){
+    constructor(model) {
         // Salva o modelo contendo todo o circuito
         this.#model = model;
         this.runStep = this.runStep.bind(this);
@@ -23,57 +25,68 @@ class SimulationEngine {
     }
 
     // Define o modelo
-    setModel(model){
+    setModel(model) {
         this.#model = model
         this.runSetup()
     }
 
-    runSetup(){
-        // Impede a simulação de continuar
-        if(this.isSimulationRunning){
-            this.emergencyStop = true
-            this.isSimulationRunning = false
+    runSetup() {
+
+        try {
+
+            // Impede a simulação de continuar
+            if (this.isSimulationRunning) {
+                this.emergencyStop = true
+                this.isSimulationRunning = false
+                return false
+            }
+
+            // Verifica se consegue puxar os nós
+            if (!this.#model || !this.#model.getNodes)
+                return false
+
+            // Obtém todos nós
+            this.#nodes = this.#model.getNodes();
+
+            return true
+
+        } catch (error) {
+            console.error("Unable to set-up simulation environment")
+            toast.error(<div>An error occurred while set-up the simulation envinronment</div>)
+            this.emergencyStop = true;
             return false
         }
 
-        // Verifica se consegue puxar os nós
-        if (!this.#model || !this.#model.getNodes)
-            return false
-
-        // Obtém todos nós
-        this.#nodes = this.#model.getNodes();
-
-        return true
     }
 
     // Run simulation
-    run(){
+    run() {
 
         // Run setup first
-        if(!this.runSetup()){
+        if (!this.runSetup()) {
             return
         }
-        
+
         // Reseta a simulação
         this.resetSimulation()
 
         // Habilita a flag de simulação
         this.isSimulationRunning = true
-        
+
         // Log de simulação
         this.saveLog && console.log("==== Simulation is starting ====")
 
         // Simula
-        const sim = this.realTimeMode? this.runRealTime : this.runStandard
+        const sim = this.realTimeMode ? this.runRealTime : this.runStandard
         sim()
-        
+
     }
 
     // Simula no modo padrão
-    runStandard(){
-        
+    runStandard() {
+
         // Inicio da simulação
-        while( (this.stopTime >= this.currentTime) && (!this.emergencyStop) ){
+        while ((this.stopTime >= this.currentTime) && (!this.emergencyStop) && this.isSimulationRunning) {
             this.runStep() // Roda o passo
         }
 
@@ -83,43 +96,49 @@ class SimulationEngine {
     }
 
     // Simula com sincronismo em tempo real
-    runRealTime(){
+    runRealTime() {
 
         // Update rate of realtime
         this.stepSize = 0.2;
-        
+
         // Função para rodar
         const sync = () => {
             setTimeout(() => {
-                (!this.emergencyStop) && sync(); // Chama uma nova instância
+                (!this.emergencyStop) && this.isSimulationRunning && this.isSimulationRunning && sync(); // Chama uma nova instância
             }, this.stepSize * 1E3)
-            this.runStep()   
+            this.runStep()
         }
 
         // Inicia a simulação e só para com o emergencyStop
-        sync()        
+        sync()
 
     }
 
     // Roda um passo de simulação
-    runStep(){
+    runStep() {
 
-        // Registra o log
-        this.saveLog && console.log("Time[" + this.currentStep + "] " + this.currentTime)
+        try {
+            // Registra o log
+            this.saveLog && console.log("Time[" + this.currentStep + "] " + this.currentTime)
+            // this.saveLog && toast(`Running step for Time[${this.currentStep}]: ${this.currentTime}`)
 
-        // Procura por outputs
-        this.#nodes.filter(node => node.isTerminalBlock).map( node => {
-            node.solution() // Chama diretamente a solução
-        })
+            // Procura por outputs
+            this.#nodes.filter(node => node.isTerminalBlock).map(node => {
+                node.solution() // Chama diretamente a solução
+            })
 
-        // Incrementa o step
-        this.currentStep += 1
-        this.currentTime += this.stepSize
-
+            // Incrementa o step
+            this.currentStep += 1
+            this.currentTime += this.stepSize
+        } catch (error) {
+            this.saveLog && console.error("An error occurred during simulation step:", error);
+            toast.error(<div>An error occurred at step {this.currentStep}.<br />Did you place an output block?</div>)
+            this.emergencyStop = true;
+        }
     }
 
-    resetSimulation(){
-        
+    resetSimulation() {
+
         // Reseta o Step e o  time
         this.currentStep = 0;
         this.currentTime = 0;
@@ -130,65 +149,69 @@ class SimulationEngine {
         this.saveLog && console.clear()
 
         // Aplica o reset nos modelos que contém reset
-        this.#nodes.filter(node => node.reset).map(node => node.reset());
+        this.#nodes.filter(node => node.reset).map(node => {
+            node.isvisited = false;
+            node.reset()
+            node.update()
+        });
 
     }
 
     // Obtem o step atual
-    getCurrentStep(){
+    getCurrentStep() {
         return this.currentStep
     }
 
-    getCurrentTime(){
+    getCurrentTime() {
         return this.currentTime
     }
 
-    getStepTime(){
+    getStepTime() {
         return this.stepSize
     }
 
     // Obtem o step atual
-    getStopTime(){
-        return this.stopTime 
+    getStopTime() {
+        return this.stopTime
     }
 
     // Obtém o tempo atual 
-    getTime(){
+    getTime() {
         return this.currentTime
     }
 
     // Obtém o tempo atual 
-    getCurrentTime(){
+    getCurrentTime() {
         return this.currentTime
     }
 
-    setSimulationTime(step, stopTime){
+    setSimulationTime(step, stopTime) {
         this.stepSize = step;
         this.stopTime = stopTime;
         this.currentStep = 0;
     }
 
     // Obtém o array de tempo total
-    getTotalTimeArray(){
+    getTotalTimeArray() {
         const timeArr = [];
         const n = (this.stopTime / this.stepSize)
-        for(let s = 0; s <= n + 1; s +=1  ){
-            timeArr.push( s * this.stepSize )
+        for (let s = 0; s <= n + 1; s += 1) {
+            timeArr.push(s * this.stepSize)
         };
         return timeArr
     }
 
     // Obtém o array de tempo até o passo de simulação atual
-    getTimeArray(){
+    getTimeArray() {
         const timeArr = [];
-        for(let s = 0; s < this.currentStep; s +=1  ){
-            timeArr.push( s * this.stepSize )
+        for (let s = 0; s < this.currentStep; s += 1) {
+            timeArr.push(s * this.stepSize)
         };
         return timeArr
     }
 
     // Congela o objeto
-    freeze(){
+    freeze() {
         Object.freeze(this)
     }
 

@@ -8,9 +8,8 @@ class DisplayModel extends SimNodeModel {
     CGenUID = 'out'
     tags = ['display', 'output', 'view', 'screen', 'monitor', 'visual', 'interface']
     isTerminalBlock = true
-    settings = null
     value = null;
-            
+
     constructor(options = {}) {
         super({...options, name: 'display'});
         this.createPort('in', true);
@@ -26,6 +25,10 @@ class DisplayModel extends SimNodeModel {
         }
         this.value = 'offline'
         this.update()
+    }
+
+    reset(){
+        this.value = null
     }
 
     icon = () => <svg width={100} height={30} fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
+import { Engine } from "../nodes/nodeModel";
 
-export const Zoombar = (props) => {
-    const { engine } = props;
-
+export const Zoombar = () => {
+    
     const control = {};
 
     const getCanvasCenter = () => {
-        const { offsetWidth, offsetHeight } = engine.canvas;
+        const { offsetWidth, offsetHeight } = Engine.canvas;
         return { x: offsetWidth / 2, y: offsetHeight / 2 };
     };
 
     const screenToModel = (point) => {
-        const zoomLevel = engine.getModel().getZoomLevel() / 100;
-        const offsetX = engine.getModel().getOffsetX();
-        const offsetY = engine.getModel().getOffsetY();
+        const zoomLevel = Engine.getModel().getZoomLevel() / 100;
+        const offsetX = Engine.getModel().getOffsetX();
+        const offsetY = Engine.getModel().getOffsetY();
         return {
             x: (point.x - offsetX) / zoomLevel,
             y: (point.y - offsetY) / zoomLevel,
@@ -21,9 +21,9 @@ export const Zoombar = (props) => {
     };
 
     const modelToScreen = (point) => {
-        const zoomLevel = engine.getModel().getZoomLevel() / 100;
-        const offsetX = engine.getModel().getOffsetX();
-        const offsetY = engine.getModel().getOffsetY();
+        const zoomLevel = Engine.getModel().getZoomLevel() / 100;
+        const offsetX = Engine.getModel().getOffsetX();
+        const offsetY = Engine.getModel().getOffsetY();
         return {
             x: point.x * zoomLevel + offsetX,
             y: point.y * zoomLevel + offsetY,
@@ -31,7 +31,7 @@ export const Zoombar = (props) => {
     };
 
     useEffect(() => {
-        const model = engine.getModel();
+        const model = Engine.getModel();
 
         control.center = screenToModel(getCanvasCenter());
         control.zoomLevel = model.getZoomLevel();
@@ -40,13 +40,13 @@ export const Zoombar = (props) => {
         control.zoomReset = () => {
             model.setZoomLevel(100);
             model.setOffset(0, 0);
-            engine.repaintCanvas();
+            Engine.repaintCanvas();
         };
 
         // Fit nodes
         control.zoomFitNodes = () => {
-            engine.zoomToFitSelectedNodes();
-            engine.repaintCanvas();
+            Engine.zoomToFitSelectedNodes();
+            Engine.repaintCanvas();
         };
 
         // Zoom in and out
@@ -58,10 +58,10 @@ export const Zoombar = (props) => {
                 model.getOffsetX() + (getCanvasCenter().x - centerAfter.x),
                 model.getOffsetY() + (getCanvasCenter().y - centerAfter.y)
             );
-            engine.repaintCanvas();
+            Engine.repaintCanvas();
         };
 
-    }, [engine]);
+    }, [Engine]);
 
     const SVG = (props) => {
         const { children, onClick, title } = props;

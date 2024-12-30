@@ -135,6 +135,7 @@ class HistogramModel extends SimNodeModel {
       return (
         <div>
           <p>This block plots the input values as a histogram. You can add new input ports to plot multiple datasets and customize their names and colors.</p>
+          <p>Not compatible with Code Generation</p>
           {settings.map((setting, index) => (
             <div key={index} style={{ display: 'flex' }}>
               <InputGroup
