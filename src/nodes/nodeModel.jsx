@@ -5,6 +5,7 @@ import * as Elements from '../elements/index';
 import { useModal } from '../components/modal';
 import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory';
 import Simulation from '../simulation/core';
+import { SelectionBox } from './selection/mouse';
 
 // Cria o motor do diagrama e o Modelo
 const Engine = createEngine();
@@ -15,6 +16,7 @@ const MousePosition = { x: 0, y: 0 };
 const state = Engine.getStateMachine().getCurrentState();
 if (state instanceof DefaultDiagramState) {
     state.dragNewLink.config.allowLooseLinks = false;
+    state.dragCanvas.config.allowDrag = false; // Desativa "pan"
 }
 
 // Monitora a posição do mouse
@@ -52,6 +54,10 @@ Engine.getPortFactories().registerFactory(new RightAnglePortFactory());
 const Model = new DiagramModel();
 
 Engine.setModel(Model);
+
+
+// Passa os parâmetros necessários para o SelectionBox
+SelectionBox()
 
 // Permite utilizar atalhos
 const handleKeyDown = (event) => {  
