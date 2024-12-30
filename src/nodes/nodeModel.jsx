@@ -3,13 +3,13 @@ import { SimNodeModel } from './nodes/simNodeModel';
 import { SimNodeFactory } from './nodes/simNodeFactory';
 import * as Elements from '../elements/index';
 import { useModal } from '../components/modal';
-import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory'
+import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory';
 import Simulation from '../simulation/core';
 
 // Cria o motor do diagrama e o Modelo
 const Engine = createEngine();
-const ModelsArray = {};
-const MousePosition = { x: 0, y: 0 }
+const ModelsArray = {}; // Armazena modelos registrados com identificadores únicos
+const MousePosition = { x: 0, y: 0 };
 
 // Permite algumas opções adicionais, como previnir fio sem ligação ponto-a-ponto
 const state = Engine.getStateMachine().getCurrentState();
@@ -34,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return new ModelClass();
             }
         }
+        
+        // Adiciona o identificador único ao modelo
+        ModelClass.modelIdentifier = type;
+
         Engine.getNodeFactories().registerFactory(new ElementNodeFactory());
         ModelsArray[type] = ModelClass;
     });
@@ -51,65 +55,66 @@ Engine.setModel(Model);
 
 // Permite utilizar atalhos
 const handleKeyDown = (event) => {  
-        if (useModal.getShow)
-            return
-        const selectedEntities = Engine.getModel().getSelectedEntities();
-        switch(event.key){
-            
-            case 'c':
+    if (useModal.getShow)
+        return;
+    const selectedEntities = Engine.getModel().getSelectedEntities();
+    switch (event.key) {
+
+        case 'c':
             if (event.ctrlKey) {
                 const nodes = [];
                 selectedEntities.filter(entity => entity.CGenUID).forEach((entity) => {
-                    nodes.push(entity.constructor.name);
+                    nodes.push(entity.constructor.modelIdentifier); // Usa o identificador único
                 });
-                sessionStorage.setItem("blocks", `[${nodes.map(n => `"${n}"`).join(",")}]`);
+                sessionStorage.setItem("blocks", JSON.stringify(nodes));
             }
-            break
+            break;
 
-            case 'v':
+        case 'v':
             if (event.ctrlKey) {
-                const modelNames = JSON.parse(sessionStorage.getItem("blocks"));
-                const EngModel = Engine.getModel()
+                const modelIdentifiers = JSON.parse(sessionStorage.getItem("blocks"));
+                const EngModel = Engine.getModel();
                 const canvasRect = event.target.getBoundingClientRect();
-                modelNames.forEach((modelName, index) => {
-                    const newNode = new ModelsArray[modelName]();
+                modelIdentifiers.forEach((modelIdentifier, index) => {
+                    const ModelClass = ModelsArray[modelIdentifier];
+                    const newNode = new ModelClass();
                     newNode.setPosition(
                         MousePosition.x - canvasRect.left - newNode.width / 2 + 50 * index,
                         MousePosition.y - canvasRect.top - newNode.height / 2 + 50 * index
                     );
 
-                    // Cria IDs unicos
+                    // Cria IDs únicos
                     const existingUIDs = new Set(Model.getNodes().map(n => n.CGenUID));
                     let i = 0;
                     while (existingUIDs.has(newNode.CGenUID + i)) {
                         i++;
                     }
                     newNode.CGenUID += i;
-                    EngModel.addNode(newNode)
-                })
+                    EngModel.addNode(newNode);
+                });
 
-                Engine.repaintCanvas()
+                Engine.repaintCanvas();
                 Simulation.setModel(EngModel);
-
             }
-            break
+            break;
 
-            case 'i':
-                selectedEntities.forEach((entity) => {
-                    if ( typeof entity.flip === "boolean" ) {
-                        entity.flip = !entity.flip
-                        entity.update()
-                    }
-                })
-                break
-            case 'o':
-                Array.isArray(selectedEntities) && 
-                selectedEntities.filter(node => node.settings).map(node => node.settings())
-        }
+        case 'i':
+            selectedEntities.forEach((entity) => {
+                if (typeof entity.flip === "boolean") {
+                    entity.flip = !entity.flip;
+                    entity.update();
+                }
+            });
+            break;
+
+        case 'o':
+            Array.isArray(selectedEntities) && 
+            selectedEntities.filter(node => node.settings).forEach(node => node.settings());
+            break;
     }
+};
 
-    // Add evento para monitorar os blocos
+// Adiciona evento para monitorar os blocos
 window.addEventListener('keydown', event => handleKeyDown(event));
-
 
 export { Engine, Model, SimNodeModel };
