@@ -22,6 +22,15 @@
   }
 }
 
+.flex,.d-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.none,.d-none {
+  display: none;
+}
+
 .btn {
   border: 0 px;
   border-radius: 6px;
@@ -40,9 +49,9 @@
 }
 
 .btn-professional {
-  border: 1px solid #007bff;
+  border: none;
   border-radius: 4px;
-  background: linear-gradient(90deg, #007bff, #0056b3);
+  background: linear-gradient(90deg, #6a0dad, #4b0082);
   padding: 10px 20px;
   color: white;
   font-size: 16px;
@@ -51,13 +60,17 @@
 }
 
 .btn-professional:hover {
-  background: linear-gradient(90deg, #0056b3, #007bff);
+  background: linear-gradient(90deg, #4b0082, #6a0dad);
   transform: scale(1.05);
 }
 
 .btn-professional:active {
-  background: linear-gradient(90deg, #004085, #0056b3);
+  background: linear-gradient(90deg, #3b0061, #4b0082);
   transform: scale(0.95);
+}
+
+.btn-sm {
+  padding: 4px 8px;
 }
 
 

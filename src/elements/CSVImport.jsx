@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
-
+import { toast } from 'react-toastify';
 const generateSampleCSV = () => {
   const sampleData = `Time,Sensor1,Sensor2,Sensor3\n0,10.5,20.1,5.0\n1,12.3,21.5,5.5\n2,14.8,19.8,5.7\n3,15.0,18.6,6.0\n4,16.5,22.0,6.2`;
   const blob = new Blob([sampleData], { type: 'text/csv' });
@@ -37,13 +37,18 @@ class ImportCSVModel extends SimNodeModel {
   loadCSV(file, setColumns) {
 
     if (!file.name.endsWith('.csv')) {
-      alert('Please upload a valid CSV file.');
+      toast.warning('Please upload a valid CSV file.', {autoClose: false})
       return;
     }
 
     const reader = new FileReader();
     reader.onload = (event) => {
       const rows = event.target.result.split('\n').map((row) => row.split(','));
+
+      if(!rows[0].includes("Time")){
+        toast.warning('Your CSV must have a column named "Time".', {autoClose: false})
+        return
+      }
 
       // Create a map with column names and values
       this.columnNames = rows[0];
@@ -124,8 +129,10 @@ class ImportCSVModel extends SimNodeModel {
         <div>
           <p>This block imports values from a CSV file. Each column generates an output port.</p>
           <p>You must have a column named "Time" in your CSV file</p>
-          <input type="file" accept=".csv" className="btn" onChange={handleFileChange} />
-          {!columns.length && <button className="btn" onClick={generateSampleCSV}>Get a sample CSV</button>}
+          <div className='flex'>
+          <input type="file" accept=".csv" className="btn-professional btn-sm" onChange={handleFileChange} />
+          {!columns.length && <button className="btn-professional btn-sm" onClick={generateSampleCSV}>Get a sample CSV</button>}
+          </div>
           {columns.length > 0 && (
             <div>
               <h4>Generated Output Ports:</h4>

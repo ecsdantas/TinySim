@@ -1,14 +1,26 @@
-import React, { useEffect } from "react";
-import { Engine } from "../nodes/nodeModel";
+import React, { useEffect, useState } from "react";
+import { Model, Engine } from "../nodes/nodeModel";
 
 export const Zoombar = () => {
-    
-    const control = {};
+    const [control, setControl] = useState({
+        showInfo: false,
+        center: { x: 0, y: 0 },
+        zoomLevel: 100,
+    });
 
-    const getCanvasCenter = () => {
-        const { offsetWidth, offsetHeight } = Engine.canvas;
-        return { x: offsetWidth / 2, y: offsetHeight / 2 };
-    };
+    useEffect(() => {
+        if (!Engine.canvas) return;
+
+        const updateControl = () => {
+            setControl({
+                center: screenToModel(getCanvasCenter()),
+                zoomLevel: Model.getZoomLevel(),
+            });
+        };
+
+        updateControl();
+        Engine.repaintCanvas();
+    }, []);
 
     const screenToModel = (point) => {
         const zoomLevel = Engine.getModel().getZoomLevel() / 100;
@@ -18,6 +30,11 @@ export const Zoombar = () => {
             x: (point.x - offsetX) / zoomLevel,
             y: (point.y - offsetY) / zoomLevel,
         };
+    };
+
+    const getCanvasCenter = () => {
+        const { offsetWidth, offsetHeight } = Engine.canvas;
+        return { x: offsetWidth / 2, y: offsetHeight / 2 };
     };
 
     const modelToScreen = (point) => {
@@ -30,69 +47,71 @@ export const Zoombar = () => {
         };
     };
 
-    useEffect(() => {
-        const model = Engine.getModel();
-
-        control.center = screenToModel(getCanvasCenter());
-        control.zoomLevel = model.getZoomLevel();
-
-        // Zoom reset
-        control.zoomReset = () => {
-            model.setZoomLevel(100);
-            model.setOffset(0, 0);
-            Engine.repaintCanvas();
-        };
-
-        // Fit nodes
-        control.zoomFitNodes = () => {
-            Engine.zoomToFitSelectedNodes();
-            Engine.repaintCanvas();
-        };
-
-        // Zoom in and out
-        control.zoomIn = (zoomValue) => {
-            const centerBefore = screenToModel(getCanvasCenter());
-            model.setZoomLevel(model.getZoomLevel() * (1 + zoomValue));
-            const centerAfter = modelToScreen(centerBefore);
-            model.setOffset(
-                model.getOffsetX() + (getCanvasCenter().x - centerAfter.x),
-                model.getOffsetY() + (getCanvasCenter().y - centerAfter.y)
-            );
-            Engine.repaintCanvas();
-        };
-
-    }, [Engine]);
-
-    const SVG = (props) => {
-        const { children, onClick, title } = props;
-        return (
-            <button onClick={onClick} title={title} style={{ background: "none", border: "none", padding: 0 }}>
-                <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg">
-                    {children}
-                </svg>
-            </button>
-        );
+    const zoomReset = () => {
+        Model.setZoomLevel(100);
+        Model.setOffset(0, 0);
+        Engine.repaintCanvas();
+        setControl({
+            center: screenToModel(getCanvasCenter()),
+            zoomLevel: 100,
+        });
     };
+
+    const zoomFitNodes = () => {
+        Engine.zoomToFitSelectedNodes();
+        Engine.repaintCanvas();
+        setControl({
+            center: screenToModel(getCanvasCenter()),
+            zoomLevel: Model.getZoomLevel(),
+        });
+    };
+
+    const zoomIn = (zoomValue) => {
+        const centerBefore = screenToModel(getCanvasCenter());
+        Model.setZoomLevel(Model.getZoomLevel() * (1 + zoomValue));
+        const centerAfter = modelToScreen(centerBefore);
+        Model.setOffset(
+            Model.getOffsetX() + (getCanvasCenter().x - centerAfter.x),
+            Model.getOffsetY() + (getCanvasCenter().y - centerAfter.y)
+        );
+        Engine.repaintCanvas();
+        setControl({
+            center: screenToModel(getCanvasCenter()),
+            zoomLevel: Model.getZoomLevel(),
+        });
+    };
+
+    const SVG = ({ children, onClick, title }) => (
+        <button onClick={onClick} title={title} style={{ background: "none", border: "none", padding: 0 }}>
+            <svg width={24} height={24} fill="none" xmlns="http://www.w3.org/2000/svg">
+                {children}
+            </svg>
+        </button>
+    );
 
     return (
         <div className="zoombar">
-            <SVG onClick={() => control.zoomIn(0.2)} title="Mouse wheel counterclockwise">
+            { control.showInfo && <div>
+                <small>Zoom Level: {control.zoomLevel}%<br />
+                    Center: ({control.center.x.toFixed(2)}, {control.center.y.toFixed(2)})
+                </small>
+            </div>}
+            <SVG onClick={() => zoomIn(0.2)} title="Mouse wheel counterclockwise">
                 <circle cx="10" cy="10" r="6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M15 15L19 19" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M8 10H10M12 10H10M10 10V8M10 10V12" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </SVG>
-            <SVG onClick={() => control.zoomIn(-0.2)} title="Mouse wheel clockwise">
+            <SVG onClick={() => zoomIn(-0.2)} title="Mouse wheel clockwise">
                 <circle cx="10" cy="10" r="6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M15 15L19 19" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M8 10H10H12" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </SVG>
-            { /*
-            <SVG onClick={() => control.zoomFitNodes()} title="Fit nodes">
-                <path d="M4 15V18C4 19 5 20 6 20H9M15 20H18C19 20 20 19 20 18V15M20 9V6C20 5 19 4 18 4H15M4 9V6C4 5 5 4 6 4H9" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </SVG>
-             */}
-            <SVG onClick={() => control.zoomReset()} title="Reset zoom">
+            <SVG onClick={zoomReset} title="Reset zoom">
                 <path d="M15 4V7C15 8 16 9 17 9H20M9 4V7C9 8 8 9 7 9H4M15 20V17C15 16 16 15 17 15H20M9 20V17C9 16 8 15 7 15H4" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </SVG>
+            <SVG onClick={() => setControl(old => ({...old, showInfo: !old.showInfo}))} title="Information">
+                <circle cx="12" cy="12" r="8" stroke="#000000" fill={ control.showInfo? "#000000" : "none" } strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M12 16V12M12 8H12.01" stroke={ control.showInfo? "#FFFFFF" : "#000000" } strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </SVG>
         </div>
     );
