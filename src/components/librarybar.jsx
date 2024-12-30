@@ -1,5 +1,6 @@
 import React from "react";
 import * as Elements from "../elements";
+import { Engine } from "../nodes/nodeModel";
 
 const ModelsArray = Object.entries(Elements)
 
@@ -53,9 +54,17 @@ export const LibraryList = () => {
         event.target.style.transform = '';
     };
 
+    const preventChanges = () => {
+        const selectedEntities = Engine.getModel().getSelectedEntities();
+        selectedEntities.forEach((entity) => {
+            entity.setSelected(false);
+        });
+        Engine.repaintCanvas();
+    }
+
     return (
         <div className="library-container">
-            <input className="search" value={getSearch} onChange={(e) => setSearch(e.target.value)}/>
+            <input className="search" value={getSearch} onChange={(e) => setSearch(e.target.value)} onFocus={ preventChanges }/>
             <div className="library">
                 {ModelsArray.filter(([modelName, ModelClass]) => {
                     const Model = new ModelClass();

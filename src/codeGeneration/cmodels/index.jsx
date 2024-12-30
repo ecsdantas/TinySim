@@ -33,6 +33,19 @@ import { PlotModel } from "./cmodel_plot";
 import { PiModel } from "./cmodel_constantPI";
 import { SqrtModel } from "./cmodel_sqrt";
 
+import { IsEvenModel } from "./cmodel_isEven";
+import { IsOddModel } from "./cmodel_isOdd";
+import { AndModel } from "./cmodel_logicAND";
+import { OrModel } from "./cmodel_logicOR";
+import { NotModel } from "./cmodel_logicNOT";
+import { NandModel } from "./cmodel_logicNAND"; 
+import { NorModel } from "./cmodel_logicNOR";   
+import { XorModel } from "./cmodel_logicXOR";   
+import { XnorModel } from "./cmodel_logicXNOR";
+
+import { RepeatingSequenceModel } from "./cmodel_repeatingSequence";
+import { ModModel } from "./cmodel_mod";
+
 
 export { 
     AddModel, 
@@ -40,6 +53,7 @@ export {
     ConstantModel, 
     DisplayModel, 
     DivideModel, 
+    ModModel,
     MultiplyModel,
     SqrtModel,
     ClockModel, 
@@ -68,5 +82,15 @@ export {
     ExportCSVModel,
     GaugeModel,
     PlotModel,
-    PiModel
+    PiModel,
+    IsEvenModel,
+    IsOddModel,
+    AndModel,
+    OrModel,
+    NotModel,
+    NandModel,
+    NorModel,
+    XorModel,
+    XnorModel,
+    RepeatingSequenceModel
 }

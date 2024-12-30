@@ -6,7 +6,7 @@ class NotModel extends SimNodeModel {
 
     kind = 'NOT';
     CGenUID = 'not';
-    tags = ['logic', 'not', 'operation', 'value', 'boolean'];
+    tags = ['logic', 'not', 'operation', 'value', 'boolean', 'inverter', 'invert', 'inversor'];
 
     constructor(options = {}) {
         super({ ...options, name: 'not' });

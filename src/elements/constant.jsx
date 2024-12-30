@@ -10,7 +10,7 @@ class ConstantModel extends SimNodeModel {
     tags = ['constant', 'fix', 'input', 'number', 'static', 'value']
     value = 0
 
-    constructor(options = {}, value = 22456) {
+    constructor(options = {}, value = 10) {
         super({ ...options, name: 'constant' });
 
         // Create the ports of add model
@@ -29,7 +29,7 @@ class ConstantModel extends SimNodeModel {
         const fontSize = [12, 12, 11, 9, 7].at(selector) ?? 7;
         return (<svg width="40" height="32" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000" strokeWidth={1} strokeLinejoin="round">
             <rect x="1" y="1" width="27" height="21" />
-            <text x={14.2} y={15} fontFamily="Segoe UI" fontSize={fontSize} textAnchor="middle" stroke='none' fill="#000000">
+            <text x={14.2} y={15} fontFamily="Arial" fontSize={fontSize} textAnchor="middle" stroke='none' fill="#000000">
                 { selector > 4? text.slice(0, 4) + '...' : text }
             </text>
         </svg>)

@@ -23,10 +23,10 @@ class NandModel extends SimNodeModel {
         for (let i = 0; i < this.getInPorts().length; i++) {
             const input = this.getNodeByInput(i);
             if (input && input.solve) {
-                result = result && (input.solve() > 0);
+                result &= (input.solve() > 0);
             }
         }
-        return { 'out': !result };
+        return { 'out': result? 0 : 1 };
     }
 
     icon = () => (

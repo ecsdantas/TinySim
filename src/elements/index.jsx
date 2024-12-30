@@ -47,6 +47,10 @@ import ZOHModel from "./zoh";
 import ZeroOrderModel from "./zo";
 import PiModel from "./constantPI";
 import SqrtModel from "./sqrt";
+import ModModel from "./mod";
+import IsEvenModel from "./isEven";
+import IsOddModel from "./isOdd";
+import RepeatingSequenceModel from "./repeatSequence";
 
 export { 
     ConstantModel,
@@ -54,6 +58,7 @@ export {
     AddModel,
     SubModel,
     DivideModel,
+    ModModel,
     MultiplyModel,
     SqrtModel,
     ClockModel,
@@ -91,4 +96,7 @@ export {
     NandModel,
     XorModel,
     XnorModel,
+    IsEvenModel,
+    IsOddModel,
+    RepeatingSequenceModel,
 }
