@@ -130,7 +130,7 @@ const handleKeyDown = (event) => {
         case 'z':
             // event.ctrlKey && !event.shiftKey && stackManager.undoLastAction();
             // event.ctrlKey && event.shiftKey && stackManager.redoLastAction();
-            event.ctrlKey && toast.info("We don't have undo or redo yet.")
+            event.ctrlKey && toast.warning("We don't have undo or redo. Sorry")
             break;
 
         case '3':

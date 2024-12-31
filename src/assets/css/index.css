@@ -164,3 +164,37 @@
   padding: 10px;
   border-radius: 5px;
 }
+
+
+
+
+
+
+ul.sample {
+  display: flex;
+  flex-direction: column;
+  height: 50vh;
+  overflow-y: auto;
+  width: 500px;
+  margin: 10px 0px;
+  padding: 0;
+  gap: 5px;
+}
+
+
+
+ul.sample li.sample-item {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 5px 10px;
+  margin: 0;
+  padding: 4px 5px;
+  border: 1px dashed gray;
+  align-items: center;
+}
+
+ul.sample li.sample-item:hover {
+  background-color: rgb(215, 245, 169);
+  cursor: pointer;
+}

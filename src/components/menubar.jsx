@@ -13,7 +13,7 @@ import CodeGeneration  from "../codeGeneration/codeGen"
 import { Engine } from "../nodes/nodeModel"
 import Simulation from "../simulation/core"
 import JSZip from "jszip";
-
+import { Samples } from "./samples"
 
 const iconSizes = { width: 28, height: 28 }
 
@@ -80,7 +80,7 @@ const FileMenu = () => {
         <div className="dropdown dropup">
             <img src={fileSVG} {...iconSizes} onClick={() => setShowDropdown(prev => !prev)} title="File options"/>
             <ul className={`dropdown-menu ${showDropdown ? 'show' : ''}`} onMouseLeave={() => setShowDropdown(false)} onClick={ () => setShowDropdown(false) }>
-                <li><img src={BoxSVG} {...menuIconSizes} title={'Load a sample diagram'} /> Samples diagram</li>
+                <li onClick={Samples}><img src={BoxSVG} {...menuIconSizes} title={'Load a sample diagram'} /> Samples diagram</li>
                 <hr className="dropdown-divider" />
                 <li onClick={load} ><img src={uploadSVG} {...menuIconSizes} title={'Load'} /> Load diagram</li>
                 <li onClick={save} ><img src={downloadSVG} {...menuIconSizes} title={'Save'} /> Download diagram</li>

@@ -4,7 +4,7 @@ const Modal = {}
 const useModal = {}
 
 useModal.configure = (block, title, body, show) => {
-    block.setSelected(false)
+    block?.setSelected(false)
     useModal.setTitle(title)
     useModal.setContent(body)
     useModal.setShow(show)

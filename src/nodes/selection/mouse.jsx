@@ -42,7 +42,7 @@ export const SelectionBox = () => {
         selectionBox = document.createElement("div");
         Object.assign(selectionBox.style, {
             position: "absolute",
-            border: "1px dashed #000",
+            border: "2px solid rgba(51, 51, 234, 0.82)",
             backgroundColor: "rgba(0, 0, 255, 0.2)",
             pointerEvents: "none"
         });

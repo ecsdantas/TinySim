@@ -1,0 +1,70 @@
+{
+    "samples": [
+        {
+            "name": "Logic Gates",
+            "description": "Explore the functionality and behavior of basic logic gates, including AND, OR, NOT, NAND, NOR, XOR, and XNOR, through interactive demonstrations.",
+            "image": "/samples/logicgates.png",
+            "url": "/samples/logicgates.tsim"
+        },
+        {
+            "name": "Plot Signals",
+            "description": "Learn how to visualize and analyze signal data by plotting dynamic waveforms and graphs in this simple example.",
+            "image": "/samples/basicplot.png",
+            "url": "/samples/basicplot.tsim"
+        },
+        {
+            "name": "Basic Feedback",
+            "description": "Explore the principles of feedback systems and learn how to implement a basic feedback loop for computational tasks.",
+            "image": "/samples/basicfeedback.png",
+            "url": "/samples/basicfeedback.tsim"
+        },
+        {
+            "name": "Computing PI",
+            "description": "Discover a mathematical approach to calculate the value of the constant \u03c0 (PI) using iterative or statistical methods.",
+            "image": "/samples/computepi.png",
+            "url": "/samples/computepi.tsim"
+        },
+        {
+            "name": "CSV Data Processing",
+            "description": "Understand how to efficiently import, process, and export data using CSV files in this practical demonstration.",
+            "image": "",
+            "url": ""
+        },
+        {
+            "name": "First Order & Second Order Models",
+            "description": "Analyze and simulate the dynamic behavior of first-order and second-order systems with step response and parameter variations.",
+            "image": "",
+            "url": ""
+        },
+        {
+            "name": "Gaussian Distribution",
+            "description": "Understand the emergence of Gaussian distribution by summing uniform random variables in this illustrative example.",
+            "image": "",
+            "url": ""
+        },
+        {
+            "name": "Proportional, Integral, and Derivative Control",
+            "description": "Implement and compare the effects of P, I, and D control strategies on a first-order system, demonstrating the principles of PID control.",
+            "image": "",
+            "url": ""
+        },
+        {
+            "name": "SAR ADC",
+            "description": "Learn the working mechanism of a Successive Approximation Register (SAR) Analog-to-Digital Converter through this detailed example.",
+            "image": "",
+            "url": ""
+        },
+        {
+            "name": "Hamming Code",
+            "description": "Understand error detection and correction by exploring the schematic and operation of Hamming code in communication systems.",
+            "image": "",
+            "url": ""
+        },
+        {
+            "name": "3-Bit Binary Adder",
+            "description": "Design and simulate the operation of a 3-bit binary adder, showcasing how binary addition is performed electronically.",
+            "image": "",
+            "url": ""
+        }
+    ]
+}
