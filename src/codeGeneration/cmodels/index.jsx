@@ -46,6 +46,7 @@ import { XnorModel } from "./cmodel_logicXNOR";
 import { RepeatingSequenceModel } from "./cmodel_repeatingSequence";
 import { ModModel } from "./cmodel_mod";
 import { HistogramModel } from "./cmodel_histogram";
+import { RelationalConstantOperatorModel } from "./cmodel_comparatorConstant"
 
 export { 
     AddModel, 
@@ -78,6 +79,7 @@ export {
     SaturationModel,
     RandomNumberModel,
     RelationalOperatorModel,
+    RelationalConstantOperatorModel,
     ImportCSVModel,
     ExportCSVModel,
     GaugeModel,

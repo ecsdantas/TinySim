@@ -20,6 +20,7 @@ import LookupTableModel from "./lookupTable";
 import RandomNumberModel from "./random";
 import RoundModel from "./round";
 import RelationalOperatorModel from "./comparator";
+import RelationalConstantOperatorModel from "./comparatorConstante";
 import MinModel from "./min";
 import MaxModel from "./max";
 import ExportCSVModel from "./CSVExport";
@@ -85,6 +86,7 @@ export {
     SaturationModel,
     RandomNumberModel,
     RelationalOperatorModel,
+    RelationalConstantOperatorModel,
     ImportCSVModel,
     ExportCSVModel,
     GaugeModel,

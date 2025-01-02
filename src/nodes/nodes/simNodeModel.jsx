@@ -72,7 +72,7 @@ class SimNodeModel extends DefaultNodeModel {
 
     // Basic solution
     solution(){
-        return {'portLabel': 0}
+        return {'out': 0}
     }
 
     // Reset
@@ -126,7 +126,7 @@ class SimNodeModel extends DefaultNodeModel {
     deserialize(event) {
         super.deserialize(event);
         this.CGenUID = event.data.CGenUID
-        
+        this.flip = event.data.flip
     }
     
 }

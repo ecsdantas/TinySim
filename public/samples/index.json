@@ -51,20 +51,8 @@
         {
             "name": "SAR ADC",
             "description": "Learn the working mechanism of a Successive Approximation Register (SAR) Analog-to-Digital Converter through this detailed example.",
-            "image": "",
-            "url": ""
-        },
-        {
-            "name": "Hamming Code",
-            "description": "Understand error detection and correction by exploring the schematic and operation of Hamming code in communication systems.",
-            "image": "",
-            "url": ""
-        },
-        {
-            "name": "3-Bit Binary Adder",
-            "description": "Design and simulate the operation of a 3-bit binary adder, showcasing how binary addition is performed electronically.",
-            "image": "",
-            "url": ""
+            "image": "/samples/sar.png",
+            "url": "/samples/sar.tsim"
         }
     ]
 }
