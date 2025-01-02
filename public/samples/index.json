@@ -27,26 +27,26 @@
         {
             "name": "CSV Data Processing",
             "description": "Understand how to efficiently import, process, and export data using CSV files in this practical demonstration.",
-            "image": "",
-            "url": ""
+            "image": "/samples/csvExample.png",
+            "url": "/samples/csvExample.tsim"
         },
         {
             "name": "First Order & Second Order Models",
             "description": "Analyze and simulate the dynamic behavior of first-order and second-order systems with step response and parameter variations.",
-            "image": "",
-            "url": ""
+            "image": "/samples/laplace.png",
+            "url": "/samples/laplace.tsim"
         },
         {
             "name": "Gaussian Distribution",
             "description": "Understand the emergence of Gaussian distribution by summing uniform random variables in this illustrative example.",
-            "image": "",
-            "url": ""
+            "image": "/samples/gaussian.png",
+            "url": "/samples/gaussian.tsim"
         },
         {
             "name": "Proportional, Integral, and Derivative Control",
             "description": "Implement and compare the effects of P, I, and D control strategies on a first-order system, demonstrating the principles of PID control.",
-            "image": "",
-            "url": ""
+            "image": "/samples/pid.png",
+            "url": "/samples/pid.tsim"
         },
         {
             "name": "SAR ADC",

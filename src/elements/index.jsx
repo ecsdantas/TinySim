@@ -99,4 +99,5 @@ export {
     IsEvenModel,
     IsOddModel,
     RepeatingSequenceModel,
+    HistogramModel
 }

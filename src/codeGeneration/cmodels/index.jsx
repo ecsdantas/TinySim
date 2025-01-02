@@ -45,7 +45,7 @@ import { XnorModel } from "./cmodel_logicXNOR";
 
 import { RepeatingSequenceModel } from "./cmodel_repeatingSequence";
 import { ModModel } from "./cmodel_mod";
-
+import { HistogramModel } from "./cmodel_histogram";
 
 export { 
     AddModel, 
@@ -92,5 +92,6 @@ export {
     NorModel,
     XorModel,
     XnorModel,
-    RepeatingSequenceModel
+    RepeatingSequenceModel,
+    HistogramModel
 }
