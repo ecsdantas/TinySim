@@ -11,6 +11,7 @@ import './assets/css/index.css'
 import './assets/css/dropdown.css'
 import './assets/css/editor.css'
 import './assets/css/toasty.css'
+import './assets/css/animation.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <App />

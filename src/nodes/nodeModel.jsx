@@ -8,6 +8,7 @@ import Simulation from '../simulation/core';
 import { SelectionBox } from './selection/mouse';
 import Stack from './stack/stack';
 import { toast } from 'react-toastify';
+import BezierLinkFactory from './links/bezierLinkFactory';
 
 
 // Cria o motor do diagrama e o Modelo
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return new ModelClass();
             }
         }
-        
+
         // Adiciona o identificador único ao modelo
         ModelClass.modelIdentifier = type;
 
@@ -55,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Registra demais blocos
 Engine.getNodeFactories().registerFactory(new SimNodeFactory());
 Engine.getLinkFactories().registerFactory(new RightAngleLinkFactory());
+Engine.getLinkFactories().registerFactory(new BezierLinkFactory());
 Engine.getPortFactories().registerFactory(new RightAnglePortFactory());
 
 // Cria o digrama e o modelo
@@ -65,7 +67,7 @@ Engine.setModel(Model);
 // const stackManager = new Stack(Engine, Simulation);
 
 // Permite utilizar atalhos
-const handleKeyDown = (event) => {  
+const handleKeyDown = (event) => {
     if (useModal.getShow)
         return;
     const selectedEntities = Engine.getModel().getSelectedEntities();
@@ -119,8 +121,8 @@ const handleKeyDown = (event) => {
             break;
 
         case 'o':
-            Array.isArray(selectedEntities) && 
-            selectedEntities.filter(node => node.settings).forEach(node => node.settings());
+            Array.isArray(selectedEntities) &&
+                selectedEntities.filter(node => node.settings).forEach(node => node.settings());
             break;
 
         case 'x':
@@ -140,7 +142,7 @@ const handleKeyDown = (event) => {
         case '2':
             event.altKey && Simulation.runStep()
             break;
-    
+
         case '1':
             event.altKey && Simulation.run()
             break;

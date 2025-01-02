@@ -1,0 +1,157 @@
+import { DefaultLinkModel, PointModel } from '@projectstorm/react-diagrams';
+import React from 'react';
+
+class BezierLinkModel extends DefaultLinkModel {
+    constructor() {
+        super({ type: 'bezier' });
+        this.points.forEach(point => (point.isPort = true));
+        this.initialPointPositions = []; // Armazena as posições iniciais dos pontos durante o drag
+        window.p = this.points
+    }
+
+    computeCurvature(dx, dy) {
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+        return [{ angle: 2, curvature: 0 }, { angle: 10, curvature: 0.05 }, { angle: 30, curvature: 0.20 }, { angle: 50, curvature: 0.3 }].find(ob => Math.abs(ob.angle) < Math.abs(angle))?.curvature || 0.5;
+    }
+
+    getPath() {
+        if (!this.sourcePort) return [];
+
+        const paths = [];
+        const pathCompute = (sourcePoint, targetPoint) => {
+            if (!sourcePoint || !targetPoint) return;
+
+            const dx = targetPoint.x - sourcePoint.x;
+            const dy = targetPoint.y - sourcePoint.y;
+            const curvature = this.computeCurvature(dx, dy);
+
+            const control1 = { x: sourcePoint.x + curvature * dx, y: sourcePoint.y };
+            const control2 = { x: targetPoint.x - curvature * dx, y: targetPoint.y };
+            
+            paths.push(`M ${sourcePoint.x} ${sourcePoint.y} C ${control1.x} ${control1.y}, ${control2.x} ${control2.y}, ${targetPoint.x} ${targetPoint.y}`);
+        };
+
+        const sourcePosition = this.getPortPosition(this.sourcePort);
+        const targetPosition = this.targetPort ? this.getPortPosition(this.targetPort) : this.points[this.points.length - 1]?.getPosition();
+
+        if (!sourcePosition || !targetPosition) return paths;
+
+        const points = [sourcePosition, ...this.getIntermediatePoints(), targetPosition];
+        for (let i = 0; i < points.length - 1; i++) {
+            pathCompute(points[i], points[i + 1]);
+        }
+
+        return paths;
+    }
+
+    getPortPosition(port) {
+        const position = port.getPosition();
+        return {
+            x: position.x + port.width / 2,
+            y: position.y + port.height / 2,
+        };
+    }
+
+    getIntermediatePoints() {
+        // Previne erros em caso de pontos criados fora do canvas
+        this.points = this.points.filter((point, index) => {
+            const pos = point.getPosition();
+            return point.isPort || (pos && !isNaN(pos.x) && !isNaN(pos.y) && pos.x > 0 && pos.y > 0);
+        });
+        return this.points.filter(point => !point.isPort).map(point => point.getPosition()).filter(pos => pos && !isNaN(pos.x) && !isNaN(pos.y));
+    }
+
+    addPoint(point) {
+        const dist = 50;
+        if (!point?.x || !point?.y || typeof point.x !== 'number' || point.x <= 0 || typeof point.y !== 'number' || point.y <= 0) return;
+
+        const isNear = this.points.some(
+            p =>
+                !p.isPort &&
+                Math.hypot(p.getPosition().x - point.x, p.getPosition().y - point.y) < dist
+        );
+
+        if (isNear) return;
+
+        const newPoint = new PointModel(this);
+        newPoint.setPosition(point.x, point.y);
+        newPoint.isLocked = () => false;
+        newPoint.setSelected(true);
+        super.addPoint(newPoint);
+        this.points.sort((a, b) => a.getPosition().x - b.getPosition().x);
+
+    }
+
+    handleDoubleClick = (event) => {
+        this.addPoint({ x: event.clientX, y: event.clientY });
+    };
+
+    handleDragStart = () => {
+        // Salva as posições iniciais dos pontos
+        this.initialPointPositions = this.points.map(point => ({ ...point.getPosition() }));
+    };
+
+    handleDrag = (event, initialOffset) => {
+        const dx = event.clientX - initialOffset.x;
+        const dy = event.clientY - initialOffset.y;
+
+        this.points.forEach((point, index) => {
+            const initialPosition = this.initialPointPositions[index];
+            point.setPosition({
+                x: initialPosition.x + dx,
+                y: initialPosition.y + dy
+            });
+        });
+    };
+
+    RenderPoints = () => {
+        return this.isSelected() &&
+            this.getPoints()
+                .filter(point => !point.isPort)
+                .map((point, index) => 
+                    { 
+                    const pos = { x: point.getPosition().x, y: point.getPosition().y };
+                    return pos.x > 0 && pos.y > 0 && <circle
+                        key={`point-${index}`}
+                        cx={point.getPosition().x}
+                        cy={point.getPosition().y}
+                        //onClick={() => point.setSelected(true)}
+                        onPointerMove={event => point.setPosition(event.clientX, event.clientY)}
+                        r={8}
+                        fill={point.isSelected() ? 'rgba(30, 30, 200, 0.5)' : 'rgba(0, 0, 0, 1)'}
+                        style={{ pointerEvents: 'all' }}
+                    />}
+                );
+    };
+
+    RenderPaths = () => {
+        return this.getPath().map((path, index) => (
+            <path
+            key={`link-${index}`}
+            d={path || 'M 0 0 L 1 1'}
+            stroke={this.isSelected() ? 'rgba(30, 30, 200, 0.5)' : 'rgba(30, 30, 30, 0.5)'}
+            strokeWidth="4"
+            fill="none"
+            strokeDasharray={this.isSelected() ? '20,5' : '0'}
+            style={{
+                pointerEvents: 'all',
+                animation: `${this.isSelected() ? 'dashAnimation 5s linear infinite' : 'none'}`
+            }}
+            onDoubleClick={this.handleDoubleClick}
+            onPointerDown={event => {
+                const initialOffset = { x: event.clientX, y: event.clientY };
+                this.handleDragStart();
+                const moveHandler = moveEvent => this.handleDrag(moveEvent, initialOffset);
+                const upHandler = () => {
+                window.removeEventListener('pointermove', moveHandler);
+                window.removeEventListener('pointerup', upHandler);
+                };
+                window.addEventListener('pointermove', moveHandler);
+                window.addEventListener('pointerup', upHandler);
+            }}
+            />
+        ));
+    };
+}
+
+export { BezierLinkModel };

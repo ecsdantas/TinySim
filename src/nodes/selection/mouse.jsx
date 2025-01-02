@@ -74,6 +74,7 @@ export const SelectionBox = () => {
         Model.getLinks().map(link => {
             const linkPoints = link.getBoundingBox().getPoints()
             link.setSelected(linkPoints.some(p => isInside(p)))
+            link.getPoints().map(point => point.setSelected(true))
         })
 
         canvas.removeChild(selectionBox); // Remove o elemento do canvas

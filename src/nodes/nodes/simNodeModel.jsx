@@ -4,7 +4,8 @@ import {
     RightAngleLinkModel
 } from '@projectstorm/react-diagrams';
 import Simulation from '../../simulation/core';
-import { RightAnglePortModel } from '../ports/rightAnglePortModel'
+// import { RightAnglePortModel } from '../ports/rightAnglePortModel'
+import { BezierPortModel } from '../ports/bezierPortModel'
 
 class SimNodeModel extends DefaultNodeModel {
 
@@ -45,7 +46,7 @@ class SimNodeModel extends DefaultNodeModel {
 
     // Creates a new port
     createPort(label, isInput = false) {
-        const port = new DefaultPortModel({ // RightAnglePortModel
+        const port = new BezierPortModel({ // DefaultPortModel or RightAnglePortModel
             in: isInput,
             name: label,
         });
