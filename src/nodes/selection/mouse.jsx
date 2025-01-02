@@ -30,8 +30,8 @@ export const SelectionBox = () => {
         if (!canvas) return;
 
         const targetElement = event.target;
-        if (!canvas.contains(targetElement) || targetElement.classList.contains("node") || targetElement.closest(".node")) {
-            // Não ativa o retângulo se o clique for sobre um bloco ou elemento interativo
+        if (!canvas.contains(targetElement) || targetElement.classList.contains("node") || targetElement.closest(".node") || targetElement.tagName === "circle") {
+            // Não ativa o retângulo se o clique for sobre um bloco, ponto ou elemento interativo
             return;
         }
 
