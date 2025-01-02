@@ -9,7 +9,7 @@ import { SelectionBox } from './selection/mouse';
 import Stack from './stack/stack';
 import { toast } from 'react-toastify';
 import BezierLinkFactory from './links/bezierLinkFactory';
-
+import { BezierPortFactory } from './ports/bezierPortFactory';
 
 // Cria o motor do diagrama e o Modelo
 const Engine = createEngine();
@@ -58,6 +58,7 @@ Engine.getNodeFactories().registerFactory(new SimNodeFactory());
 Engine.getLinkFactories().registerFactory(new RightAngleLinkFactory());
 Engine.getLinkFactories().registerFactory(new BezierLinkFactory());
 Engine.getPortFactories().registerFactory(new RightAnglePortFactory());
+Engine.getPortFactories().registerFactory(new BezierPortFactory());
 
 // Cria o digrama e o modelo
 const Model = new DiagramModel();

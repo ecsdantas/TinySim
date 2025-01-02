@@ -1,5 +1,6 @@
 import { DefaultLinkFactory } from '@projectstorm/react-diagrams';
 import BezierLinkWidget from './bezierWidget';
+import { BezierLinkModel } from './bezierLinks';
 
 class BezierLinkFactory extends DefaultLinkFactory {
     constructor() {
