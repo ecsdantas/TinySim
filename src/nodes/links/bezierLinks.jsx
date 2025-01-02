@@ -66,7 +66,7 @@ class BezierLinkModel extends DefaultLinkModel {
         // Previne erros em caso de pontos criados fora do canvas
         this.points = this.points.filter((point, index) => {
             const pos = point.getPosition();
-            const isValid = point.isPort || (pos && !isNaN(pos.x) && !isNaN(pos.y) && pos.x > 0 && pos.y > 0);
+            const isValid = point.isPort || (pos && !isNaN(pos.x) && !isNaN(pos.y) && typeof pos.x === 'number' && typeof pos.y === 'number');
             if (!isValid) {
                 console.log('Excluded points:', point);
             }
@@ -76,8 +76,8 @@ class BezierLinkModel extends DefaultLinkModel {
     }
 
     addPoint(point) {
-        const dist = 50;
-        if (!point?.x || !point?.y || typeof point.x !== 'number' || point.x <= 0 || typeof point.y !== 'number' || point.y <= 0) return;
+        const dist = 30;
+        if (!point || typeof point.x !== 'number' || typeof point.y !== 'number') return;
 
         const isNear = this.points.some(
             p =>
@@ -90,9 +90,8 @@ class BezierLinkModel extends DefaultLinkModel {
         const newPoint = new PointModel(this);
         newPoint.setPosition(point.x, point.y);
         newPoint.isLocked = () => false;
-        newPoint.setSelected(false);
         super.addPoint(newPoint);
-        this.points = this.points.sort((a, b) => a.getPosition().x - b.getPosition().x);
+        this.points = [this.points[0], ...this.points.filter(p => !p.isPort).sort((a, b) => a.getX() - b.getX()), this.points[this.points.length-1]];
 
     }
 
@@ -121,11 +120,14 @@ class BezierLinkModel extends DefaultLinkModel {
                 .filter(point => !point.isPort)
                 .map((point, index) => 
                     { 
-                    const pos = { x: point.getPosition().x, y: point.getPosition().y };
-                    return pos.x > 0 && pos.y > 0 && <circle
+                    const pos = { x: point.getX(), y: point.getY() };
+                    return <circle
                         key={`point-${index}`}
-                        cx={point.getPosition().x}
-                        cy={point.getPosition().y}
+                        className="point"
+                        cx={pos.x}
+                        cy={pos.y}
+                        //data-id={point.getID()} // point.getID()
+					    //data-linkid={point.getLink().getID()}
                         //onClick={() => point.setSelected(true)}
                         onPointerMove={event => point.setPosition(event.clientX, event.clientY)}
                         r={8}
