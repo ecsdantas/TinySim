@@ -7,6 +7,7 @@ import Simulation from './simulation/core';
 import { DropElement } from './components/dropElement';
 import Modal from './components/modal';
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import { Analytics } from "@vercel/analytics/react"
 import { Zoombar } from './components/zoomControl';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -60,6 +61,7 @@ const App = () => {
             className="ts-toast-container"
             progressClassName="ts-toast-progress" draggable />
         <SpeedInsights />
+        <Analytics/>
     </>
 
 }
