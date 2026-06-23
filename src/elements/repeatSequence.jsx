@@ -23,8 +23,10 @@ class RepeatingSequenceModel extends SimNodeModel {
 
   // Main function of the block
   solution() {
-    const currentTime = Simulation.getCurrentTime();
-    const index = currentTime % this.sequence.length;
+    // Indexes by step count (always an integer) rather than simulation time,
+    // which is fractional for non-integer step sizes and would index the
+    // array with a non-integer value.
+    const index = Simulation.getCurrentStep() % this.sequence.length;
     return { 'out': this.sequence[index] };
   }
 

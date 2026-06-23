@@ -1,20 +1,33 @@
 /* start of zoombar */
 .zoombar {
-    border: 0px;
-    padding: 10px 10px;
+    border: 1px solid var(--ts-border-subtle);
+    background-color: var(--ts-bg-surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    border-radius: 8px;
+    margin: 12px;
+    padding: 6px 8px;
     z-index: 2;
     position: absolute;
     top: 0;
     right: 0;
     display: flex;
+    align-items: center;
     gap: 4px;
+    color: var(--ts-text-primary);
 }
 
 .zoombar button {
-    padding: 0;
+    display: flex;
+    padding: 4px;
     margin: 0;
     border: none;
+    border-radius: 4px;
     background: none;
+    transition: background-color 0.15s ease;
+}
+
+.zoombar button:hover {
+    background-color: var(--ts-bg-elevated);
 }
 
 .zoombar svg {
@@ -22,6 +35,14 @@
 }
 
 .zoombar svg:hover {
-    transform: scale(1.2);
+    transform: scale(1.15);
+}
+
+.zoombar svg [stroke="#000000"] {
+    stroke: var(--ts-text-primary);
+}
+
+.zoombar svg [fill="#000000"] {
+    fill: var(--ts-accent);
 }
 /* end of zoombar */

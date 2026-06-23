@@ -29,6 +29,15 @@ class PIDControllerModel extends SimNodeModel {
 
   // Main function of the block
   solution() {
+    const currentTime = Simulation.getCurrentTime();
+    const currentStep = Simulation.getCurrentStep();
+
+    // Prevent algebraic loops (must run before recursing into inputs)
+    if (this.previousStep === currentStep) {
+      return { 'out': this.previousOutput };
+    }
+    this.previousStep = currentStep;
+
     const setpointInput = this.getNodeByInput(0);
     const inpt = this.getNodeByInput(1);
 
@@ -39,14 +48,6 @@ class PIDControllerModel extends SimNodeModel {
 
     if (setpointInput && setpointInput.solve) {
       this.setpoint = setpointInput.solve();
-    }
-
-    const currentTime = Simulation.getCurrentTime();
-    const currentStep = Simulation.getCurrentStep();
-
-    // Prevent algebraic loops
-    if (this.previousStep === currentStep) {
-      return { 'out': this.previousOutput };
     }
 
     const deltaTime = this.previousTime !== null ? (currentTime - this.previousTime) : 0;

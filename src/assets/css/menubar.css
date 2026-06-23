@@ -1,9 +1,10 @@
 /* start of menubar */
 .menubar {
-    background-color: rgb(40, 38, 38);
-    color: rgb(210, 212, 220);
-    border: 0px;
-    border-radius: 6px;
+    background-color: var(--ts-bg-surface);
+    color: var(--ts-text-primary);
+    border: 1px solid var(--ts-border-subtle);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     padding: 10px 20px;
     z-index: 10;
     position: absolute;

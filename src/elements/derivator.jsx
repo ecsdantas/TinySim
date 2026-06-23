@@ -7,6 +7,7 @@ class DerivatorModel extends SimNodeModel {
 
     kind = 'derivator'
     previousInput = 0
+    previousOutput = 0
     lastStepSolved = null
     CGenUID = 'der'
     tags = ['derivatior', 'derivate', 'limit', 's', 'laplace', 'differentiation', 'calculus', 'math', 'signal processing', 'rate of change']
@@ -24,20 +25,22 @@ class DerivatorModel extends SimNodeModel {
     solution() {
         // Prevents algebraic loop
         if (this.lastStepSolved === Simulation.getCurrentStep()){
-            return this.previousInput
+            return {'out': this.previousOutput}
         }
         this.lastStepSolved = Simulation.getCurrentStep()
-        
+
         const inpt = this.getNodeByInput(0);
         const currentInput = (inpt && inpt.solve) ? inpt.solve() : 0;
         const derivative = (currentInput - this.previousInput) / Simulation.getStepTime();
         this.previousInput = currentInput;
+        this.previousOutput = derivative;
         return {'out': derivative};
     }
 
     reset(){
         super.reset()
         this.previousInput = 0
+        this.previousOutput = 0
         this.lastStepSolved = null
     }
 

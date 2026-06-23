@@ -112,29 +112,58 @@ nodes/links/ports ainda é frágil.
       estava duplicado em `simulation/core.jsx` (warning de build), e havia
       um terceiro método `getTime()` idêntico e não usado em nenhum lugar do
       código. Os dois métodos redundantes foram removidos.
+- [x] Configurado **Vitest** (`npm test` / `npm run test:watch`) — primeira
+      ferramenta de teste do projeto. Foi necessário subir `vite` de 6.0.3
+      para 6.4.3 (mesmo range `^6` do `package.json`, sem mudar a versão
+      major) porque vitest 4.1.9 não inicializava contra o `vite@6.0.3`
+      exato (erro interno no `ModuleRunner`).
+- [x] Escrita uma suíte de regressão para `SimulationEngine`
+      (`src/simulation/core.test.jsx`, 9 testes) **antes** de tocar na
+      estrutura interna — cobre `runSetup`, `runStep` (caminho feliz e
+      quando um nó lança erro), `runStandard`, `resetSimulation` e os
+      cálculos de `getTotalTimeArray`/`getTimeArray`. Serviu de rede de
+      segurança para o item abaixo.
+- [x] Quebrado `simulation/core.jsx` em módulos menores, com a API pública
+      da classe `SimulationEngine` preservada (mesmos métodos, mesma
+      assinatura, mesmo singleton exportado por padrão — a classe agora
+      também é exportada nomeada para permitir testes com instâncias
+      isoladas):
+      - `setup.jsx` — `setupSimulation(model)`: valida o modelo e extrai os nós.
+      - `runStep.jsx` — `solveTerminalNodes(...)`: resolve os blocos terminais de um passo.
+      - `runModes.jsx` — `runStandardLoop`/`runRealTimeLoop`: os dois laços de execução.
+      - `reset.jsx` — `resetNodes(...)`: reseta os blocos com estado interno.
+      - `timeArrays.jsx` — `buildTotalTimeArray`/`buildTimeArray`: funções puras já usadas pelos testes.
+      `core.jsx` ficou como um orquestrador fino que mantém o estado
+      (`currentStep`, `currentTime`, flags) e delega a lógica para esses
+      módulos.
 - [ ] Definir contrato explícito de bloco (interface que todo `SimNodeModel`
       deve cumprir) e documentar em um único lugar.
-- [ ] Quebrar `simulation/core.jsx` em partes menores: setup, loop de
-      execução, modo realtime — mantendo a API pública igual.
 - [ ] Unificar gerenciamento de estado global (escolher um padrão: Context,
       Zustand, ou ao menos consolidar os singletons existentes em um só
       lugar coerente).
 - [ ] Avaliar migração incremental para TypeScript (ao menos `nodeModel`,
       `simNodeModel` e `simulation/core` primeiro, por serem o núcleo).
+- [ ] Ampliar a suíte de testes para os blocos mais usados (Integrator,
+      Gain, PID, `VariadicMathModel`) e para `bezierLinks.jsx`, agora que o
+      runner já está configurado.
 
-> Validação até aqui: `npm run build` passa limpo (único warning restante é
-> de uma dependência de terceiros, `@projectstorm/react-diagrams-routing`,
-> não relacionado ao código do projeto). Não há testes automatizados ainda
-> (Fase 2), então a verificação foi: build limpo + revisão linha-a-linha
-> comparando a lógica antiga com a nova para garantir comportamento
-> idêntico (mesmos valores de `identity`/seed, mesmo tratamento de divisão
-> por zero, mesmo texto de UI).
+> Validação até aqui: `npm test` (9/9) e `npm run build` passam limpos
+> (único warning restante é de uma dependência de terceiros,
+> `@projectstorm/react-diagrams-routing`, não relacionado ao código do
+> projeto). Os testes do `SimulationEngine` foram escritos contra o
+> comportamento antigo antes do split em módulos, e continuaram passando
+> sem alteração depois — é a primeira vez que um refactor neste projeto
+> tem essa rede de segurança. A parte de `elements/` (Add/Sub/Multiply/
+> Divide/Mod) ainda não tem testes automatizados; a verificação ali foi
+> build limpo + revisão linha-a-linha comparando a lógica antiga com a
+> nova.
 
 ### Fase 2 — Rede de segurança
-- [ ] Configurar test runner (Vitest, já que o projeto usa Vite).
-- [ ] Testes unitários para `SimulationEngine` (Euler step, reset, stop
-      condition) e para `solution()` de cada bloco — começando pelos mais
-      usados (Integrator, Gain, PID, operações básicas).
+- [x] Configurar test runner (Vitest — `npm test`).
+- [x] Testes unitários para `SimulationEngine` (Euler step, reset, stop
+      condition) — feito em paralelo com o split do `core.jsx` (ver Fase 1).
+- [ ] Testes para `solution()` de cada bloco — começando pelos mais
+      usados (Integrator, Gain, PID, `VariadicMathModel`/operações básicas).
 - [ ] Testes de regressão para o cálculo de curvatura Bezier
       (`bezierLinks.jsx`), área que já gerou bugs visuais recorrentes.
 

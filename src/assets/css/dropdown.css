@@ -2,12 +2,13 @@
 .dropdown-menu {
     list-style: none; /* Remove bullets */
     margin: 0;
-    padding: 0;
+    padding: 6px;
     display: none;
     position: absolute;
-    background-color: #ffffff;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
+    background-color: var(--ts-bg-surface);
+    border: 1px solid var(--ts-border-subtle);
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.45);
+    border-radius: 8px;
     min-width: 180px;
     z-index: 1;
 }
@@ -19,18 +20,19 @@
 
 /* Style individual list items */
 .dropdown-menu li {
-    color: #333;
-    padding: 8px 15px;
+    color: var(--ts-text-primary);
+    padding: 8px 10px;
     text-decoration: none;
     display: flex;
     font-size: 14px;
     cursor: pointer;
     align-items: center;
     gap: 8px;
+    border-radius: 5px;
 }
 
 .dropdown-menu li:hover {
-    background-color: #f1f1f1; /* Light gray background on hover */
+    background-color: var(--ts-accent-soft);
 }
 
 /* Button styling */
@@ -69,6 +71,6 @@
 /* Style for the separator */
 .dropdown-divider {
     border: none; /* Remove default border */
-    border-top: 1px solid #ccc; /* Add a custom line */
+    border-top: 1px solid var(--ts-border-subtle); /* Add a custom line */
     margin: 5px 0; /* Add spacing above and below */
 }

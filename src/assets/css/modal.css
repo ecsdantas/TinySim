@@ -19,37 +19,54 @@
 
 .modal-main {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: rgba(5, 9, 3, 0.9);
+    color: var(--ts-text-primary);
     z-index: 101;
     position: fixed;
-    background: rgb(246, 243, 243);
+    background: var(--ts-bg-surface);
+    border: 1px solid var(--ts-border-subtle);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
     width: auto;
     height: auto;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 10px 20px;
+    padding: 14px 20px 18px;
     margin: 0;
-    border: 0;
-    border-radius: 5px;
+    border-radius: 8px;
 }
 
 .modal-main .modal-header {
     display: flex;
     justify-content: space-between;
-    padding: 0 0 2px 0;
-    margin: 0 0 2px 0;
+    align-items: center;
+    padding: 0 0 10px 0;
+    margin: 0 0 12px 0;
     border: 0;
-    border-bottom: 1px solid rgba(0.2, 0.2, 0.2, 0.2);
+    border-bottom: 1px solid var(--ts-border-subtle);
 }
 
 .modal-main .modal-header h3 {
     padding: 0;
     margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    background: linear-gradient(90deg, #d6c2f0, var(--ts-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
 }
 
 .modal-main .modal-header svg {
     cursor: pointer;
     padding: 0;
     margin: 0;
+}
+
+.modal-main .modal-header svg path {
+    stroke: var(--ts-text-secondary);
+    transition: stroke 0.15s ease;
+}
+
+.modal-main .modal-header svg:hover path {
+    stroke: var(--ts-text-primary);
 }

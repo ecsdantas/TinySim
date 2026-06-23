@@ -7,8 +7,9 @@
 }
 
 .ts-toast-container .Toastify__toast {
-    background: #333;
-    color: snow;
+    background: var(--ts-bg-surface);
+    color: var(--ts-text-primary);
+    border: 1px solid var(--ts-border-subtle);
 }
 
 .ts-toast-container .Toastify__toast a {

@@ -1,4 +1,9 @@
 import { toast } from "react-toastify"
+import { setupSimulation } from "./setup"
+import { solveTerminalNodes } from "./runStep"
+import { runStandardLoop, runRealTimeLoop } from "./runModes"
+import { resetNodes } from "./reset"
+import { buildTotalTimeArray, buildTimeArray } from "./timeArrays"
 
 class SimulationEngine {
 
@@ -41,13 +46,10 @@ class SimulationEngine {
                 return false
             }
 
-            // Verifica se consegue puxar os nós
-            if (!this.#model || !this.#model.getNodes)
-                return false
+            const result = setupSimulation(this.#model)
+            if (!result.ok) return false
 
-            // Obtém todos nós
-            this.#nodes = this.#model.getNodes();
-
+            this.#nodes = result.nodes
             return true
 
         } catch (error) {
@@ -84,48 +86,20 @@ class SimulationEngine {
 
     // Simula no modo padrão
     runStandard() {
-
-        // Inicio da simulação
-        while ((this.stopTime >= this.currentTime) && (!this.emergencyStop) && this.isSimulationRunning) {
-            this.runStep() // Roda o passo
-        }
-
-        // Desabilita a flag de simulação
-        this.isSimulationRunning = false
-
+        runStandardLoop(this)
     }
 
     // Simula com sincronismo em tempo real
     runRealTime() {
-
-        // Update rate of realtime
-        this.stepSize = 0.2;
-
-        // Função para rodar
-        const sync = () => {
-            setTimeout(() => {
-                (!this.emergencyStop) && this.isSimulationRunning && this.isSimulationRunning && sync(); // Chama uma nova instância
-            }, this.stepSize * 1E3)
-            this.runStep()
-        }
-
-        // Inicia a simulação e só para com o emergencyStop
-        sync()
-
+        runRealTimeLoop(this)
     }
 
     // Roda um passo de simulação
     runStep() {
 
         try {
-            // Registra o log
-            this.saveLog && console.log("Time[" + this.currentStep + "] " + this.currentTime)
-            // this.saveLog && toast(`Running step for Time[${this.currentStep}]: ${this.currentTime}`)
-
-            // Procura por outputs
-            this.#nodes.filter(node => node.isTerminalBlock).map(node => {
-                node.solution() // Chama diretamente a solução
-            })
+            // Procura por outputs e resolve cada um
+            solveTerminalNodes(this.#nodes, this.saveLog, this.currentStep, this.currentTime)
 
             // Incrementa o step
             this.currentStep += 1
@@ -149,11 +123,7 @@ class SimulationEngine {
         this.saveLog && console.clear()
 
         // Aplica o reset nos modelos que contém reset
-        this.#nodes.filter(node => node.reset).map(node => {
-            node.isvisited = false;
-            node.reset()
-            node.update()
-        });
+        resetNodes(this.#nodes)
 
     }
 
@@ -183,21 +153,12 @@ class SimulationEngine {
 
     // Obtém o array de tempo total
     getTotalTimeArray() {
-        const timeArr = [];
-        const n = (this.stopTime / this.stepSize)
-        for (let s = 0; s <= n + 1; s += 1) {
-            timeArr.push(s * this.stepSize)
-        };
-        return timeArr
+        return buildTotalTimeArray(this.stepSize, this.stopTime)
     }
 
     // Obtém o array de tempo até o passo de simulação atual
     getTimeArray() {
-        const timeArr = [];
-        for (let s = 0; s < this.currentStep; s += 1) {
-            timeArr.push(s * this.stepSize)
-        };
-        return timeArr
+        return buildTimeArray(this.stepSize, this.currentStep)
     }
 
     // Congela o objeto
@@ -211,4 +172,5 @@ class SimulationEngine {
 const Simulation = new SimulationEngine()
 
 
+export { SimulationEngine }
 export default Simulation

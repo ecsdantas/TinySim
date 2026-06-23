@@ -39,10 +39,12 @@ class ZOHModel extends SimNodeModel {
         // Realiza o cálculo nominal
         const inpt = this.getNodeByInput(0);
         const inputValue = (inpt && inpt.solve) ? inpt.solve() : 0;
-        const currentTime = Simulation.getCurrentTime();
 
-        // Atualiza o valor somente se o tempo for múltiplo do tempo de amostragem
-        if (currentTime % this.sampleTime === 0) {
+        // Atualiza o valor somente se o passo for múltiplo do tempo de amostragem.
+        // Usa contagem de steps (inteiros) em vez de tempo flutuante para evitar
+        // erros de arredondamento (ex.: 0.3 % 0.1 !== 0 em ponto flutuante).
+        const stepsPerSample = Math.max(1, Math.round(this.sampleTime / Simulation.getStepTime()));
+        if (Simulation.getCurrentStep() % stepsPerSample === 0) {
             this.lastValue = inputValue;
         }
 

@@ -8,4 +8,7 @@ export default defineConfig({
     sourcemap: false, // Enable source maps
   },
   chunkSizeWarningLimit: 500,
+  test: {
+    environment: 'node',
+  },
 })

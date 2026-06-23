@@ -3,9 +3,9 @@
     display: flex;
     flex-direction: column;
     width: 300px;
-    background-color: rgb(32, 30, 30);
+    background-color: var(--ts-bg-surface);
     background-image: linear-gradient(180deg, rgba(106, 13, 173, 0.08), transparent 140px);
-    color: rgb(210, 212, 220);
+    color: var(--ts-text-primary);
     height: 100vh;
     z-index: 10;
     position: absolute;
@@ -15,13 +15,13 @@
 
 .sidebar.left {
     left: 0;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid var(--ts-border-subtle);
     transform: translateX(-100%);
 }
 
 .sidebar.right {
     right: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 1px solid var(--ts-border-subtle);
     transform: translateX(100%);
 }
 
@@ -40,7 +40,7 @@
     font-size: x-large;
     margin: 0;
     padding: 14px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--ts-border-subtle);
 }
 
 .sidebar .flex-container h4 {
@@ -48,7 +48,7 @@
     letter-spacing: 0.04em;
     margin: auto 0;
     padding: 0;
-    background: linear-gradient(90deg, #d6c2f0, #b388e0);
+    background: linear-gradient(90deg, #d6c2f0, var(--ts-accent));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -69,7 +69,7 @@
 }
 
 .sidebar .flex-container button:hover {
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: var(--ts-border-subtle);
     transform: scale(1.08);
 }
 
@@ -110,24 +110,24 @@
     margin: 0 0 12px 0;
     padding: 9px 10px 9px 34px;
     font-size: medium;
-    color: rgb(225, 225, 230);
-    background-color: rgba(255, 255, 255, 0.06);
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="rgb(170,170,180)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="6"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'); /* Add the search icon */
+    color: var(--ts-text-primary);
+    background-color: var(--ts-bg-elevated);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--ts-text-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="6"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'); /* Add the search icon */
     background-position: 10px center;
     background-repeat: no-repeat;
     background-size: 16px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--ts-border-subtle);
     border-radius: 8px;
     outline: none;
     transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .library-container input.search::placeholder {
-    color: rgb(140, 140, 150);
+    color: var(--ts-text-secondary);
 }
 
 .library-container input.search:focus {
-    border-color: rgba(179, 136, 224, 0.7);
+    border-color: var(--ts-accent);
     background-color: rgba(255, 255, 255, 0.09);
 }
 
@@ -141,7 +141,7 @@
     height: 64px;
     background-color: rgb(235, 233, 240);
     color: rgb(60, 50, 70);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--ts-bg-elevated);
     border-radius: 10px;
     text-align: center;
     font-size: 11px;
@@ -152,13 +152,20 @@
 
 .library .library-modal:hover {
     transform: translateY(-2px);
-    border-color: rgba(179, 136, 224, 0.8);
+    border-color: var(--ts-accent);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .library .library-modal:active {
     cursor: grabbing;
     transform: translateY(0) scale(0.97);
+}
+
+.library .library-modal svg {
+    max-width: 48px;
+    max-height: 36px;
+    width: auto;
+    height: auto;
 }
 
 .library::-webkit-scrollbar {
@@ -175,7 +182,7 @@
 }
 
 .library::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(179, 136, 224, 0.5);
+    background-color: var(--ts-accent);
 }
 
 /* settings panel */
@@ -188,8 +195,8 @@
 
 .sidebar .settings .group-frame {
     padding: 14px 16px;
-    background-color: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: var(--ts-bg-elevated);
+    border: 1px solid var(--ts-border-subtle);
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -198,36 +205,13 @@
     font-size: medium;
     font-weight: 500;
     letter-spacing: 0.02em;
-    color: rgb(225, 225, 230);
     padding: 0 0 12px 0;
     margin: 0 0 4px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.sidebar .settings .input-group {
-    background-color: rgba(255, 255, 255, 0.06);
-    color: rgb(220, 220, 226);
-    border-radius: 6px;
-    margin-bottom: 8px;
-}
-
-.sidebar .settings .input-group input {
-    background-color: transparent;
-    color: rgb(225, 225, 230);
-}
-
-.sidebar .settings .input-group input:hover,
-.sidebar .settings .input-group input:focus {
-    background-color: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--ts-border-subtle);
 }
 
 .sidebar .settings .input-group.form-check {
     justify-content: space-between;
     padding: 6px 12px;
-}
-
-.sidebar .settings .danger {
-    background-color: rgba(198, 66, 45, 0.18);
-    color: rgb(255, 150, 130);
 }
 /* end of settings */

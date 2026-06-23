@@ -1,3 +1,17 @@
+:root {
+  --ts-bg-canvas: rgb(24, 23, 26);
+  --ts-bg-canvas-grid: rgb(38, 36, 42);
+  --ts-bg-surface: rgb(32, 30, 30);
+  --ts-bg-elevated: rgba(255, 255, 255, 0.06);
+  --ts-border-subtle: rgba(255, 255, 255, 0.1);
+  --ts-text-primary: rgb(225, 225, 230);
+  --ts-text-secondary: rgb(170, 170, 180);
+  --ts-accent: #b388e0;
+  --ts-accent-strong: #6a0dad;
+  --ts-accent-soft: rgba(179, 136, 224, 0.18);
+  --ts-danger: rgb(255, 150, 130);
+}
+
 #root, .main {
   position: absolute;
   overflow: hidden;
@@ -149,18 +163,18 @@
 
 
 .srd-diagram {
-  background-color: rgb(237, 236, 229);
-  background-image: 
-        linear-gradient(to right, rgb(231, 222, 222) 2px, transparent 1px),
-        linear-gradient(to bottom,  rgb(231, 222, 222) 2px, transparent 1px);
+  background-color: var(--ts-bg-canvas);
+  background-image:
+        linear-gradient(to right, var(--ts-bg-canvas-grid) 2px, transparent 1px),
+        linear-gradient(to bottom,  var(--ts-bg-canvas-grid) 2px, transparent 1px);
   background-size: 35px 35px;
   width: 100%;
   height: 100%;
 }
 
 .srd-node {
-  background-color: #eeeeee;
-  border: 1px solid #cccccc;
+  background-color: rgb(238, 236, 242);
+  border: 1px solid rgb(200, 196, 210);
   padding: 10px;
   border-radius: 5px;
 }
@@ -189,12 +203,16 @@ ul.sample li.sample-item {
   flex-wrap: nowrap;
   gap: 5px 10px;
   margin: 0;
-  padding: 4px 5px;
-  border: 1px dashed gray;
+  padding: 6px 10px;
+  background-color: var(--ts-bg-elevated);
+  border: 1px solid var(--ts-border-subtle);
+  border-radius: 6px;
   align-items: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 ul.sample li.sample-item:hover {
-  background-color: rgb(215, 245, 169);
+  background-color: rgba(179, 136, 224, 0.12);
+  border-color: var(--ts-accent);
   cursor: pointer;
 }
