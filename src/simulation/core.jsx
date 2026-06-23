@@ -175,16 +175,6 @@ class SimulationEngine {
         return this.stopTime
     }
 
-    // Obtém o tempo atual 
-    getTime() {
-        return this.currentTime
-    }
-
-    // Obtém o tempo atual 
-    getCurrentTime() {
-        return this.currentTime
-    }
-
     setSimulationTime(step, stopTime) {
         this.stepSize = step;
         this.stopTime = stopTime;
