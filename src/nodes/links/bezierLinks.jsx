@@ -38,7 +38,10 @@ class BezierLinkModel extends DefaultLinkModel {
         if (intermediatePoints.length === 0) {
             return this.computeOrthogonalRoute(sourcePosition, targetPosition);
         }
-        return [sourcePosition, ...intermediatePoints, targetPosition];
+        // Arrastar um trecho pode empurrar um ponto manual até coincidir com o
+        // vizinho (ex.: a "ponte" some quando os dois trechos verticais se cruzam);
+        // remove duplicatas para não gerar um trecho de comprimento zero.
+        return this.dedupePoints([sourcePosition, ...intermediatePoints, targetPosition]);
     }
 
     // Lado do bloco para o qual a porta aponta: portas de saída apontam para a
@@ -204,6 +207,15 @@ class BezierLinkModel extends DefaultLinkModel {
 
             const distPrev = Math.hypot(curr.x - prev.x, curr.y - prev.y);
             const distNext = Math.hypot(next.x - curr.x, next.y - curr.y);
+
+            // Trecho vizinho de comprimento ~zero (ex.: um arraste empurrou este
+            // ponto até coincidir com o vizinho): não há quina real pra arredondar,
+            // e dividir por uma distância zero geraria NaN no path.
+            if (distPrev < 0.01 || distNext < 0.01) {
+                path += `L ${curr.x} ${curr.y} `;
+                continue;
+            }
+
             const r = Math.min(radius, distPrev / 2, distNext / 2);
 
             const fromPrev = {
