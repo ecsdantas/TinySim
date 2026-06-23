@@ -1,5 +1,6 @@
 import { DefaultLinkModel, PointModel } from '@projectstorm/react-diagrams';
 import React from 'react';
+import { Engine } from '../nodeModel';
 
 class BezierLinkModel extends DefaultLinkModel {
     constructor() {
@@ -40,7 +41,7 @@ class BezierLinkModel extends DefaultLinkModel {
 
             const control1 = { x: sourcePoint.x + curvature * dx, y: sourcePoint.y};
             const control2 = { x: targetPoint.x - curvature * dx, y: targetPoint.y};
-            
+
             (curvature !== 0)?
                 paths.push(`M ${sourcePoint.x} ${sourcePoint.y} C ${control1.x} ${control1.y}, ${control2.x} ${control2.y}, ${targetPoint.x} ${targetPoint.y}`) :
                 paths.push(`M ${sourcePoint.x} ${sourcePoint.y} ${targetPoint.x} ${targetPoint.y}`)
@@ -51,12 +52,66 @@ class BezierLinkModel extends DefaultLinkModel {
 
         if (!sourcePosition || !targetPosition) return paths;
 
-        const points = [sourcePosition, ...this.getIntermediatePoints(), targetPosition];
+        const intermediatePoints = this.getIntermediatePoints();
+
+        // Links "para trás" (feedback) sem pontos manuais ganham um contorno
+        // retangular em vez de cortar reto pelo meio do bloco de origem.
+        if (intermediatePoints.length === 0 && targetPosition.x < sourcePosition.x) {
+            return this.getFeedbackPath(sourcePosition, targetPosition);
+        }
+
+        const points = [sourcePosition, ...intermediatePoints, targetPosition];
         for (let i = 0; i < points.length - 1; i++) {
             pathCompute(points[i], points[i + 1]);
         }
 
         return paths;
+    }
+
+    getFeedbackPath(sourcePoint, targetPoint) {
+        const outMargin = 30;
+        const exitX = sourcePoint.x + outMargin;
+        const entryX = targetPoint.x - outMargin;
+        const routeY = this.computeFeedbackRouteY(sourcePoint, targetPoint);
+
+        return [
+            `M ${sourcePoint.x} ${sourcePoint.y} ` +
+            `L ${exitX} ${sourcePoint.y} ` +
+            `L ${exitX} ${routeY} ` +
+            `L ${entryX} ${routeY} ` +
+            `L ${entryX} ${targetPoint.y} ` +
+            `L ${targetPoint.x} ${targetPoint.y}`
+        ];
+    }
+
+    // Decide se o contorno passa por cima ou por baixo dos blocos no caminho,
+    // escolhendo o lado que exige o menor desvio (ou seja, o lado com mais espaço livre).
+    computeFeedbackRouteY(sourcePoint, targetPoint) {
+        const margin = 30;
+        const xMin = Math.min(sourcePoint.x, targetPoint.x);
+        const xMax = Math.max(sourcePoint.x, targetPoint.x);
+        const minY = Math.min(sourcePoint.y, targetPoint.y);
+        const maxY = Math.max(sourcePoint.y, targetPoint.y);
+
+        const diagramModel = this.getParent();
+        const nodes = diagramModel && typeof diagramModel.getNodes === 'function' ? diagramModel.getNodes() : [];
+        const overlapping = nodes
+            .map(node => node.getBoundingBox())
+            .filter(box => {
+                const topLeft = box.getTopLeft();
+                const bottomRight = box.getBottomRight();
+                return bottomRight.x >= xMin && topLeft.x <= xMax;
+            });
+
+        const topEdge = overlapping.length ? Math.min(...overlapping.map(box => box.getTopLeft().y)) : minY;
+        const bottomEdge = overlapping.length ? Math.max(...overlapping.map(box => box.getBottomRight().y)) : maxY;
+
+        const routeAboveY = topEdge - margin;
+        const routeBelowY = bottomEdge + margin;
+        const distAbove = minY - routeAboveY;
+        const distBelow = routeBelowY - maxY;
+
+        return distAbove <= distBelow ? routeAboveY : routeBelowY;
     }
 
     getPortPosition(port) {
@@ -136,7 +191,7 @@ class BezierLinkModel extends DefaultLinkModel {
                         //onClick={() => point.setSelected(true)}
                         onPointerMove={event => point.setPosition(event.clientX, event.clientY)}
                         r={8}
-                        fill={point.isSelected() ? 'rgba(30, 30, 200, 0.5)' : 'rgba(0, 0, 0, 1)'}
+                        fill={point.isSelected() ? '#b388e0' : 'rgba(225, 225, 230, 0.9)'}
                         style={{ pointerEvents: 'all' }}
                     />}
                 );
@@ -147,7 +202,7 @@ class BezierLinkModel extends DefaultLinkModel {
             <path
             key={`link-${index}`}
             d={path || 'M 0 0 L 1 1'}
-            stroke={this.isSelected() ? 'rgba(30, 30, 200, 0.5)' : 'rgba(30, 30, 30, 0.5)'}
+            stroke={this.isSelected() ? '#b388e0' : 'rgba(0, 0, 0, 0.8)'}
             strokeWidth="4"
             fill="none"
             strokeDasharray={this.isSelected() ? '20,5' : '0'}
@@ -157,6 +212,14 @@ class BezierLinkModel extends DefaultLinkModel {
             }}
             onDoubleClick={this.handleDoubleClick}
             onPointerDown={event => {
+                if (!event.shiftKey) {
+                    this.getParent()?.getNodes().forEach(node => node.setSelected(false));
+                    this.getParent()?.getLinks().forEach(link => link.setSelected(link === this));
+                } else {
+                    this.setSelected(true);
+                }
+                Engine.repaintCanvas();
+
                 const initialOffset = { x: event.clientX, y: event.clientY };
                 this.handleDragStart();
                 const moveHandler = moveEvent => this.handleDrag(moveEvent, initialOffset);

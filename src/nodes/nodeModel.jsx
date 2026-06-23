@@ -10,9 +10,12 @@ import Stack from './stack/stack';
 import { toast } from 'react-toastify';
 import BezierLinkFactory from './links/bezierLinkFactory';
 import { BezierPortFactory } from './ports/bezierPortFactory';
+import { PercentZoomCanvasAction } from './actions/percentZoomCanvasAction';
 
 // Cria o motor do diagrama e o Modelo
-const Engine = createEngine();
+// Desativa o ZoomCanvasAction padrão (zoom por incremento fixo) para usar um zoom percentual
+const Engine = createEngine({ registerDefaultZoomCanvasAction: false });
+Engine.getActionEventBus().registerAction(new PercentZoomCanvasAction());
 const ModelsArray = {}; // Armazena modelos registrados com identificadores únicos
 const MousePosition = { x: 0, y: 0 };
 
@@ -146,6 +149,12 @@ const handleKeyDown = (event) => {
 
         case '1':
             event.altKey && Simulation.run()
+            break;
+
+        case ' ':
+            event.preventDefault();
+            Engine.zoomToFitSelectedNodes({ margin: 50 });
+            Engine.repaintCanvas();
             break;
     }
 };

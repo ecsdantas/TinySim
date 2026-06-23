@@ -1,6 +1,6 @@
 :root {
-  --ts-bg-canvas: rgb(24, 23, 26);
-  --ts-bg-canvas-grid: rgb(38, 36, 42);
+  --ts-bg-canvas: rgb(255, 253, 235);
+  --ts-bg-canvas-grid: rgb(235, 230, 200);
   --ts-bg-surface: rgb(32, 30, 30);
   --ts-bg-elevated: rgba(255, 255, 255, 0.06);
   --ts-border-subtle: rgba(255, 255, 255, 0.1);
