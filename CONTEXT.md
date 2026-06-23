@@ -17,7 +17,10 @@ código C compilável.
 - `control-systems-js`, `jszip`, `dompurify`, `react-toastify`
 - Sem gerenciador de estado global (Redux/Zustand) — `useState` local +
   alguns singletons ad-hoc (`Simulation`, `useModal`, `sessionStorage`)
-- **Zero testes automatizados**
+- **Vitest** (`npm test` / `npm run test:watch`), ambiente `happy-dom`
+  (necessário porque `@projectstorm/react-diagrams` espera globais de
+  browser mesmo só sendo importado) — adicionado nesta fase de refatoração,
+  era zero antes.
 
 ## Estrutura principal
 
@@ -143,29 +146,62 @@ nodes/links/ports ainda é frágil.
       lugar coerente).
 - [ ] Avaliar migração incremental para TypeScript (ao menos `nodeModel`,
       `simNodeModel` e `simulation/core` primeiro, por serem o núcleo).
-- [ ] Ampliar a suíte de testes para os blocos mais usados (Integrator,
-      Gain, PID, `VariadicMathModel`) e para `bezierLinks.jsx`, agora que o
-      runner já está configurado.
+- [ ] **Novo, descoberto nesta rodada**: trocar, em todo `src/elements/*.jsx`,
+      o import `{ SimNodeModel } from '../nodes/nodeModel'` pelo import
+      direto de `../nodes/nodes/simNodeModel`. O caminho atual via
+      `nodeModel.jsx` só funciona por sorte de ordem de carregamento (ver
+      bug do `VariadicMathModel` acima) — qualquer novo arquivo que tente
+      importar um bloco isoladamente (testes, Storybook, etc.) corre risco
+      de cair no mesmo ciclo.
 
-> Validação até aqui: `npm test` (9/9) e `npm run build` passam limpos
+> Validação até aqui: `npm test` (36/36) e `npm run build` passam limpos
 > (único warning restante é de uma dependência de terceiros,
 > `@projectstorm/react-diagrams-routing`, não relacionado ao código do
 > projeto). Os testes do `SimulationEngine` foram escritos contra o
 > comportamento antigo antes do split em módulos, e continuaram passando
-> sem alteração depois — é a primeira vez que um refactor neste projeto
-> tem essa rede de segurança. A parte de `elements/` (Add/Sub/Multiply/
-> Divide/Mod) ainda não tem testes automatizados; a verificação ali foi
-> build limpo + revisão linha-a-linha comparando a lógica antiga com a
-> nova.
+> sem alteração depois. A correção de `computeCurvature` foi confirmada
+> explicitamente com o usuário antes de aplicar, por mudar a aparência
+> visual de todos os links já existentes.
 
 ### Fase 2 — Rede de segurança
 - [x] Configurar test runner (Vitest — `npm test`).
 - [x] Testes unitários para `SimulationEngine` (Euler step, reset, stop
       condition) — feito em paralelo com o split do `core.jsx` (ver Fase 1).
-- [ ] Testes para `solution()` de cada bloco — começando pelos mais
-      usados (Integrator, Gain, PID, `VariadicMathModel`/operações básicas).
-- [ ] Testes de regressão para o cálculo de curvatura Bezier
-      (`bezierLinks.jsx`), área que já gerou bugs visuais recorrentes.
+- [x] Testes para `solution()` dos blocos mais usados:
+      `Add/Sub/Multiply/Divide/Mod` (via `VariadicMathModel`), `Integrator`
+      (Euler + guarda de loop algébrico + reset), `Gain` e `PIDController`
+      (termos P/I/D isolados + guarda de loop algébrico + reset). Total: 36
+      testes (`npm test`). Ambiente do Vitest precisou ser trocado de
+      `node` para `happy-dom`, porque `@projectstorm/react-diagrams`
+      assume globais de browser (`self`) mesmo só sendo importado, não
+      renderizado.
+- [x] Testes de regressão para o cálculo de curvatura Bezier
+      (`bezierLinks.jsx` → `computeCurvature`).
+  - **Bug real encontrado e corrigido durante a escrita desses testes**:
+    `computeCurvature` sempre retornava `0.5`, para qualquer ângulo. Causa:
+    `Array.prototype.find` num array ordenado ascendente por ângulo sempre
+    batia no primeiro item (`{angle:5, curvature:0}`) sempre que o ângulo
+    real era maior que 5°; e como esse item tem `curvature: 0` (falsy), o
+    fallback `?.curvature || 0.5` sempre vencia. Ou seja, a "curvatura
+    adaptativa" por ângulo nunca funcionou — todo link sempre usou 0.5.
+    Corrigido para uma busca por "menor breakpoint que ainda cobre o
+    ângulo" (ângulos pequenos → quase reto, perto de 90° → curva máxima,
+    voltando a quase reto perto de 180°), confirmado com o usuário antes de
+    aplicar por mudar a aparência visual de todos os links existentes.
+  - **Bug colateral encontrado e corrigido ao testar `VariadicMathModel`**:
+    importar `add.jsx` (ou qualquer um dos 5 blocos refatorados) de forma
+    isolada — como um teste faz, sem passar primeiro por `App.jsx`/
+    `nodeModel.jsx` — quebrava com `Class extends value undefined is not a
+    constructor`. Causa: `variadicMathModel.jsx` importava `SimNodeModel`
+    de `../nodes/nodeModel`, que reexporta o `Engine`/`Model` e por isso
+    arrasta `elements/index.jsx` (todos os blocos) de volta — um ciclo de
+    import que só "dava sorte" de resolver na ordem certa quando a entrada
+    era sempre `App.jsx`. Corrigido importando direto do módulo-fonte
+    (`../nodes/nodes/simNodeModel`), que não depende de `elements/index.jsx`.
+    **Esse mesmo padrão de import (`from '../nodes/nodeModel'`) ainda existe
+    em praticamente todos os outros arquivos de `elements/`** — funciona
+    hoje só por ordem de carregamento favorável; é uma dívida arquitetural
+    a ter em mente ao adicionar testes para mais blocos.
 
 ### Fase 3 — Dívidas funcionais conhecidas (do próprio `public/todo.html`)
 - [ ] Reativar undo/redo (`nodes/stack/stack.jsx`).

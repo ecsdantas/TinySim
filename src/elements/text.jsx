@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SimNodeModel } from '../nodes/nodeModel'
+import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import DOMPurify from 'dompurify';
 import Editor from 'react-simple-wysiwyg';
 import { useModal } from '../components/modal';

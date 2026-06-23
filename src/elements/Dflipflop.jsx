@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimNodeModel } from '../nodes/nodeModel';
+import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 
 class DFlipFlopModel extends SimNodeModel {

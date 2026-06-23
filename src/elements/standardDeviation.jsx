@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { SimNodeModel } from '../nodes/nodeModel';
+import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import { InputGroup } from '../components/inputGroup';
 
 class StandardDeviationModel extends SimNodeModel {
   kind = 'deviation';
-  values = [];
   CGenUID = 'std';
   tags = ['standard', 'deviation', 'average', 'media', 'statistics', 'math', 'calculation', 'data', 'analysis', 'variance', 'spread', 'distribution'];
 
@@ -15,7 +14,6 @@ class StandardDeviationModel extends SimNodeModel {
     this.createPort('in1', true);
     this.createPort('in2', true);
     this.createPort('out', false);
-    this.values = [];
     this.component = null;
   }
 
@@ -31,17 +29,13 @@ class StandardDeviationModel extends SimNodeModel {
       }
     });
 
+    if (values.length === 0) return { 'out': 0 };
+
     const mean = values.reduce((a, b) => a + b, 0) / values.length;
     const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
     const stdDev = Math.sqrt(variance);
 
-    this.values.push(stdDev);
     return { 'out': stdDev };
-  }
-
-  reset() {
-    super.reset();
-    this.values = [];
   }
 
   icon = () => (

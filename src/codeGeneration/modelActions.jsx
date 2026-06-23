@@ -26,8 +26,8 @@ class ModelActions {
         this.registerModels(CModels);
     }
 
-    default() {
-        return "error";
+    default(node) {
+        throw new Error(`No C model registered for block "${node.constructor.name}" (kind: "${node.kind}"). Cannot generate C code for this block.`);
     }
 
     // FUNÇÕES PRIVADAS

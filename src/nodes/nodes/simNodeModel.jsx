@@ -94,14 +94,15 @@ class SimNodeModel extends DefaultNodeModel {
     // Exemplo de uso: <node>.getNodeByInput(0)?.getOptions().name
     getNodeByInput(inPortIndex = 0) {
         const port = this.getInPorts()[inPortIndex];
-        const links = Object.keys(port.getLinks())
-        if (port && links.length > 0) {
+        if (!port) return null; // Porta inexistente nesse índice
+        const links = Object.values(port.getLinks())
+        if (links.length > 0) {
             // Assumindo que existe apenas uma ligação por porta de entrada
-            const link = Object.values(port.getLinks())[0];
+            const link = links[0];
             const connectedPort = link.getSourcePort() === port ? link.getTargetPort() : link.getSourcePort();
             const node = connectedPort.getNode()
             node.calledPort = connectedPort // Bind the port that was called
-            return node;   
+            return node;
         }
         return null; // Nenhuma ligação encontrada
     }

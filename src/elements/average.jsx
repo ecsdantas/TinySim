@@ -1,10 +1,9 @@
 import React from 'react';
-import { SimNodeModel } from '../nodes/nodeModel';
+import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 
 class AverageModel extends SimNodeModel {
   kind = 'average';
-  values = [];
   CGenUID = 'avg';
   tags = ['avg', 'mean', 'average', 'media', 'arithmetic', 'calculation', 'math', 'statistics'];
 
@@ -14,7 +13,6 @@ class AverageModel extends SimNodeModel {
     this.createPort('in1', true);
     this.createPort('in2', true);
     this.createPort('out', false);
-    this.values = [];
     this.component = null;
   }
 
@@ -33,13 +31,7 @@ class AverageModel extends SimNodeModel {
     });
 
     const avg = count > 0 ? sum / count : 0;
-    this.values.push(avg);
     return { 'out': avg };
-  }
-
-  reset() {
-    super.reset();
-    this.values = [];
   }
 
   icon = () => (

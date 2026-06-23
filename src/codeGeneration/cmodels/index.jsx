@@ -47,6 +47,11 @@ import { RepeatingSequenceModel } from "./cmodel_repeatingSequence";
 import { ModModel } from "./cmodel_mod";
 import { HistogramModel } from "./cmodel_histogram";
 import { RelationalConstantOperatorModel } from "./cmodel_comparatorConstant"
+import { PIDControllerModel } from "./cmodel_PIDcontroller";
+import { DFlipFlopModel } from "./cmodel_dFlipFlop";
+import { TFlipFlopModel } from "./cmodel_tFlipFlop";
+import { JKFlipFlopModel } from "./cmodel_jkFlipFlop";
+import { SRFlipFlopModel } from "./cmodel_srFlipFlop";
 
 export { 
     AddModel, 
@@ -95,5 +100,10 @@ export {
     XorModel,
     XnorModel,
     RepeatingSequenceModel,
-    HistogramModel
+    HistogramModel,
+    PIDControllerModel,
+    DFlipFlopModel,
+    TFlipFlopModel,
+    JKFlipFlopModel,
+    SRFlipFlopModel
 }

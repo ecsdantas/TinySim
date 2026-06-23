@@ -1,5 +1,8 @@
 import React from 'react';
-import { SimNodeModel } from '../nodes/nodeModel'
+// Imports directly from the leaf module (not '../nodes/nodeModel', which
+// re-exports the diagram Engine/Model and pulls in elements/index.jsx) to
+// avoid a circular import: nodeModel -> elements/index -> (this file).
+import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 
 // Base class for blocks that fold 2+ numeric inputs into a single output

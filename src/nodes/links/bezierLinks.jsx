@@ -9,8 +9,8 @@ class BezierLinkModel extends DefaultLinkModel {
     }
 
     computeCurvature(dx, dy) {
-        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-        return [
+        const angle = Math.abs(Math.atan2(dy, dx) * (180 / Math.PI));
+        const breakpoints = [
             { angle: 5, curvature: 0 },
             { angle: 10, curvature: 0.05 },
             { angle: 30, curvature: 0.20 },
@@ -18,7 +18,12 @@ class BezierLinkModel extends DefaultLinkModel {
             { angle: 90, curvature: 0.8 },
             { angle: 135, curvature: 0.3 },
             { angle: 175, curvature: 0 },
-        ].find(ob => Math.abs(ob.angle) < Math.abs(angle))?.curvature || 0.5;
+        ];
+        // Smallest breakpoint whose threshold still covers this angle; beyond
+        // the last breakpoint (close to 180°), keep its curvature instead of
+        // falling back to an unrelated default.
+        const match = breakpoints.find(bp => angle <= bp.angle);
+        return match ? match.curvature : breakpoints[breakpoints.length - 1].curvature;
     }
 
     getPath() {

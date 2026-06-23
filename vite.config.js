@@ -9,6 +9,6 @@ export default defineConfig({
   },
   chunkSizeWarningLimit: 500,
   test: {
-    environment: 'node',
+    environment: 'happy-dom', // @projectstorm/react-diagrams expects browser globals (self, window)
   },
 })
