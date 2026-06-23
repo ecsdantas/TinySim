@@ -4,6 +4,7 @@ import { solveTerminalNodes } from "./runStep"
 import { runStandardLoop, runRealTimeLoop } from "./runModes"
 import { resetNodes } from "./reset"
 import { buildTotalTimeArray, buildTimeArray } from "./timeArrays"
+import { EULER } from "./integrationMethods"
 
 class SimulationEngine {
 
@@ -11,7 +12,7 @@ class SimulationEngine {
     currentTime = 0
     stepSize = 1
     stopTime = 10
-    method = 0 // método de integração: 0 = ODE1, 1 = ODE2... a ser implementado
+    method = EULER // método de integração usado pelos blocos dinâmicos (ver integrationMethods.jsx)
     statelessMode = false
     saveLog = true
     #model = null
@@ -138,6 +139,15 @@ class SimulationEngine {
 
     getStepTime() {
         return this.stepSize
+    }
+
+    // Obtem o método de integração atual (ver integrationMethods.jsx)
+    getMethod() {
+        return this.method
+    }
+
+    setMethod(method) {
+        this.method = method
     }
 
     // Obtem o step atual

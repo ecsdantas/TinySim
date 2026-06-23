@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import { integrateLinearODE } from '../simulation/integrationMethods';
 
 class FirstOrderModel extends SimNodeModel {
 
@@ -43,8 +44,8 @@ class FirstOrderModel extends SimNodeModel {
         const inputValue = (inpt && inpt.solve) ? inpt.solve() : 0;
         const stepTime = Simulation.getStepTime();
 
-        // Equação: memoryValue += (inputValue - a * memoryValue) * stepTime
-        this.memoryValue += (inputValue - this.dampingFactor * this.memoryValue) * stepTime;
+        // Equação: dy/dt = inputValue - a * memoryValue
+        this.memoryValue = integrateLinearODE(Simulation.getMethod(), this.memoryValue, inputValue, this.dampingFactor, stepTime);
 
         // Retorna o valor antigo da memória
         return { 'out': outValue };

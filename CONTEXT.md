@@ -146,15 +146,23 @@ nodes/links/ports ainda é frágil.
       lugar coerente).
 - [ ] Avaliar migração incremental para TypeScript (ao menos `nodeModel`,
       `simNodeModel` e `simulation/core` primeiro, por serem o núcleo).
-- [ ] **Novo, descoberto nesta rodada**: trocar, em todo `src/elements/*.jsx`,
-      o import `{ SimNodeModel } from '../nodes/nodeModel'` pelo import
-      direto de `../nodes/nodes/simNodeModel`. O caminho atual via
-      `nodeModel.jsx` só funciona por sorte de ordem de carregamento (ver
-      bug do `VariadicMathModel` acima) — qualquer novo arquivo que tente
-      importar um bloco isoladamente (testes, Storybook, etc.) corre risco
-      de cair no mesmo ciclo.
+- [x] Trocado, nos 48 arquivos restantes de `src/elements/*.jsx`, o import
+      `{ SimNodeModel } from '../nodes/nodeModel'` pelo import direto de
+      `../nodes/nodes/simNodeModel` (troca mecânica, mesma import shape em
+      todos os arquivos). Isso elimina o ciclo `nodeModel.jsx →
+      elements/index.jsx → <qualquer bloco> → nodeModel.jsx` para todo o
+      diretório `elements/` — qualquer bloco agora pode ser importado
+      isoladamente (testes, Storybook, etc.) sem depender da ordem de
+      carregamento. `App.jsx` e `components/dropElement.jsx` continuam
+      importando de `nodeModel.jsx` normalmente, pois eles de fato
+      precisam do `Engine`/`Model`, não só do `SimNodeModel`.
+  - Teste de regressão dedicado em
+    `src/elements/isolatedImport.test.jsx`: importa 5 blocos
+    (`Average`, `Clock`, `Comparator`, `Text`, `Switch`) como os
+    **primeiros** imports do arquivo, reproduzindo exatamente o cenário que
+    quebrava antes (módulo cego, sem `App.jsx` carregado primeiro).
 
-> Validação até aqui: `npm test` (36/36) e `npm run build` passam limpos
+> Validação até aqui: `npm test` (41/41) e `npm run build` passam limpos
 > (único warning restante é de uma dependência de terceiros,
 > `@projectstorm/react-diagrams-routing`, não relacionado ao código do
 > projeto). Os testes do `SimulationEngine` foram escritos contra o

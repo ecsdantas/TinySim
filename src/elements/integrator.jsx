@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import { integrateLinearODE } from '../simulation/integrationMethods';
 
 class IntegratorModel extends SimNodeModel {
 
@@ -35,7 +36,9 @@ class IntegratorModel extends SimNodeModel {
         this.lastStepSolved = Simulation.getCurrentStep()
         // Realiza o calculo nominal
         const inpt = this.getNodeByInput(0);
-        this.memoryValue += ((inpt && inpt.solve)? inpt.solve() : 0) * Simulation.getStepTime()
+        const inputValue = (inpt && inpt.solve) ? inpt.solve() : 0
+        // dy/dt = inputValue (a = 0): Euler/RK2/RK4 são todos exatos aqui
+        this.memoryValue = integrateLinearODE(Simulation.getMethod(), this.memoryValue, inputValue, 0, Simulation.getStepTime())
         // Retorna o valor antigo da memória
         return {'out':  outValue}
     }
