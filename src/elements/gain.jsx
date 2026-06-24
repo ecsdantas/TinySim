@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal  } from '../components/modal';
 import { InputGroup  } from '../components/inputGroup';
+import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
 
 class GainModel extends SimNodeModel {
 
@@ -26,6 +27,12 @@ class GainModel extends SimNodeModel {
         const inpt = this.getNodeByInput(0);
         const out = (inpt && inpt.solve) ? inpt.solve() * this.gainValue : 0
         return {'out': out}
+    }
+
+    linearize() {
+        const inpt = this.getNodeByInput(0);
+        if (!inpt) throw new LinearizationError(`"${this.getModelName()}": entrada não conectada`, this);
+        return seriesTF({ numerator: [this.gainValue], denominator: [1] }, inpt.linearize());
     }
 
     icon = () => <svg width={32} height={32} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" >

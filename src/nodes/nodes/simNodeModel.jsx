@@ -91,6 +91,22 @@ class SimNodeModel extends DefaultNodeModel {
         this.settings = Settings
     }
 
+    // Retorna a função de transferência (Laplace) deste bloco como
+    // {numerator, denominator} (coeficientes do maior grau para o menor),
+    // combinada com a de suas entradas, para a análise de frequência (ver
+    // src/simulation/linearize.jsx e elements/frequencyScope.jsx).
+    // Default: blocos sem porta de entrada (fontes: Constant, Clock...) são
+    // tratados como uma referência unitária (ganho 1); blocos com entrada
+    // que não sobrescrevem este método são considerados não-lineares ou sem
+    // representação em Laplace conhecida, e lançam erro.
+    linearize() {
+        const inPorts = this.getInPorts ? this.getInPorts() : []
+        if (inPorts.length === 0) {
+            return { numerator: [1], denominator: [1] }
+        }
+        throw new LinearizationError(`"${this.getModelName()}" não pode ser linearizado (bloco não-linear ou sem representação em Laplace suportada)`, this)
+    }
+
     // Retorna SimNodeModels conectados ao bloco atual
     // Exemplo de uso: <node>.getNodeByInput(0)?.getOptions().name
     getNodeByInput(inPortIndex = 0) {

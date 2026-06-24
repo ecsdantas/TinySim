@@ -4,6 +4,7 @@ import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
 import { integrateLinearODE } from '../simulation/integrationMethods';
+import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
 
 class IntegratorModel extends SimNodeModel {
 
@@ -48,6 +49,13 @@ class IntegratorModel extends SimNodeModel {
         super.reset()
         this.memoryValue = this.initialValue
         this.lastStepSolved = null
+    }
+
+    // H(s) = 1/s, em série com a entrada
+    linearize() {
+        const inpt = this.getNodeByInput(0);
+        if (!inpt) throw new LinearizationError(`"${this.getModelName()}": entrada não conectada`, this);
+        return seriesTF({ numerator: [1], denominator: [1, 0] }, inpt.linearize());
     }
 
     icon = () => <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

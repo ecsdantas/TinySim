@@ -52,8 +52,12 @@ import ModModel from "./mod";
 import IsEvenModel from "./isEven";
 import IsOddModel from "./isOdd";
 import RepeatingSequenceModel from "./repeatSequence";
+import StepModel from "./step";
+import RampModel from "./ramp";
+import SineWaveModel from "./sineWave";
+import PulseGeneratorModel from "./pulseGenerator";
 
-export { 
+export {
     ConstantModel,
     PiModel,
     AddModel,
@@ -106,5 +110,9 @@ export {
     DFlipFlopModel,
     TFlipFlopModel,
     JKFlipFlopModel,
-    SRFlipFlopModel
+    SRFlipFlopModel,
+    StepModel,
+    RampModel,
+    SineWaveModel,
+    PulseGeneratorModel
 }
