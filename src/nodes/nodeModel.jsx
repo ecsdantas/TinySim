@@ -7,8 +7,7 @@ import { useModal } from '../components/modal';
 import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory';
 import Simulation from '../simulation/core';
 import { SelectionBox } from './selection/mouse';
-import Stack from './stack/stack';
-import { toast } from 'react-toastify';
+import getStackManager from './stack/stack';
 import BezierLinkFactory from './links/bezierLinkFactory';
 import { BezierPortFactory } from './ports/bezierPortFactory';
 
@@ -55,9 +54,6 @@ Engine.getPortFactories().registerFactory(new BezierPortFactory());
 // Cria o digrama e o modelo
 const Model = new DiagramModel();
 Engine.setModel(Model);
-
-// Permite fazer o Undo e Redos
-// const stackManager = new Stack(Engine, Simulation);
 
 // Permite utilizar atalhos
 const handleKeyDown = (event) => {
@@ -118,14 +114,11 @@ const handleKeyDown = (event) => {
                 selectedEntities.filter(node => node.settings).forEach(node => node.settings());
             break;
 
-        case 'x':
-            // event.ctrlKey && stackManager.redoLastAction();
-            break;
-
         case 'z':
-            // event.ctrlKey && !event.shiftKey && stackManager.undoLastAction();
-            // event.ctrlKey && event.shiftKey && stackManager.redoLastAction();
-            event.ctrlKey && toast.warning("We don't have undo or redo. Sorry")
+            if (event.ctrlKey) {
+                event.preventDefault();
+                event.shiftKey ? getStackManager().redoLastAction() : getStackManager().undoLastAction();
+            }
             break;
 
         case '3':

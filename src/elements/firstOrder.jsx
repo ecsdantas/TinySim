@@ -8,6 +8,7 @@ import { integrateLinearODE } from '../simulation/integrationMethods';
 class FirstOrderModel extends SimNodeModel {
 
     kind = 'firstOrder';
+    breaksAlgebraicLoop = true;
     CGenUID = 'fo';
     initialValue = 0;
     memoryValue = this.initialValue;

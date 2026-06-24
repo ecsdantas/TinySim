@@ -6,6 +6,7 @@ import Simulation from '../simulation/core';
 class DerivatorModel extends SimNodeModel {
 
     kind = 'derivator'
+    breaksAlgebraicLoop = true
     previousInput = 0
     previousOutput = 0
     lastStepSolved = null

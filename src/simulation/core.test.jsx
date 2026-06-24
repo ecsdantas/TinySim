@@ -29,6 +29,16 @@ describe('SimulationEngine', () => {
         expect(engine.runSetup()).toBe(true);
     });
 
+    it('runSetup fails and sets emergencyStop when the diagram has an algebraic loop', () => {
+        const a = makeNode({ getInPorts: () => [0] });
+        const b = makeNode({ getInPorts: () => [0], getNodeByInput: () => a });
+        a.getNodeByInput = () => b;
+        engine.setModel({ getNodes: () => [a, b] });
+
+        expect(engine.runSetup()).toBe(false);
+        expect(engine.emergencyStop).toBe(true);
+    });
+
     it('runStep solves only terminal nodes and advances time', () => {
         const terminal = makeNode({ isTerminalBlock: true });
         const nonTerminal = makeNode({ isTerminalBlock: false });

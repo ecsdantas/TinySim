@@ -8,6 +8,7 @@ import { integrateLinearODE } from '../simulation/integrationMethods';
 class IntegratorModel extends SimNodeModel {
 
     kind = 'integrator'
+    breaksAlgebraicLoop = true
     CGenUID = 'int'
     initialValue = 0
     memoryValue = this.initialValue

@@ -7,6 +7,7 @@ import { InputGroup } from '../components/inputGroup';
 class ZeroOrderModel extends SimNodeModel {
 
     kind = 'zeroOrder';
+    breaksAlgebraicLoop = true;
     CGenUID = 'zo';
     memoryValue = 0;
     constantA = 1.0; // Correspondente ao 'a' em (s + a)

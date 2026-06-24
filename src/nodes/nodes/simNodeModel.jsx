@@ -13,6 +13,7 @@ class SimNodeModel extends DefaultNodeModel {
     tags = ['generic', 'default']   // Tags para pesquisa
     description = null              // Descrição do bloco
     isTerminalBlock = false         // Indica ao simulador que este bloco não é terminal
+    breaksAlgebraicLoop = false     // true se o bloco tem estado e não depende do input do passo atual (ver algebraicLoop.jsx)
     lastStepSolved = null           // Help to avoid re-work
     icon = null                     // Icone do bloco (deve ser uma React SVG _ => <svg>...</svg>)
     settings = null                 // Página de configuração do bloco (deve ser uma React SVG _ => <svg>...</svg>)

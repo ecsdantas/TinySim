@@ -7,6 +7,7 @@ import { InputGroup } from '../components/inputGroup';
 class MemoryModel extends SimNodeModel {
 
     kind = 'memory'
+    breaksAlgebraicLoop = true
     initialValue = 0
     memoryValue = this.initialValue
     lastStepSolved = null

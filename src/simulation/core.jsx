@@ -48,7 +48,14 @@ class SimulationEngine {
             }
 
             const result = setupSimulation(this.#model)
-            if (!result.ok) return false
+            if (!result.ok) {
+                if (result.error === 'algebraic-loop') {
+                    this.saveLog && console.error("Algebraic loop detected:", result.cycleLabels.join(' -> '))
+                    toast.error(<div>Algebraic loop detected: {result.cycleLabels.join(' → ')}.<br />Add a state block (Integrator, Memory, ZOH...) to break the loop.</div>)
+                    this.emergencyStop = true
+                }
+                return false
+            }
 
             this.#nodes = result.nodes
             return true

@@ -187,13 +187,19 @@ nodes/links/ports ainda é frágil.
 > comportamento antigo antes do split em módulos, e continuaram passando
 > sem alteração depois.
 >
-> **Atualização (2026-06-24): `npm test` está quebrado de novo.** Todas as
-> 7 suítes falham com `TypeError: Class extends value undefined is not a
-> constructor or null` em `src/elements/constant.jsx` — o mesmo padrão de
-> ciclo de import descrito acima, aparentemente reintroduzido por mudanças
-> posteriores (não investigado a fundo ainda; `npm run build` continua
-> passando, então o problema é específico do grafo de módulos do Vitest).
-> Tratar como bug aberto antes de confiar em qualquer execução de teste.
+> **Atualização (2026-06-24): falha intermitente investigada e descartada
+> como bug de código.** `npm test` chegou a falhar nas 7 suítes com
+> `TypeError: Class extends value undefined is not a constructor or null`
+> em `src/elements/constant.jsx` (o mesmo padrão de ciclo de import descrito
+> acima). Investigando, `src/nodes/engine.jsx` já existe e o ciclo
+> `nodeModel.jsx → elements/index.jsx → bloco → nodeModel.jsx` continua
+> quebrado como deveria. Repetindo `npm test` várias vezes, inclusive com
+> `node_modules/.vite` apagado (cache frio), o resultado foi consistentemente
+> 39/39 (7/7 suítes). A falha não voltou a reproduzir; ficou registrada como
+> possível instabilidade pontual do cache do Vitest/Vite durante edições
+> concorrentes na mesma sessão, não uma regressão real no grafo de imports.
+> Se voltar a acontecer, vale checar `node_modules/.vite` antes de suspeitar
+> do código.
 >
 > Também nesta data: `bezierLinks.jsx` foi reescrito por completo —
 > trocou o roteamento por curvas Bezier (com `computeCurvature`, descrito

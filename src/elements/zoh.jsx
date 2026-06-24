@@ -7,6 +7,7 @@ import { InputGroup } from '../components/inputGroup';
 class ZOHModel extends SimNodeModel {
 
     kind = 'zero-order-hold';
+    breaksAlgebraicLoop = true;
     CGenUID = 'zoh';
     lastValue = 0;
     lastStepSolved = null;

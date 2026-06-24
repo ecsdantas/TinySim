@@ -7,6 +7,7 @@ import { InputGroup } from '../components/inputGroup';
 class PIDControllerModel extends SimNodeModel {
   kind = 'pidController';
   isTerminalBlock = false;
+  breaksAlgebraicLoop = true;
   kp = 0.3;
   ki = 0.02;
   kd = 0.001;
