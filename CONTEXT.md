@@ -88,8 +88,9 @@ nodes/links/ports ainda é frágil.
 7. **Validação fraca** — checagem de ciclos algébricos feita na Fase 4
    (`algebraicLoop.jsx`); divisão por zero ainda não tratada, import de CSV
    ainda sem validação de tipos/schema.
-8. **Sem subsistemas/hierarquia** — todo diagrama é uma única camada plana;
-   Simulink real permite blocos aninhados.
+8. **Subsistemas/hierarquia** implementados na Fase 4 (`SubsystemModel`);
+   ainda sem geração de código C para eles e sem detecção de loop algébrico
+   atravessando a fronteira do subsistema (ver detalhes na Fase 4).
 
 ## Plano de trabalho
 
@@ -317,7 +318,63 @@ nodes/links/ports ainda é frágil.
       não faz parte do repositório.
 
 ### Fase 4 — Funcionalidades tipo Simulink ainda ausentes
-- [ ] Subsistemas/blocos aninhados.
+- [x] **Subsistemas/blocos aninhados.** Três blocos novos:
+      `SubsystemModel` (`src/elements/subsystem.jsx`), `SubsystemInputModel`
+      e `SubsystemOutputModel` (`subsystemInput.jsx`/`subsystemOutput.jsx`),
+      registrados em `index.jsx`.
+      - **Modelo**: `SubsystemModel` guarda seu próprio `internalModel`
+        (`DiagramModel`) — um diagrama independente, vivo o tempo todo em
+        memória, com seus próprios nós/links. Dentro dele, blocos
+        `SubsystemInputModel`/`SubsystemOutputModel` marcam onde os sinais
+        entram/saem; o botão "Sync Ports" no modal do `SubsystemModel`
+        recalcula as portas externas a partir desses marcadores (não há
+        sincronia automática em tempo real nesta rodada — decisão deliberada
+        para não precisar de listeners no diagrama interno).
+      - **Navegação**: "View Inside" troca o `model` do `Engine` global pelo
+        `internalModel` do subsistema, no lugar (mesmo padrão que o
+        undo/redo usa para restaurar estado — não cria um segundo Engine).
+        Novo singleton `src/nodes/subsystemNavigation.jsx` (estilo ad-hoc
+        igual ao `useModal`) mantém uma pilha de navegação e notifica
+        `App.jsx`, que renderiza um breadcrumb com "‹ Back"/"Top".
+        **Lacuna conhecida**: os listeners do `Stack` de undo/redo
+        (`nodes/stack/stack.jsx`) são presos ao model que existia quando o
+        `Stack` foi instanciado: undo/redo não acompanha a navegação para
+        dentro/fora de um subsistema.
+      - **Simulação**: `SubsystemModel.solution()` resolve **todas** as
+        saídas de uma vez (não só a do `calledPort` chamado), porque o cache
+        por passo em `SimNodeModel.solve()` guarda o retorno de uma única
+        chamada de `solution()` — se o bloco resolvesse só uma porta por vez,
+        consultar uma segunda saída no mesmo passo devolveria `undefined` em
+        vez de recalcular. Cada `SubsystemInputModel` delega para
+        `parentSubsystem.getOuterInputValue(portIndex)`, que chama
+        `getNodeByInput` na própria porta externa do `SubsystemModel` — ou
+        seja, o subsistema é "transparente" para o restante do motor de
+        simulação, sem precisar de um segundo `SimulationEngine`.
+        `reset()` propaga para todos os nós do `internalModel`.
+      - **Análise de frequência**: também suportado — `linearize()` no
+        `SubsystemModel` usa `this.calledPort.options.label` (`out1`,
+        `out2`...) pra achar o marcador de saída certo e delega; loops
+        algébricos e blocos não suportados *dentro* do subsistema propagam o
+        mesmo erro que propagariam fora dele.
+      - **Bug real encontrado e corrigido durante os testes**: `syncPorts()`
+        chamava `this.removePort(port)` iterando direto sobre
+        `this.getOutPorts()` — mas `getOutPorts()`/`getInPorts()` no
+        `DefaultNodeModel` da lib retornam o **array vivo** interno
+        (`portsIn`/`portsOut`), e `removePort` faz `splice` nesse mesmo
+        array. Mutar um array enquanto o `forEach` itera sobre ele pula
+        elementos (índices deslocam depois do `splice`) — com 2 portas para
+        remover, só 1 saía. Corrigido iterando sobre uma cópia
+        (`[...this.getOutPorts()]`).
+      - **Não coberto nesta rodada** (limitações deliberadas, não bugs):
+        detecção de loop algébrico não atravessa a fronteira de um
+        subsistema (só vê suas portas externas como uma caixa preta); não há
+        geração de código C para `SubsystemModel`/marcadores — chegar a um
+        deles em `codeGeneration/modelActions.jsx` lança o mesmo erro
+        "no C model registered" que qualquer outro bloco sem `cmodel`, em
+        vez de gerar algo (falha clara, não silenciosa); sem suporte a
+        subsistemas recursivos com referência a si mesmo (não testado, risco
+        de recursão infinita se alguém arrastar um Subsystem dentro de si
+        mesmo).
 - [x] **Detecção de loop algébrico / validação de diagrama antes de simular.**
       Criado `src/simulation/algebraicLoop.jsx` (`detectAlgebraicLoop(nodes)`):
       faz DFS sobre o grafo de dependências (`getNodeByInput`) procurando

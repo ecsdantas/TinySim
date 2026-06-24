@@ -61,8 +61,10 @@ class SubsystemModel extends SimNodeModel {
         const inputs = this.getInputMarkers();
         const outputs = this.getOutputMarkers();
 
-        this.getInPorts().forEach((port) => this.removePort(port));
-        this.getOutPorts().forEach((port) => this.removePort(port));
+        // Copies first: removePort splices DefaultNodeModel's own portsIn/portsOut
+        // arrays in place, which would skip entries if we iterated them directly.
+        [...this.getInPorts()].forEach((port) => this.removePort(port));
+        [...this.getOutPorts()].forEach((port) => this.removePort(port));
 
         inputs.forEach((node, i) => {
             node.portIndex = i;

@@ -10,6 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
 import { Zoombar } from './components/zoomControl';
 import { toast, ToastContainer } from 'react-toastify';
+import { getBreadcrumb, subscribe, goBack, goToRoot } from './nodes/subsystemNavigation';
 
 
 const App = () => {
@@ -20,6 +21,9 @@ const App = () => {
     const [getLBarShow, setLBarShow] = useState(true)
     const [getRBarShow, setRBarShow] = useState(false)
     const [getModelStates, setModelStates] = useState({ show: false, title: 'not in use', content: <b>Empty</b> })
+    const [breadcrumb, setBreadcrumb] = useState(getBreadcrumb())
+
+    useEffect(() => subscribe(setBreadcrumb), [])
 
     // Funções do menu de simulação
     const MenuOptions = {
@@ -52,6 +56,13 @@ const App = () => {
             <Sidebar Side='left' Show={getLBarShow} closeFcn={_ => setLBarShow(false)} />
             <Menubar {...MenuOptions} />
             <Zoombar />
+            {breadcrumb.length > 1 && (
+                <div className="subsystem-breadcrumb" style={{ position: 'absolute', top: 60, left: '50%', transform: 'translateX(-50%)', zIndex: 10, background: '#222', color: '#fff', padding: '4px 10px', borderRadius: 4, fontSize: 12 }}>
+                    <button className="btn" onClick={goBack} style={{ marginRight: 8 }}>‹ Back</button>
+                    <span>{breadcrumb.join(' / ')}</span>
+                    {breadcrumb.length > 2 && <button className="btn" onClick={goToRoot} style={{ marginLeft: 8 }}>Top</button>}
+                </div>
+            )}
             <CanvasWidget className="srd-diagram" engine={Engine} />
         </div>
         <Modal.container getState={getModelStates} setState={setModelStates} />
