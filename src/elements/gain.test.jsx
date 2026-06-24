@@ -22,4 +22,20 @@ describe('GainModel', () => {
 
         expect(gain.serialize().gainValue).toBe(7);
     });
+
+    describe('linearize', () => {
+        it('combines its gain in series with the input transfer function', () => {
+            const gain = new GainModel({}, 3);
+            gain.getNodeByInput = vi.fn(() => ({ linearize: () => ({ numerator: [1], denominator: [1, 0] }) }));
+
+            expect(gain.linearize()).toEqual({ numerator: [3], denominator: [1, 0] });
+        });
+
+        it('throws when the input is not connected', () => {
+            const gain = new GainModel({}, 3);
+            gain.getNodeByInput = vi.fn(() => null);
+
+            expect(() => gain.linearize()).toThrow();
+        });
+    });
 });

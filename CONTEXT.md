@@ -310,8 +310,55 @@ nodes/links/ports ainda é frágil.
       overflow sem explicação. Testes novos: `algebraicLoop.test.jsx` (6
       casos, incluindo self-loop e ciclo quebrado por bloco com estado),
       `setup.test.jsx` (4 casos) e um caso adicional em `core.test.jsx`.
-- [ ] Scope de frequência / análise mais avançada (há `control-systems-js`
-      já na dependência, subutilizada).
+- [x] **Scope de frequência / análise mais avançada**, usando `control-systems-js`
+      (até então dependência sem uso real no código). Novo bloco
+      `FrequencyScopeModel` (`src/elements/frequencyScope.jsx`): não participa
+      do loop de tempo (`isTerminalBlock = false`), é uma análise estática
+      sob demanda — botão "Analyze" no modal de configuração chama
+      `analyze()`, que linealiza a cadeia de blocos conectada à sua entrada e
+      plota o diagrama de Bode (magnitude/fase x frequência, escala log) com
+      `BodeChart` (`elements/complements/BodeChart.jsx`, dois canvases
+      chart.js empilhados).
+      - **Mecanismo**: novo método `linearize()` em `SimNodeModel`
+        (`nodes/nodes/simNodeModel.jsx`), análogo ao `solution()` mas
+        retornando `{numerator, denominator}` (Laplace) em vez de um valor
+        numérico. Default: bloco sem porta de entrada (fonte — Constant,
+        Clock, Step...) é tratado como referência unitária (`{[1],[1]}`);
+        bloco com entrada que não sobrescreve `linearize()` lança
+        `LinearizationError` (bloco não-linear ou sem representação
+        conhecida). Overrides adicionados em `GainModel` (ganho puro),
+        `IntegratorModel` (`1/s`), `FirstOrderModel` (`1/(s+a)`),
+        `ZeroOrderModel` (`s+a`), `PIDControllerModel` (só quando `kd=0` e a
+        porta `setpoint` está desconectada — ver limitações abaixo), e
+        genericamente em `VariadicMathModel` via uma flag `isLinearCombination`
+        (`true` só em `AddModel`/`SubModel`; `Multiply/Divide/Mod` caem no
+        default e lançam erro, por serem não-lineares).
+      - Álgebra de polinômios isolada em `src/simulation/transferFunctionMath.jsx`
+        (`seriesTF` para blocos em cascata, `addTF` para somas/subtrações
+        sobre um denominador comum, `trimLeadingZeros`, `logSpace`,
+        `LinearizationError`) — só na borda final (`FrequencyScopeModel.analyze()`)
+        os coeficientes acumulados são passados pro `transferFunction()` da
+        lib externa.
+      - **Limitação real descoberta na lib, não só deste projeto**:
+        `control-systems-js` exige `numerator.length <= denominator.length`
+        (sistema "estritamente próprio" — physically realizable). Isso
+        bloqueia um `Derivator` puro (`s/1`, numerador de ordem maior) e um
+        PID completo com `kd≠0` (numerador de ordem 2 > denominador de ordem
+        1) — por isso só PI (`kd=0`) é suportado na análise de frequência.
+      - **Bug da lib contornado, não só evitado**: `tf.bode()` sem argumentos
+        usa um range de frequência "default" calculado a partir dos
+        polos/zeros: para qualquer sistema com polo na origem (ex.: um
+        `Integrator` sozinho — o caso mais comum no app), esse cálculo
+        retorna `Infinity`/`NaN` em todos os pontos (confirmado isolando o
+        problema via Node antes de implementar). Por isso o bloco sempre
+        gera seu próprio array de frequências log-espaçadas
+        (`logSpace(minFrequency, maxFrequency, numPoints)`, configurável no
+        modal) em vez de confiar no default da lib.
+      - **Não suportado nesta rodada** (lança erro claro nomeando o bloco, em
+        vez de silenciosamente dar um resultado errado): `Multiply`,
+        `Divide`, `Mod`, `Derivator`, PID com `kd≠0`, `Saturation`, `Switch`,
+        comparadores, `Memory`/`ZOH` (delay/sample discreto) e qualquer outro
+        bloco que não sobrescreva `linearize()`.
 
 ### Fase 5 — Limpeza de código não utilizado (2026-06-24)
 - [x] **Bug real encontrado e corrigido**: `src/elements/index.jsx` importava

@@ -4,6 +4,7 @@ import React from 'react';
 // avoid a circular import: nodeModel -> elements/index -> (this file).
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { addTF, LinearizationError } from '../simulation/transferFunctionMath';
 
 // Base class for blocks that fold 2+ numeric inputs into a single output
 // (Add, Sub, Multiply, Divide, Mod). It owns port creation, the "Add port"
@@ -15,6 +16,9 @@ class VariadicMathModel extends SimNodeModel {
     identity = 0                  // value returned when 0 ports are connected
     seedFromFirstInput = false    // true: accumulator starts as in1's value (sub/divide/mod)
                                    // false: accumulator starts at `identity` (add/multiply)
+    isLinearCombination = false   // true for Add/Sub: combine() is a plain sum/difference,
+                                   // safe to redo over Laplace polynomials (see linearize())
+    combineSign = 1                // sign applied to every input after the first when isLinearCombination
     modalTitle = 'Math Block'
     helpText = 'This block combines its input values.'
 
@@ -49,6 +53,26 @@ class VariadicMathModel extends SimNodeModel {
             acc = this.combine(acc, value);
         }
         return { out: started ? acc : this.identity };
+    }
+
+    // Multiply/Divide/Mod don't override this and fall through to
+    // SimNodeModel's default, which throws (they're nonlinear in general).
+    // Add/Sub set `isLinearCombination` and combine over a common
+    // denominator instead, since summing/subtracting is polynomial-safe.
+    linearize() {
+        if (!this.isLinearCombination) {
+            return super.linearize();
+        }
+        const ports = this.getInPorts();
+        let result = null;
+        for (let i = 0; i < ports.length; i++) {
+            const inputNode = this.getNodeByInput(i);
+            if (!inputNode) continue;
+            const tf = inputNode.linearize();
+            result = result ? addTF(result, tf, this.combineSign) : tf;
+        }
+        if (!result) throw new LinearizationError(`"${this.getModelName()}": nenhuma entrada conectada`, this);
+        return result;
     }
 
     settings = _ => {

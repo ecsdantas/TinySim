@@ -14,6 +14,13 @@ function withInputs(node, values) {
     });
 }
 
+function withLinearizedInputs(node, tfs) {
+    node.getNodeByInput = vi.fn((i) => {
+        const tf = tfs[i];
+        return tf === undefined ? null : { linearize: () => tf };
+    });
+}
+
 describe('VariadicMathModel-based blocks', () => {
 
     describe('AddModel', () => {
@@ -28,6 +35,22 @@ describe('VariadicMathModel-based blocks', () => {
             const add = new AddModel();
             withInputs(add, []);
             expect(add.solution()).toEqual({ out: 0 });
+        });
+
+        it('linearize: sums the input transfer functions over a common denominator', () => {
+            const add = new AddModel();
+            // 1/s + 1/s = 2/s^2 (over the common denominator)
+            withLinearizedInputs(add, [{ numerator: [1], denominator: [1, 0] }, { numerator: [1], denominator: [1, 0] }]);
+
+            const result = add.linearize();
+            expect(result.numerator).toEqual([2, 0]);
+            expect(result.denominator).toEqual([1, 0, 0]);
+        });
+
+        it('linearize: throws when nothing is connected', () => {
+            const add = new AddModel();
+            withLinearizedInputs(add, []);
+            expect(() => add.linearize()).toThrow();
         });
     });
 
@@ -44,6 +67,14 @@ describe('VariadicMathModel-based blocks', () => {
             withInputs(sub, []);
             expect(sub.solution()).toEqual({ out: 0 });
         });
+
+        it('linearize: subtracts subsequent input transfer functions', () => {
+            const sub = new SubModel();
+            // 5/1 - 2/1 = 3/1
+            withLinearizedInputs(sub, [{ numerator: [5], denominator: [1] }, { numerator: [2], denominator: [1] }]);
+
+            expect(sub.linearize()).toEqual({ numerator: [3], denominator: [1] });
+        });
     });
 
     describe('MultiplyModel', () => {
@@ -57,6 +88,11 @@ describe('VariadicMathModel-based blocks', () => {
             const mul = new MultiplyModel();
             withInputs(mul, []);
             expect(mul.solution()).toEqual({ out: 1 });
+        });
+
+        it('linearize: throws (nonlinear, not supported for frequency analysis)', () => {
+            const mul = new MultiplyModel();
+            expect(() => mul.linearize()).toThrow();
         });
     });
 

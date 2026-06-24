@@ -51,4 +51,20 @@ describe('IntegratorModel', () => {
         expect(integrator.lastStepSolved).toBeNull();
         expect(integrator.solution()).toEqual({ out: 5 });
     });
+
+    describe('linearize', () => {
+        it('returns 1/s in series with the input transfer function', () => {
+            const integrator = new IntegratorModel();
+            integrator.getNodeByInput = vi.fn(() => ({ linearize: () => ({ numerator: [3], denominator: [1] }) }));
+
+            expect(integrator.linearize()).toEqual({ numerator: [3], denominator: [1, 0] });
+        });
+
+        it('throws when the input is not connected', () => {
+            const integrator = new IntegratorModel();
+            integrator.getNodeByInput = vi.fn(() => null);
+
+            expect(() => integrator.linearize()).toThrow();
+        });
+    });
 });

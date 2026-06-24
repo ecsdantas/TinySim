@@ -56,6 +56,7 @@ import StepModel from "./step";
 import RampModel from "./ramp";
 import SineWaveModel from "./sineWave";
 import PulseGeneratorModel from "./pulseGenerator";
+import FrequencyScopeModel from "./frequencyScope";
 
 export {
     ConstantModel,
@@ -114,5 +115,6 @@ export {
     StepModel,
     RampModel,
     SineWaveModel,
-    PulseGeneratorModel
+    PulseGeneratorModel,
+    FrequencyScopeModel
 }

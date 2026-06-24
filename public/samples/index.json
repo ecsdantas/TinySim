@@ -53,6 +53,16 @@
             "description": "Learn the working mechanism of a Successive Approximation Register (SAR) Analog-to-Digital Converter through this detailed example.",
             "image": "/samples/sar.png",
             "url": "/samples/sar.tsim"
+        },
+        {
+            "name": "Signal Sources",
+            "description": "See the four classic source blocks - Step, Ramp, Sine Wave, and Pulse Generator - side by side, each plotted against simulation time.",
+            "url": "/samples/signalsources.tsim"
+        },
+        {
+            "name": "Closed-Loop Step Response",
+            "description": "Drive a first-order plant with a PID controller tracking a Step setpoint, and compare the setpoint against the plant's response.",
+            "url": "/samples/stepresponse.tsim"
         }
     ]
 }

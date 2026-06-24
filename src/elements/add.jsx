@@ -9,6 +9,7 @@ class AddModel extends VariadicMathModel {
 
     identity = 0
     seedFromFirstInput = false
+    isLinearCombination = true
     modalTitle = 'Add Block'
     helpText = <>This blocks sum the values from all input ports.<br />You can add new ports.</>
 

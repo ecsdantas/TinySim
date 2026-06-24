@@ -52,8 +52,12 @@ import { DFlipFlopModel } from "./cmodel_dFlipFlop";
 import { TFlipFlopModel } from "./cmodel_tFlipFlop";
 import { JKFlipFlopModel } from "./cmodel_jkFlipFlop";
 import { SRFlipFlopModel } from "./cmodel_srFlipFlop";
+import { StepModel } from "./cmodel_step";
+import { RampModel } from "./cmodel_ramp";
+import { SineWaveModel } from "./cmodel_sineWave";
+import { PulseGeneratorModel } from "./cmodel_pulseGenerator";
 
-export { 
+export {
     AddModel, 
     SubModel, 
     ConstantModel, 
@@ -105,5 +109,9 @@ export {
     DFlipFlopModel,
     TFlipFlopModel,
     JKFlipFlopModel,
-    SRFlipFlopModel
+    SRFlipFlopModel,
+    StepModel,
+    RampModel,
+    SineWaveModel,
+    PulseGeneratorModel
 }

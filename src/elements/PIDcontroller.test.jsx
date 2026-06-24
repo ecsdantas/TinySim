@@ -75,4 +75,37 @@ describe('PIDControllerModel', () => {
         expect(pid.previousTime).toBeNull();
         expect(pid.previousOutput).toBe(0);
     });
+
+    describe('linearize', () => {
+        it('returns -(kp*s + ki)/s in series with the "in" input when kd=0 and setpoint is unconnected', () => {
+            const pid = new PIDControllerModel({}, 2, 1, 0);
+            pid.getNodeByInput = vi.fn((index) => {
+                if (index === 1) return { linearize: () => ({ numerator: [1], denominator: [1] }) };
+                return null; // setpoint unconnected
+            });
+
+            expect(pid.linearize()).toEqual({ numerator: [-2, -1], denominator: [1, 0] });
+        });
+
+        it('throws when kd is not zero (derivative term is not realizable)', () => {
+            const pid = new PIDControllerModel({}, 2, 1, 0.5);
+            pid.getNodeByInput = vi.fn(() => null);
+
+            expect(() => pid.linearize()).toThrow();
+        });
+
+        it('throws when the setpoint port is connected (unsupported MISO case)', () => {
+            const pid = new PIDControllerModel({}, 2, 1, 0);
+            pid.getNodeByInput = vi.fn((index) => ({ linearize: () => ({ numerator: [1], denominator: [1] }) }));
+
+            expect(() => pid.linearize()).toThrow();
+        });
+
+        it('throws when the "in" port is not connected', () => {
+            const pid = new PIDControllerModel({}, 2, 1, 0);
+            pid.getNodeByInput = vi.fn(() => null);
+
+            expect(() => pid.linearize()).toThrow();
+        });
+    });
 });

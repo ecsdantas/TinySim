@@ -9,6 +9,8 @@ class SubModel extends VariadicMathModel {
 
     identity = 0
     seedFromFirstInput = true
+    isLinearCombination = true
+    combineSign = -1
     modalTitle = 'Sub Block'
     helpText = <>This blocks subtract the values from in1 port.<br />You can add new ports to subtract.</>
 

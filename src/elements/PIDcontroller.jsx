@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
 
 class PIDControllerModel extends SimNodeModel {
   kind = 'pidController';
@@ -74,6 +75,25 @@ class PIDControllerModel extends SimNodeModel {
     this.previousTime = null;
     this.previousOutput = 0.0;
     this.previousStep = null;
+  }
+
+  // C(s) = kp + ki/s + kd*s (PID), em série com a entrada "in" (error = setpoint - in).
+  // Suportado apenas com kd = 0: a parte derivativa pura tem numerador de
+  // ordem maior que o denominador, o que control-systems-js não aceita
+  // (sistema não estritamente próprio). E só com "setpoint" desconectado
+  // (tratado como referência 0), já que o bloco tem duas entradas e a
+  // análise é de um único caminho (SISO).
+  linearize() {
+    if (this.kd !== 0) {
+      throw new LinearizationError(`"${this.getModelName()}": termo derivativo (kd ≠ 0) não é uma função de transferência realizável; ajuste kd para 0 (PI) para a análise de frequência`, this);
+    }
+    if (this.getNodeByInput(0)) {
+      throw new LinearizationError(`"${this.getModelName()}": análise de frequência não suporta a porta "setpoint" conectada — deixe-a desconectada (tratada como 0)`, this);
+    }
+    const inpt = this.getNodeByInput(1);
+    if (!inpt) throw new LinearizationError(`"${this.getModelName()}": entrada "in" não conectada`, this);
+    // output = C(s) * (setpoint(0) - in) = -C(s) * in
+    return seriesTF({ numerator: [-this.kp, -this.ki], denominator: [1, 0] }, inpt.linearize());
   }
 
   icon = () => (
