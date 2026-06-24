@@ -34,10 +34,11 @@ src/
     nodeModel.jsx                # classe base de nó
     nodes/simNodeModel.jsx       # SimNodeModel (toda lógica de bloco herda daqui)
     ports/                       # portas Bezier
-    links/bezierLinks.jsx        # cálculo das curvas Bezier dos links
+    links/bezierLinks.jsx        # roteamento ortogonal (estilo Simulink) dos links;
+                                  # nome "Bezier" é histórico, não desenha mais curvas
     selection/mouse.jsx          # seleção múltipla
     stack/stack.jsx              # undo/redo (existe, mas DESATIVADO)
-  simulation/core.jsx            # engine de simulação (loop de tempo, Euler/ODE1)
+  simulation/core.jsx            # engine de simulação (loop de tempo, integrationMethods.jsx)
   codeGeneration/                # gera projeto C a partir do diagrama
     cmodels/                     # um cmodel_*.jsx por tipo de bloco (espelha elements/)
     template/                    # templates .c/.h
@@ -49,8 +50,10 @@ public/samples/                  # exemplos .tsim prontos
 - `SimulationEngine` (`src/simulation/core.jsx`) mantém `currentTime`,
   `stepSize`, `stopTime` e itera os nós marcados `isTerminalBlock` (saídas),
   que resolvem recursivamente suas entradas via `node.solve()` → `solution()`.
-- Único método de integração implementado: **Euler explícito (ODE1)**. Existe
-  um campo `method` para outros métodos, mas não está implementado.
+- Métodos de integração disponíveis: **Euler (RK1), Heun (RK2) e Runge-Kutta 4**,
+  implementados em `src/simulation/integrationMethods.jsx`
+  (`integrateLinearODE`) e usados pelos blocos com estado (Integrator,
+  FirstOrder).
 - Cache por passo (`lastStepSolved`) evita recálculo, desativável via
   `statelessMode`.
 - Cada bloco em `src/elements/*.jsx` estende `SimNodeModel` e implementa sua
@@ -177,14 +180,27 @@ nodes/links/ports ainda é frágil.
       `selection/mouse.jsx` agora importam `Engine` desse módulo. `npm test`
       voltou a 39/39 (7/7 suítes) e `npm run build` continua limpo.
 
-> Validação até aqui: `npm test` (41/41) e `npm run build` passam limpos
+> Validação na época: `npm test` (41/41) e `npm run build` passavam limpos
 > (único warning restante é de uma dependência de terceiros,
 > `@projectstorm/react-diagrams-routing`, não relacionado ao código do
 > projeto). Os testes do `SimulationEngine` foram escritos contra o
 > comportamento antigo antes do split em módulos, e continuaram passando
-> sem alteração depois. A correção de `computeCurvature` foi confirmada
-> explicitamente com o usuário antes de aplicar, por mudar a aparência
-> visual de todos os links já existentes.
+> sem alteração depois.
+>
+> **Atualização (2026-06-24): `npm test` está quebrado de novo.** Todas as
+> 7 suítes falham com `TypeError: Class extends value undefined is not a
+> constructor or null` em `src/elements/constant.jsx` — o mesmo padrão de
+> ciclo de import descrito acima, aparentemente reintroduzido por mudanças
+> posteriores (não investigado a fundo ainda; `npm run build` continua
+> passando, então o problema é específico do grafo de módulos do Vitest).
+> Tratar como bug aberto antes de confiar em qualquer execução de teste.
+>
+> Também nesta data: `bezierLinks.jsx` foi reescrito por completo —
+> trocou o roteamento por curvas Bezier (com `computeCurvature`, descrito
+> no parágrafo de Fase 2 abaixo) por roteamento ortogonal estilo Simulink
+> (`computeOrthogonalRoute`, com desvio de obstáculos). `computeCurvature`
+> não existe mais no código; o histórico abaixo é mantido como registro,
+> não como descrição do estado atual.
 
 ### Fase 2 — Rede de segurança
 - [x] Configurar test runner (Vitest — `npm test`).
@@ -228,8 +244,8 @@ nodes/links/ports ainda é frágil.
 
 ### Fase 3 — Dívidas funcionais conhecidas (do próprio `public/todo.html`)
 - [ ] Reativar undo/redo (`nodes/stack/stack.jsx`).
-- [ ] Implementar métodos de integração além de Euler (campo `method` já
-      existe, falta implementação).
+- [x] Implementar métodos de integração além de Euler — feito
+      (`src/simulation/integrationMethods.jsx`: Euler/Heun/RK4).
 - [ ] Sincronizar modo "tempo real" com a geração de código C.
 - [ ] Adicionar mais blocos e mais exemplos.
 
@@ -238,6 +254,23 @@ nodes/links/ports ainda é frágil.
 - [ ] Detecção de loop algébrico / validação de diagrama antes de simular.
 - [ ] Scope de frequência / análise mais avançada (há `control-systems-js`
       já na dependência, subutilizada).
+
+### Fase 5 — Limpeza de código não utilizado (2026-06-24)
+- [x] **Bug real encontrado e corrigido**: `src/elements/index.jsx` importava
+      `PIDControllerModel`, `DFlipFlopModel`, `TFlipFlopModel`,
+      `JKFlipFlopModel` e `SRFlipFlopModel`, mas nenhum dos 5 estava no bloco
+      de `export` — ou seja, 5 blocos completos (com cmodel C e o PID com
+      testes próprios) ficavam invisíveis na barra de elementos, sem nenhum
+      erro visível. Corrigido adicionando os 5 ao `export`.
+- [x] Removidos comentários de código morto sem valor explicativo:
+      import comentado de `RightAnglePortModel` e comentário inline
+      desatualizado em `simNodeModel.jsx`, bloco de serialização de portas
+      comentado (feature nunca concluída) também em `simNodeModel.jsx`, e
+      implementação antiga comentada em `cmodel_constantPI.jsx`.
+- Avaliado e **mantido** (não é código morto, é débito documentado/planejado):
+  `nodes/stack/stack.jsx` (undo/redo desativado, mas listado na Fase 3 para
+  reativar) e a dependência `control-systems-js` no `package.json`
+  (reservada para a Fase 4 — análise de frequência).
 
 ## Observação sobre ordem
 

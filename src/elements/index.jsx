@@ -101,5 +101,10 @@ export {
     IsEvenModel,
     IsOddModel,
     RepeatingSequenceModel,
-    HistogramModel
+    HistogramModel,
+    PIDControllerModel,
+    DFlipFlopModel,
+    TFlipFlopModel,
+    JKFlipFlopModel,
+    SRFlipFlopModel
 }
