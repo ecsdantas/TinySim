@@ -57,6 +57,9 @@ import RampModel from "./ramp";
 import SineWaveModel from "./sineWave";
 import PulseGeneratorModel from "./pulseGenerator";
 import FrequencyScopeModel from "./frequencyScope";
+import SubsystemModel from "./subsystem";
+import SubsystemInputModel from "./subsystemInput";
+import SubsystemOutputModel from "./subsystemOutput";
 
 export {
     ConstantModel,
@@ -116,5 +119,8 @@ export {
     RampModel,
     SineWaveModel,
     PulseGeneratorModel,
-    FrequencyScopeModel
+    FrequencyScopeModel,
+    SubsystemModel,
+    SubsystemInputModel,
+    SubsystemOutputModel
 }

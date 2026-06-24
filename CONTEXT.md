@@ -281,8 +281,40 @@ nodes/links/ports ainda é frágil.
     `nodeModel.jsx` rodar `Engine.setModel(...)`).
 - [x] Implementar métodos de integração além de Euler — feito
       (`src/simulation/integrationMethods.jsx`: Euler/Heun/RK4).
-- [ ] Sincronizar modo "tempo real" com a geração de código C.
-- [ ] Adicionar mais blocos e mais exemplos.
+- [x] Sincronizado o modo "tempo real" com a geração de código C. O loop
+      `runRealTimeLoop` (`src/simulation/runModes.jsx`) já existia no React
+      (`setTimeout(stepSize*1000)` entre passos) e o codegen já propagava o
+      flag `realTimeMode` até a struct C (`model.simulation.mode`, 0 =
+      simulado, 1 = tempo real), mas o `main.c.template` gerado **ignorava**
+      esse campo — o loop C sempre rodava o mais rápido possível,
+      independente do modo. Corrigido adicionando `sim_real_time_sleep(double
+      seconds)` (`libs.h.template`/`libs.c.template`, `usleep` no
+      POSIX/`Sleep` no Windows via `#ifdef _WIN32`), chamada no fim de cada
+      iteração do `main.c.template` quando `model.simulation.mode == 1`,
+      dormindo por `sampling_time` segundos — mesma cadência que o
+      `runRealTimeLoop` do React, só que no C gerado. Validado manualmente
+      compilando com `gcc` um `model.c`/`main.c` de exemplo (`stepSize=0.2`,
+      `stopTime=1`, `mode=1`): 6 passos, ~1.2s de tempo real decorrido
+      (medido com `time`), confirmando a sincronização.
+- [x] Adicionados 4 blocos de fonte clássicos do Simulink, que faltavam por
+      completo: **Step** (`src/elements/step.jsx`), **Ramp**
+      (`src/elements/ramp.jsx`), **Sine Wave** (`src/elements/sineWave.jsx`)
+      e **Pulse Generator** (`src/elements/pulseGenerator.jsx`) — cada um com
+      bloco React, cmodel C correspondente
+      (`src/codeGeneration/cmodels/cmodel_{step,ramp,sineWave,pulseGenerator}.jsx`)
+      e testes (`*.test.jsx`, 16 casos novos). Seguem o mesmo padrão de
+      `clock.jsx`/`random.jsx`: sem porta de entrada, leem
+      `Simulation.getCurrentTime()` em `solution()`.
+- [x] Adicionados 2 exemplos novos em `public/samples/`: **Signal Sources**
+      (`signalsources.tsim`) — os 4 blocos novos, cada um plotado
+      isoladamente — e **Closed-Loop Step Response** (`stepresponse.tsim`) —
+      Step → PIDController (setpoint) com FirstOrder como planta na
+      realimentação, plotando setpoint vs. resposta da planta. Gerados
+      programaticamente (instanciando os nós, ligando as portas via
+      `PortModel`/`LinkModel` e chamando `DiagramModel.serialize()`) em vez
+      de à mão, para garantir um `model.json` válido no mesmo formato que o
+      app produz ao salvar — o script usado foi descartado após a geração,
+      não faz parte do repositório.
 
 ### Fase 4 — Funcionalidades tipo Simulink ainda ausentes
 - [ ] Subsistemas/blocos aninhados.
