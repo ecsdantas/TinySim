@@ -4,7 +4,6 @@ import {
     RightAngleLinkModel
 } from '@projectstorm/react-diagrams';
 import Simulation from '../../simulation/core';
-// import { RightAnglePortModel } from '../ports/rightAnglePortModel'
 import { BezierPortModel } from '../ports/bezierPortModel'
 
 class SimNodeModel extends DefaultNodeModel {
@@ -46,7 +45,7 @@ class SimNodeModel extends DefaultNodeModel {
 
     // Creates a new port
     createPort(label, isInput = false) {
-        const port = new BezierPortModel({ // DefaultPortModel or RightAnglePortModel
+        const port = new BezierPortModel({
             in: isInput,
             name: label,
         });
@@ -116,11 +115,6 @@ class SimNodeModel extends DefaultNodeModel {
             description: this.description,
             isTerminalBlock: this.isTerminalBlock,
             flip: this.flip
-            /* ,
-            ports: Object.fromEntries(
-                Object.values(this.getPorts()).map(port => [port.getID(), port.serialize()]) // Serializa as portas
-            )
-            */
         };
     }
     

@@ -1,6 +1,6 @@
 import { DefaultLinkModel, PointModel } from '@projectstorm/react-diagrams';
 import React from 'react';
-import { Engine } from '../nodeModel';
+import { Engine } from '../engine';
 
 // Tamanho do trecho reto que o fio percorre ao sair/entrar de uma porta
 // antes de poder virar (estilo Simulink).

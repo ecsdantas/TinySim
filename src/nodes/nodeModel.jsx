@@ -1,4 +1,5 @@
-import createEngine, { DiagramModel, DefaultDiagramState, RightAngleLinkFactory } from '@projectstorm/react-diagrams';
+import { DiagramModel, RightAngleLinkFactory } from '@projectstorm/react-diagrams';
+import { Engine } from './engine';
 import { SimNodeModel } from './nodes/simNodeModel';
 import { SimNodeFactory } from './nodes/simNodeFactory';
 import * as Elements from '../elements/index';
@@ -10,21 +11,9 @@ import Stack from './stack/stack';
 import { toast } from 'react-toastify';
 import BezierLinkFactory from './links/bezierLinkFactory';
 import { BezierPortFactory } from './ports/bezierPortFactory';
-import { PercentZoomCanvasAction } from './actions/percentZoomCanvasAction';
 
-// Cria o motor do diagrama e o Modelo
-// Desativa o ZoomCanvasAction padrão (zoom por incremento fixo) para usar um zoom percentual
-const Engine = createEngine({ registerDefaultZoomCanvasAction: false });
-Engine.getActionEventBus().registerAction(new PercentZoomCanvasAction());
 const ModelsArray = {}; // Armazena modelos registrados com identificadores únicos
 const MousePosition = { x: 0, y: 0 };
-
-// Permite algumas opções adicionais, como previnir fio sem ligação ponto-a-ponto
-const state = Engine.getStateMachine().getCurrentState();
-if (state instanceof DefaultDiagramState) {
-    state.dragNewLink.config.allowLooseLinks = false;
-    state.dragCanvas.config.allowDrag = false; // Desativa "pan"
-}
 
 // Monitora a posição do mouse
 document.addEventListener("mousemove", (event) => {

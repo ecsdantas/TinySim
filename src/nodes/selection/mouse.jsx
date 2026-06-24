@@ -1,4 +1,4 @@
-import { Engine } from "../nodeModel";
+import { Engine } from "../engine";
 
 export const SelectionBox = () => {
     let isDragging = false;

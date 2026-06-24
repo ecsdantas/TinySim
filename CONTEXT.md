@@ -161,6 +161,21 @@ nodes/links/ports ainda é frágil.
     (`Average`, `Clock`, `Comparator`, `Text`, `Switch`) como os
     **primeiros** imports do arquivo, reproduzindo exatamente o cenário que
     quebrava antes (módulo cego, sem `App.jsx` carregado primeiro).
+- [x] **Regressão encontrada e corrigida**: a correção acima não cobria uma
+      segunda borda do mesmo ciclo — `bezierLinks.jsx` e
+      `selection/mouse.jsx` importavam `{ Engine } from '../nodeModel'`, e
+      `nodeModel.jsx` importa `elements/index.jsx` (todos os blocos), que
+      por sua vez chega em `simNodeModel.jsx` → `bezierPortModel.jsx` →
+      `bezierLinks.jsx` → de volta a `nodeModel.jsx`, ainda no meio da
+      definição da classe `SimNodeModel`. Isso quebrava 5 suítes de teste
+      (`gain`, `integrator`, `PIDcontroller`, `variadicMathModel`,
+      `isolatedImport` — 0 testes executados, `TypeError: Class extends
+      value undefined`) sempre que um bloco era importado sem passar
+      primeiro por `App.jsx`. Corrigido extraindo a criação do `Engine`
+      para um módulo-folha novo, `src/nodes/engine.jsx` (sem dependência de
+      `elements/index.jsx`); `nodeModel.jsx`, `bezierLinks.jsx` e
+      `selection/mouse.jsx` agora importam `Engine` desse módulo. `npm test`
+      voltou a 39/39 (7/7 suítes) e `npm run build` continua limpo.
 
 > Validação até aqui: `npm test` (41/41) e `npm run build` passam limpos
 > (único warning restante é de uma dependência de terceiros,
