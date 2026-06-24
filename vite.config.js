@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react-swc'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  esbuild: {
+    keepNames: true, // Preserve class/function names so runtime lookups by constructor.name survive minification
+  },
    build: {
     sourcemap: false, // Enable source maps
   },

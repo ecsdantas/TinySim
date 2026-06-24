@@ -15,6 +15,7 @@ import Simulation from "../simulation/core"
 import JSZip from "jszip";
 import { saveDiagram } from "../nodes/diagramIO"
 import { Samples } from "./samples"
+import { toast } from "react-toastify"
 
 const iconSizes = { width: 28, height: 28 }
 
@@ -72,7 +73,11 @@ const FileMenu = () => {
 
 const CGen = () => {
     const CodeGen = new CodeGeneration(Engine.getModel(), Simulation)
-    CodeGen.compileC()
+    toast.promise(CodeGen.compileC(), {
+        pending: 'Generating code...',
+        success: 'Code generated successfully!',
+        error: 'Failed to generate code.'
+    })
 }
 
 export const Menubar = (props) => {
