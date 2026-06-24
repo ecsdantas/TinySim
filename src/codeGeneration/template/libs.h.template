@@ -12,10 +12,12 @@ ${LIBS_H__DEFINES_TEMPLATE}
 #else
 #include <unistd.h>
 #endif
+#include <time.h>
 ${LIBS_H__INCLUDES_TEMPLATE}
 
 /* Functions declarations */
 void sim_real_time_sleep(double seconds);
+double current_system_time(void);
 ${LIBS_H__DECLARATION_TEMPLATE}
 
 #endif

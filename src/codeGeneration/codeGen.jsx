@@ -35,37 +35,39 @@ class CodeGeneration {
         // Obtém os replacements
         const getPlacement = (placement, clue, alternative) => cstruct.replacements.filter(p => p.placement === placement).map(p => p.content).join(clue) || alternative;
 
-        // Replace placeholders in templates
+        // Replace placeholders in templates. Keys are plain placeholder names (no
+        // regex/escaping involved); generateFiles() wraps them as ${NAME} and does a
+        // literal string replace, so names are never interpreted as regex syntax.
         const replacements = {
-            "\\${MODELINFO_TEMPLATE}": `Generated using tinysim.vercel.app on ${new Date().toLocaleString()}`,
-            "\\${MAIN_C__INCLUDES_TEMPLATE}": getPlacement('MAIN_C__INCLUDES_TEMPLATE','\n',''),
-            "\\${MAIN_C__BEFORE_MAIN_TEMPLATE}": getPlacement('MAIN_C__BEFORE_MAIN_TEMPLATE','\n',''),
-            "\\${MAIN_C__BEFORE_INIT_MODEL_TEMPLATE}": getPlacement('MAIN_C__BEFORE_INIT_MODEL_TEMPLATE','\n',''),
-            "\\${MAIN_C__AFTER_INIT_MODEL_TEMPLATE}": getPlacement('MAIN_C__AFTER_INIT_MODEL_TEMPLATE','\n',''),
-            "\\${MAIN_C__MAIN_LOOP_BEFORE_STEP_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_BEFORE_STEP_TEMPLATE','\n',''),
-            "\\${MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE','\n',''),
-            "\\${MAIN_C__MAIN_LOOP_SET_VARS_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_SET_VARS_TEMPLATE','\n\t','// No inputs to set'),
-            "\\${MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE}": getPlacement('MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE','\n\t',''),
-            "\\${MAIN_C__BEFORE_TERM_MODEL_TEMPLATE}": getPlacement('MAIN_C__BEFORE_TERM_MODEL_TEMPLATE','\n',''),
-            "\\${MAIN_C__AFTER_TERM_MODEL_TEMPLATE}": getPlacement('MAIN_C__AFTER_TERM_MODEL_TEMPLATE','\n',''),
-            
-            "\\${LIBS_H__INCLUDES_TEMPLATE}": getPlacement('LIBS_H__INCLUDES_TEMPLATE','\n','// No includes to add'),
-            "\\${LIBS_H__DEFINES_TEMPLATE}": getPlacement('LIBS_H__DEFINES_TEMPLATE','\n','// No more defines to include'),
-            "\\${LIBS_H__DECLARATION_TEMPLATE}": getPlacement('LIBS_H__DECLARATION_TEMPLATE','\n','// No functions to declare'),
-            
-            "\\${LIBS_C__FUNCTIONS_TEMPLATE}": getPlacement('LIBS_C__FUNCTIONS_TEMPLATE','\n','// No Library functions to implement'),
+            "MODELINFO_TEMPLATE": `Generated using tinysim.vercel.app on ${new Date().toLocaleString()}`,
+            "MAIN_C__INCLUDES_TEMPLATE": getPlacement('MAIN_C__INCLUDES_TEMPLATE','\n',''),
+            "MAIN_C__BEFORE_MAIN_TEMPLATE": getPlacement('MAIN_C__BEFORE_MAIN_TEMPLATE','\n',''),
+            "MAIN_C__BEFORE_INIT_MODEL_TEMPLATE": getPlacement('MAIN_C__BEFORE_INIT_MODEL_TEMPLATE','\n',''),
+            "MAIN_C__AFTER_INIT_MODEL_TEMPLATE": getPlacement('MAIN_C__AFTER_INIT_MODEL_TEMPLATE','\n',''),
+            "MAIN_C__MAIN_LOOP_BEFORE_STEP_TEMPLATE": getPlacement('MAIN_C__MAIN_LOOP_BEFORE_STEP_TEMPLATE','\n',''),
+            "MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE": getPlacement('MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE','\n',''),
+            "MAIN_C__MAIN_LOOP_SET_VARS_TEMPLATE": getPlacement('MAIN_C__MAIN_LOOP_SET_VARS_TEMPLATE','\n\t','// No inputs to set'),
+            "MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE": getPlacement('MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE','\n\t',''),
+            "MAIN_C__BEFORE_TERM_MODEL_TEMPLATE": getPlacement('MAIN_C__BEFORE_TERM_MODEL_TEMPLATE','\n',''),
+            "MAIN_C__AFTER_TERM_MODEL_TEMPLATE": getPlacement('MAIN_C__AFTER_TERM_MODEL_TEMPLATE','\n',''),
 
-            "\\${MODEL_H__DATATYPE_TEMPLATE}": getPlacement('MODEL_H__DATATYPE_TEMPLATE','\n\t','// No new data types is required'),
-            "\\${MODEL_H__FUNCTIONS_TEMPLATE}": getPlacement('MODEL_H__FUNCTIONS_TEMPLATE','\n\n','// No shared model functions is required'),
-            "\\${MODEL_H__VARIABLES_TEMPLATE}": getPlacement('MODEL_H__VARIABLES_TEMPLATE','\n\n','// No shared model variables is required'),
+            "LIBS_H__INCLUDES_TEMPLATE": getPlacement('LIBS_H__INCLUDES_TEMPLATE','\n','// No includes to add'),
+            "LIBS_H__DEFINES_TEMPLATE": getPlacement('LIBS_H__DEFINES_TEMPLATE','\n','// No more defines to include'),
+            "LIBS_H__DECLARATION_TEMPLATE": getPlacement('LIBS_H__DECLARATION_TEMPLATE','\n','// No functions to declare'),
 
-            "\\${MODEL_C__VARS_TEMPLATE}": getPlacement('MODEL_C__VARS_TEMPLATE','\n','// No new model variables is required'),
-            "\\${MODEL_C__INIT_TEMPLATE}": getPlacement('MODEL_C__INIT_TEMPLATE','\n\t','// No model initialization procedures is required'),
-            "\\${MODEL_C__TERM_TEMPLATE}": getPlacement('MODEL_C__TERM_TEMPLATE','\n\t','// No model termination procedures is required'),
-            "\\${MODEL_C__STEP_TEMPLATE}": getPlacement('MODEL_C__STEP_TEMPLATE','\n\t','// No new steps procedures is required'),
-            "\\${MODEL_C__SIMULATION_MODE_TEMPLATE}": this.#sim.realTimeMode,
-            "\\${MODEL_C__SAMPLING_TIME_TEMPLATE}": this.#sim.samplingTime,
-            "\\${MODEL_C__STOP_SIMULATION_TIME_TEMPLATE}": this.#sim.stopTime,
+            "LIBS_C__FUNCTIONS_TEMPLATE": getPlacement('LIBS_C__FUNCTIONS_TEMPLATE','\n','// No Library functions to implement'),
+
+            "MODEL_H__DATATYPE_TEMPLATE": getPlacement('MODEL_H__DATATYPE_TEMPLATE','\n\t','// No new data types is required'),
+            "MODEL_H__FUNCTIONS_TEMPLATE": getPlacement('MODEL_H__FUNCTIONS_TEMPLATE','\n\n','// No shared model functions is required'),
+            "MODEL_H__VARIABLES_TEMPLATE": getPlacement('MODEL_H__VARIABLES_TEMPLATE','\n\n','// No shared model variables is required'),
+
+            "MODEL_C__VARS_TEMPLATE": getPlacement('MODEL_C__VARS_TEMPLATE','\n','// No new model variables is required'),
+            "MODEL_C__INIT_TEMPLATE": getPlacement('MODEL_C__INIT_TEMPLATE','\n\t','// No model initialization procedures is required'),
+            "MODEL_C__TERM_TEMPLATE": getPlacement('MODEL_C__TERM_TEMPLATE','\n\t','// No model termination procedures is required'),
+            "MODEL_C__STEP_TEMPLATE": getPlacement('MODEL_C__STEP_TEMPLATE','\n\t','// No new steps procedures is required'),
+            "MODEL_C__SIMULATION_MODE_TEMPLATE": this.#sim.realTimeMode,
+            "MODEL_C__SAMPLING_TIME_TEMPLATE": this.#sim.samplingTime,
+            "MODEL_C__STOP_SIMULATION_TIME_TEMPLATE": this.#sim.stopTime,
         };
 
         // Generate and zip files
@@ -90,7 +92,7 @@ class CodeGeneration {
             let outputContent = templateContent;
 
             for (const [placeholder, value] of Object.entries(replacements)) {
-                outputContent = outputContent.replace(new RegExp(placeholder, "g"), value);
+                outputContent = outputContent.replaceAll(`\${${placeholder}}`, value);
             }
 
             outputFiles[fileName] = outputContent;

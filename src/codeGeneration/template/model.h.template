@@ -3,7 +3,6 @@
 // Header file defining the data structures and functions used in the simulation model.
 #ifndef MODEL_H
 #define MODEL_H
-#include <time.h>
 
 // Structure to hold input and output data
 typedef struct {
@@ -14,7 +13,7 @@ typedef struct {
 typedef struct {
 	int current_step;
 	int mode; /* 0 = simulated, 1 = real time sync */
-	long start_time;
+	double start_time;
 	double elapsed_time;
 	double sampling_time;
 	double simulated_time;
@@ -29,7 +28,6 @@ typedef struct {
 } ModelType;
 
 // Function prototypes
-long current_system_time();
 void init(ModelType *model);
 void term(ModelType *model);
 void step(ModelType *model);

@@ -3,15 +3,9 @@
 // Contains functions to manage the simulation model, including initialization, simulation steps, and termination.
 #include "model.h"
 #include "libs.h"
-#include <time.h>
 
 // Model shared variables
 ${MODEL_C__VARS_TEMPLATE}
-
-// Get the current system time
-long current_system_time() {
-	return (long)time(NULL);
-}
 
 // Initialize the simulation model
 void init(ModelType *model){
@@ -38,7 +32,7 @@ void step(ModelType *model) {
 	// Increase simulation information
 	model->simulation.current_step++;
 	model->simulation.simulated_time = model->simulation.sampling_time * model->simulation.current_step;
-	model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+	model->simulation.elapsed_time = current_system_time() - model->simulation.start_time;
 
 }
 
@@ -50,6 +44,6 @@ void term(ModelType *model){
 
 	// Finish the simulation model
 	model->simulation.status = 0;
-	model->simulation.elapsed_time = (double)(current_system_time() - model->simulation.start_time);
+	model->simulation.elapsed_time = current_system_time() - model->simulation.start_time;
 
 }

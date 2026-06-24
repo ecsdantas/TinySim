@@ -13,4 +13,19 @@ void sim_real_time_sleep(double seconds) {
 #endif
 }
 
+// Returns a monotonic system time in seconds, with sub-second precision.
+// Only meant for measuring elapsed time (deltas), not wall-clock time of day.
+double current_system_time(void) {
+#ifdef _WIN32
+	LARGE_INTEGER frequency, counter;
+	QueryPerformanceFrequency(&frequency);
+	QueryPerformanceCounter(&counter);
+	return (double)counter.QuadPart / (double)frequency.QuadPart;
+#else
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (double)ts.tv_sec + (double)ts.tv_nsec / 1e9;
+#endif
+}
+
 ${LIBS_C__FUNCTIONS_TEMPLATE}
