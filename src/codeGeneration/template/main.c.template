@@ -40,7 +40,12 @@ int main() {
     ${MAIN_C__MAIN_LOOP_GET_VARS_TEMPLATE}
 
     ${MAIN_C__MAIN_LOOP_AFTER_STEP_TEMPLATE}
-    
+
+    // Sync with real time, if enabled
+    if (model.simulation.mode == 1) {
+      sim_real_time_sleep(model.simulation.sampling_time);
+    }
+
   }
 
   ${MAIN_C__BEFORE_TERM_MODEL_TEMPLATE}

@@ -13,6 +13,7 @@ import CodeGeneration  from "../codeGeneration/codeGen"
 import { Engine } from "../nodes/nodeModel"
 import Simulation from "../simulation/core"
 import JSZip from "jszip";
+import { saveDiagram } from "../nodes/diagramIO"
 import { Samples } from "./samples"
 
 const iconSizes = { width: 28, height: 28 }
@@ -53,28 +54,8 @@ const FileMenu = () => {
     };
     
     
-    const save = () => {
-        const modelData = Engine.getModel().serialize();
-        const modelJson = JSON.stringify(modelData, null, 2);
-    
-        const zip = new JSZip();
-        zip.file("model.json", modelJson);
-    
-        zip.generateAsync({ type: "blob" }).then((content) => {
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = 'schematic.tsim';
-            document.body.appendChild(link);
-            link.click();
-    
-            // Clean up
-            document.body.removeChild(link);
-            URL.revokeObjectURL(link.href);
-        }).catch((err) => {
-            console.error("Error generating zip file:", err);
-        });
-    };
-    
+    const save = () => saveDiagram(Engine);
+
 
     return (
         <div className="dropdown dropup">
@@ -83,7 +64,7 @@ const FileMenu = () => {
                 <li onClick={Samples}><img src={BoxSVG} {...menuIconSizes} title={'Load a sample diagram'} /> Samples diagram</li>
                 <hr className="dropdown-divider" />
                 <li onClick={load} ><img src={uploadSVG} {...menuIconSizes} title={'Load'} /> Load diagram</li>
-                <li onClick={save} ><img src={downloadSVG} {...menuIconSizes} title={'Save'} /> Download diagram</li>
+                <li onClick={save} ><img src={downloadSVG} {...menuIconSizes} title={'Save ([Ctrl] + [S])'} /> Download diagram</li>
             </ul>
         </div>
     );

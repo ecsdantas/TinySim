@@ -85,8 +85,9 @@ nodes/links/ports ainda é frágil.
 6. **Estado global desorganizado** — mistura de singleton de classe
    (`Simulation`), objeto global (`useModal`), `sessionStorage` (clipboard) e
    `useState` espalhado pelos componentes, sem padrão único.
-7. **Validação fraca** — sem checagem de ciclos algébricos, divisão por zero
-   não tratada, import de CSV sem validação de tipos/schema.
+7. **Validação fraca** — checagem de ciclos algébricos feita na Fase 4
+   (`algebraicLoop.jsx`); divisão por zero ainda não tratada, import de CSV
+   ainda sem validação de tipos/schema.
 8. **Sem subsistemas/hierarquia** — todo diagrama é uma única camada plana;
    Simulink real permite blocos aninhados.
 
@@ -187,19 +188,23 @@ nodes/links/ports ainda é frágil.
 > comportamento antigo antes do split em módulos, e continuaram passando
 > sem alteração depois.
 >
-> **Atualização (2026-06-24): falha intermitente investigada e descartada
-> como bug de código.** `npm test` chegou a falhar nas 7 suítes com
-> `TypeError: Class extends value undefined is not a constructor or null`
-> em `src/elements/constant.jsx` (o mesmo padrão de ciclo de import descrito
-> acima). Investigando, `src/nodes/engine.jsx` já existe e o ciclo
-> `nodeModel.jsx → elements/index.jsx → bloco → nodeModel.jsx` continua
-> quebrado como deveria. Repetindo `npm test` várias vezes, inclusive com
-> `node_modules/.vite` apagado (cache frio), o resultado foi consistentemente
-> 39/39 (7/7 suítes). A falha não voltou a reproduzir; ficou registrada como
-> possível instabilidade pontual do cache do Vitest/Vite durante edições
-> concorrentes na mesma sessão, não uma regressão real no grafo de imports.
-> Se voltar a acontecer, vale checar `node_modules/.vite` antes de suspeitar
-> do código.
+> **Atualização (2026-06-24): falha intermitente investigada — causa raiz
+> identificada, não é bug de código.** `npm test` chegou a falhar (todas as
+> suítes) com `TypeError: Class extends value undefined is not a
+> constructor or null` em `src/elements/constant.jsx`. Repetindo `npm test`
+> em loop com `node_modules/.vite` apagado a cada vez (15+ execuções), a
+> falha reproduziu numa janela específica que coincidiu com uma edição em
+> disco de `src/nodes/nodes/simNodeModel.jsx` (arquivo que define a classe
+> base `SimNodeModel`, herdada por todo bloco) ocorrendo durante a leitura
+> do Vite/Vitest. Conclusão: é uma corrida entre o test runner lendo o
+> arquivo e o editor/linter salvando-o no mesmo instante — o Vite lê uma
+> versão momentaneamente incompleta do módulo, a classe sai `undefined`, e
+> qualquer bloco que estenda `SimNodeModel` falha no `extends`. Não é um
+> ciclo de import nem regressão no código; `src/nodes/engine.jsx` e o corte
+> do ciclo `nodeModel.jsx → elements/index.jsx → bloco → nodeModel.jsx`
+> continuam corretos. Se voltar a acontecer, é esperado se houver edição de
+> arquivo fonte (especialmente `simNodeModel.jsx`) durante a execução do
+> `npm test` — não indica bug.
 >
 > Também nesta data: `bezierLinks.jsx` foi reescrito por completo —
 > trocou o roteamento por curvas Bezier (com `computeCurvature`, descrito
@@ -249,7 +254,31 @@ nodes/links/ports ainda é frágil.
     a ter em mente ao adicionar testes para mais blocos.
 
 ### Fase 3 — Dívidas funcionais conhecidas (do próprio `public/todo.html`)
-- [ ] Reativar undo/redo (`nodes/stack/stack.jsx`).
+- [x] Reativado undo/redo (`nodes/stack/stack.jsx`), com correções no design
+      original: o listener antigo (`eventDidFire` no `DiagramModel`)
+      capturava também `zoomUpdated`/`offsetUpdated`/`gridUpdated` (pan/zoom
+      entrando como "ações" desfazíveis) e nunca capturava `positionChanged`
+      (que dispara no nó, não no model) — ou seja, mover um bloco, a edição
+      mais comum, nunca era gravada. `updateModel()` também trocava o
+      `DiagramModel` inteiro via `Engine.setModel(new DiagramModel())`, o que
+      descartava o próprio listener registrado no construtor após o primeiro
+      undo/redo. Corrigido: filtra por `event.function` (só
+      `nodesUpdated`/`linksUpdated`/`positionChanged`, debounced para
+      `positionChanged` para não empilhar um estado por frame de arrasto);
+      restaura desserializando no mesmo `model` (mesmo padrão de
+      `samples.jsx`/`menubar.jsx`) em vez de trocar o objeto; reanexa
+      listeners de posição aos nós recriados pela desserialização. Também
+      passou a capturar edição de parâmetros de bloco (ex.: `gainValue`), que
+      muda campos direto sem disparar evento nenhum — capturado no fechamento
+      do modal de configurações (`useModal.close()`), único ponto confiável
+      pra saber que um bloco terminou de ser editado.
+      Atalhos: `Ctrl+Z` (undo) / `Ctrl+Shift+Z` (redo).
+  - A instância do `Stack` é criada sob demanda (`getStackManager()`), não no
+    carregamento do módulo: o módulo é importado por `modal.jsx`, que por sua
+    vez é importado por praticamente todo bloco em `elements/`, então
+    instanciar no load-time quebrava qualquer teste que importa um bloco
+    isoladamente (`Engine.getModel()` ainda é `null` nesse cenário, antes de
+    `nodeModel.jsx` rodar `Engine.setModel(...)`).
 - [x] Implementar métodos de integração além de Euler — feito
       (`src/simulation/integrationMethods.jsx`: Euler/Heun/RK4).
 - [ ] Sincronizar modo "tempo real" com a geração de código C.
@@ -257,7 +286,30 @@ nodes/links/ports ainda é frágil.
 
 ### Fase 4 — Funcionalidades tipo Simulink ainda ausentes
 - [ ] Subsistemas/blocos aninhados.
-- [ ] Detecção de loop algébrico / validação de diagrama antes de simular.
+- [x] **Detecção de loop algébrico / validação de diagrama antes de simular.**
+      Criado `src/simulation/algebraicLoop.jsx` (`detectAlgebraicLoop(nodes)`):
+      faz DFS sobre o grafo de dependências (`getNodeByInput`) procurando
+      ciclo entre blocos puramente combinacionais. A chave do design é a nova
+      flag `breaksAlgebraicLoop` em `SimNodeModel` (default `false`),
+      marcada `true` nos 7 blocos que já guardam `lastStepSolved`/
+      `previousStep` **antes** de recursar nas entradas — `Integrator`,
+      `Derivator`, `Memory`, `ZOH`, `ZeroOrder`, `FirstOrder`,
+      `PIDController`. Esse guard pré-existente é o que faz esses blocos
+      devolverem um valor cacheado do passo anterior em vez de recursar de
+      novo no próprio input quando reentrados no mesmo passo — ou seja, eles
+      já eram, na prática, os "quebra-ciclo" do motor; a detecção estática
+      só formaliza essa mesma regra antes de rodar, em vez de descobrir via
+      estouro de pilha. Um ciclo que não passa por nenhum desses blocos
+      (ex.: `Add` ligado de volta nele mesmo via `Gain`) é reportado como erro
+      antes da simulação começar.
+      `setupSimulation()` (`src/simulation/setup.jsx`) agora roda essa
+      checagem e retorna `{ok: false, error: 'algebraic-loop', cycleLabels}`;
+      `SimulationEngine.runSetup()` (`src/simulation/core.jsx`) trata esse
+      caso com um toast nomeando os blocos do ciclo (`A → B → A`) e sugerindo
+      adicionar um bloco com estado, em vez de travar com call stack
+      overflow sem explicação. Testes novos: `algebraicLoop.test.jsx` (6
+      casos, incluindo self-loop e ciclo quebrado por bloco com estado),
+      `setup.test.jsx` (4 casos) e um caso adicional em `core.test.jsx`.
 - [ ] Scope de frequência / análise mais avançada (há `control-systems-js`
       já na dependência, subutilizada).
 

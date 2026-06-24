@@ -8,6 +8,7 @@ import { RightAnglePortFactory } from '../nodes/ports/rightAngleFactory';
 import Simulation from '../simulation/core';
 import { SelectionBox } from './selection/mouse';
 import getStackManager from './stack/stack';
+import { saveDiagram } from './diagramIO';
 import BezierLinkFactory from './links/bezierLinkFactory';
 import { BezierPortFactory } from './ports/bezierPortFactory';
 
@@ -97,6 +98,42 @@ const handleKeyDown = (event) => {
 
                 Engine.repaintCanvas();
                 Simulation.setModel(EngModel);
+            }
+            break;
+
+        case 'd':
+            if (event.ctrlKey) {
+                event.preventDefault();
+                const EngModel = Engine.getModel();
+                const duplicable = selectedEntities.filter(entity => entity.CGenUID);
+                if (duplicable.length === 0) break;
+
+                EngModel.clearSelection();
+                duplicable.forEach((entity) => {
+                    const ModelClass = ModelsArray[entity.constructor.modelIdentifier];
+                    const newNode = new ModelClass();
+                    newNode.setPosition(entity.getX() + 30, entity.getY() + 30);
+
+                    // Cria IDs únicos
+                    const existingUIDs = new Set(EngModel.getNodes().map(n => n.CGenUID));
+                    let i = 0;
+                    while (existingUIDs.has(newNode.CGenUID + i)) {
+                        i++;
+                    }
+                    newNode.CGenUID += i;
+                    newNode.setSelected(true);
+                    EngModel.addNode(newNode);
+                });
+
+                Engine.repaintCanvas();
+                Simulation.setModel(EngModel);
+            }
+            break;
+
+        case 's':
+            if (event.ctrlKey) {
+                event.preventDefault();
+                saveDiagram(Engine);
             }
             break;
 

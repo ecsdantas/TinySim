@@ -7,9 +7,15 @@
 ${LIBS_H__DEFINES_TEMPLATE}
 
 /* Includes */
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 ${LIBS_H__INCLUDES_TEMPLATE}
 
 /* Functions declarations */
+void sim_real_time_sleep(double seconds);
 ${LIBS_H__DECLARATION_TEMPLATE}
 
 #endif

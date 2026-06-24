@@ -2,4 +2,15 @@
 // Contains basic mathematical utility functions used in the simulation.
 #include "libs.h"
 
+// Sleeps for the given number of seconds; used to sync the main loop with
+// real time when simulation.mode == 1 (real time sync)
+void sim_real_time_sleep(double seconds) {
+	if (seconds <= 0) return;
+#ifdef _WIN32
+	Sleep((DWORD)(seconds * 1000));
+#else
+	usleep((useconds_t)(seconds * 1000000));
+#endif
+}
+
 ${LIBS_C__FUNCTIONS_TEMPLATE}

@@ -5,6 +5,7 @@ import {
 } from '@projectstorm/react-diagrams';
 import Simulation from '../../simulation/core';
 import { BezierPortModel } from '../ports/bezierPortModel'
+import { LinearizationError } from '../../simulation/transferFunctionMath'
 
 class SimNodeModel extends DefaultNodeModel {
 
