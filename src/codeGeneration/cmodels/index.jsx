@@ -56,6 +56,9 @@ import { StepModel } from "./cmodel_step";
 import { RampModel } from "./cmodel_ramp";
 import { SineWaveModel } from "./cmodel_sineWave";
 import { PulseGeneratorModel } from "./cmodel_pulseGenerator";
+import { MuxModel } from "./cmodel_mux";
+import { DemuxModel } from "./cmodel_demux";
+import { SubsystemModel, SubsystemOutputModel, SubsystemInputModel } from "./cmodel_subsystem";
 
 export {
     AddModel, 
@@ -113,5 +116,10 @@ export {
     StepModel,
     RampModel,
     SineWaveModel,
-    PulseGeneratorModel
+    PulseGeneratorModel,
+    MuxModel,
+    DemuxModel,
+    SubsystemModel,
+    SubsystemOutputModel,
+    SubsystemInputModel
 }

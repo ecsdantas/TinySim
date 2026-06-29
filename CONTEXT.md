@@ -562,6 +562,48 @@ nodes/links/ports ainda é frágil.
 
 > `npm test` (121/121, 20 suítes) e `npm run build` passaram limpos.
 
+### Fase 7 — Geração de código C para Subsystem/Mux/Demux (2026-06-29)
+- [x] Fechado o último gap documentado nas Fases 4 e 6: `SubsystemModel`,
+      `MuxModel` e `DemuxModel` agora geram C em vez de cair no erro
+      genérico "no C model registered". Implementado reaproveitando peças
+      já existentes no `ModelActions`, sem mecanismo novo:
+      `node.calledPort.options.label` (já usado por
+      `cmodel_dFlipFlop.jsx` para blocos com múltiplas saídas),
+      `node.isvisited` (dedupe de código gerado) e o fato de todo cmodel já
+      poder devolver uma **expressão C**, não só um identificador simples
+      (precedente: `_arrayReduceCModel.jsx` monta `double param[] = {...}`
+      inline).
+- [x] **`cmodel_mux.jsx`**: declara `double var_..._mux[N];` (N = portas de
+      entrada conectadas) e preenche cada posição no step. Retorna o nome
+      do array.
+- [x] **`cmodel_demux.jsx`**: não declara variável própria — devolve uma
+      expressão de indexação (`array[i]`) no array C da entrada, usando
+      `calledPort` para saber qual `outN` foi pedido.
+- [x] **`cmodel_subsystem.jsx`** (3 exports: `SubsystemModel`,
+      `SubsystemOutputModel`, `SubsystemInputModel`): delega para as mesmas
+      pontes já usadas pela simulação (`getNodeByInput`, `parentSubsystem`,
+      `portIndex`, `getOutputMarkers()` — ver `src/elements/subsystem.jsx`,
+      **zero alteração nesse arquivo**). Nenhum dos três marcadores declara
+      variável própria, só repassa a expressão C do nó que resolveu —
+      subsistemas aninhados funcionam por recursão sem caso especial.
+- [x] **Decisão de design deliberada**: nenhuma validação em JS de "Mux
+      alimentando bloco escalar" antes de gerar C. Um array decai pra
+      pointer em C; se um bloco escalar tentar usar esse retorno em
+      aritmética direta (`pointer * double`), o C gerado não compila —
+      mesma filosofia "falha clara, não corrupção silenciosa" já usada no
+      guard de simulação (Fase 6/6.1), só que resolvida pelo próprio
+      compilador C em vez de um guard em JS.
+- [x] Testes novos (`cmodel_mux.test.jsx`, `cmodel_demux.test.jsx`,
+      `cmodel_subsystem.test.jsx`) chamando as funções de cmodel
+      diretamente com um `this` mockado (`addModelC__vars`/`addModelC__step`/
+      `getNode` como `vi.fn()`) — não havia precedente de teste de cmodel
+      no repo antes desta fase.
+
+> `npm test` (131/131, 23 suítes) e `npm run build` passaram limpos.
+> Fora de escopo, documentado: subsistema recursivo referenciando a si
+> mesmo (risco não testado já citado na Fase 4, herdado pelo codegen sem
+> ser regressão nova).
+
 ## Observação sobre ordem
 
 A Fase 1 deve vir antes da Fase 2 ser totalmente eficaz: escrever testes

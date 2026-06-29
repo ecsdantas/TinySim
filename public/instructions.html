@@ -9,7 +9,7 @@
 
         <p>TinySim is a powerful simulation tool currently under development. While it may still have some bugs or incomplete features, it's ready for you to explore and test its capabilities!</p>
 
-        <p>To begin, click on "<b>Library</b>" and drag components onto the workspace. Connect the ports and run your simulation.
+        <p>To begin, click on "<b>Library</b>" and drag components onto the workspace. Connect the ports and run your simulation. Use the search box at the top of the Library to filter blocks by name or by keyword (e.g. "filter", "logic", "control").
         
         <p>
             <b>All wires must connect to ports</b><br />
@@ -23,14 +23,54 @@
         <li><b>Flip horizontally:</b> Select the item and press [I] on your keyboard.</li>
         <li><b>Configure block:</b> Select the block and press [O] on your keyboard, or click the gear icon.</li>
         <li><b>Zoom:</b> Use the scroll wheel to zoom in or out.</li>
+        <li><b>Zoom to fit selection:</b> Select one or more items and press [Space].</li>
         <li><b>Move item:</b> Click and hold the item, then drag it to the desired position.</li>
         <li><b>Move several items:</b> Click and drag to select multiple items, then drag any selected item to move all of them.</li>
-        <li><b>Undo/Redo:</b> This feature is not supported in the current version.</li>
+        <li><b>Copy/Paste:</b> Select one or more items and press [Ctrl+C] / [Ctrl+V].</li>
+        <li><b>Duplicate:</b> Select one or more items and press [Ctrl+D].</li>
+        <li><b>Undo/Redo:</b> Press [Ctrl+Z] to undo and [Ctrl+Shift+Z] to redo.</li>
         <li><b>Save project:</b> Press [Ctrl+S] to save your current project.</li>
         <li><b>Double-click on wire:</b> Create an intermediate point that can be dragged to form more complex paths.</li>
         </ul>
 
         <p>You can simulate up to 10,000 steps. All simulations and circuit data are processed entirely on your device. We do not store any circuit data on our servers.</p>
+
+        <hr />
+
+        <h4>Simulation Settings</h4>
+        <p>Click the gear/settings icon to open the simulation panel:</p>
+        <ul>
+        <li><b>Step time / Stop time:</b> Defines the simulation's sample time and total duration. The ratio between them cannot exceed the 10,000-step limit.</li>
+        <li><b>Real Time:</b> Runs the simulation synced to the wall clock instead of as fast as possible. Step/Stop time fields are hidden while enabled.</li>
+        <li><b>Console Log:</b> Prints each step's values to the browser console for debugging.</li>
+        <li><b>Integration method:</b> Selects the numerical method used to solve dynamic blocks (Integrator, First Order).</li>
+        <li><b>Force stateless:</b> Forces every block to be re-solved on each access, even if already solved. Use only if you run into solving issues, as it impacts performance.</li>
+        </ul>
+
+        <hr />
+
+        <h4>Importing and Exporting Data</h4>
+        <ul>
+        <li>The <b>CSV Import</b> block reads a CSV file and exposes one output port per column. The file must have a column named <b>Time</b>; download the block's sample CSV for the expected format.</li>
+        <li>The <b>CSV Export</b> block writes the values it receives, alongside the simulation time, to a downloadable CSV file.</li>
+        <li>The <b>Lookup Table</b> block maps an input value to an output using a configurable table of points, with <b>nearest</b>, <b>linear</b>, or <b>stepwise</b> interpolation.</li>
+        </ul>
+
+        <hr />
+
+        <h4>Subsystems</h4>
+        <p>Group part of your diagram into a reusable <b>Subsystem</b> block:</p>
+        <ul>
+        <li>Click <b>View Inside</b> on a Subsystem block to open its internal diagram, where you can place <b>Input</b> and <b>Output</b> marker blocks to define its ports.</li>
+        <li>Use the breadcrumb navigation to move back up to the parent diagram or the top-level diagram.</li>
+        <li>After adding or rearranging markers inside, click <b>Sync Ports</b> on the Subsystem block to update its external ports to match.</li>
+        <li>Subsystems are not yet supported in C code export.</li>
+        </ul>
+
+        <hr />
+
+        <h4>Frequency Scope</h4>
+        <p>The <b>Frequency Scope</b> block performs a Bode (frequency response) analysis of the linear chain feeding its input. Connect it to your signal path and click <b>Analyze</b> to view the magnitude/phase plot and the resulting transfer function.</p>
 
         <hr />
 
@@ -42,7 +82,7 @@
         <li>Always use a <b>Display</b> block as the output port for the generated C code.</li>
         <li>Always use a <b>Constant</b> block as the input port for the generated C code.</li>
         <li>All settings and parameters are copied into the generated C code.</li>
-        <li>Real-time synchronization is not supported in the current version.</li>
+        <li>Enable <b>Real Time</b> in the simulation settings to sync the generated code's execution speed to the simulation's sample time, instead of running as fast as possible.</li>
         <li>The generated C code is divided into several files:
             <ul>
             <li><b>main.c:</b> The entry point of your program. Customize this file as needed.</li>
