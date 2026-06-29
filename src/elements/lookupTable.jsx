@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import { InputGroup, SelectGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class LookupTableModel extends SimNodeModel {
 
@@ -28,7 +29,7 @@ class LookupTableModel extends SimNodeModel {
     solution() {
         const inpt = this.getNodeByInput(0);
         if (inpt && inpt.solve) {
-            const inputValue = inpt.solve();
+            const inputValue = assertScalar(inpt.solve(), this.getModelName());
 
             switch (this.interpolationMethod) {
                 case 'nearest':

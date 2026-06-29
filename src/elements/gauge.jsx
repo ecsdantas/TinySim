@@ -4,6 +4,7 @@ import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import Gauge from './complements/Gauge';
 import { InputGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class GaugeModel extends SimNodeModel {
     kind = 'gauge';
@@ -25,7 +26,7 @@ class GaugeModel extends SimNodeModel {
     solution() {
         const inpt = this.getNodeByInput(0);
         if (inpt && inpt.solve) {
-            this.value = inpt.solve();
+            this.value = assertScalar(inpt.solve(), this.getModelName());
             this.update()
         }
         return this.value;

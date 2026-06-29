@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class MaxModel extends SimNodeModel {
 
@@ -23,8 +24,8 @@ class MaxModel extends SimNodeModel {
         const inpt2 = this.getNodeByInput(1);
         
         if (inpt1 && inpt1.solve && inpt2 && inpt2.solve) {
-            const value1 = inpt1.solve();
-            const value2 = inpt2.solve();
+            const value1 = assertScalar(inpt1.solve(), this.getModelName());
+            const value2 = assertScalar(inpt2.solve(), this.getModelName());
             return {'out': Math.max(value1, value2)};
         }
         return {'out': NaN};

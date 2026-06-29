@@ -5,6 +5,39 @@ import Simulation from '../simulation/core';
 import LineChart from './complements/LineChart';
 import { InputGroup, ColorPicker } from '../components/inputGroup';
 
+// Uma porta pode carregar um sinal vetorial (vindo de um Mux, por exemplo):
+// nesse caso `series` é um array-de-arrays (uma entrada por passo de tempo,
+// cada uma um array de componentes). Em vez de empurrar isso pro Chart.js
+// (que espera number[] plano), expande em um dataset por componente,
+// nomeado `label[0]`, `label[1]`... Extraída como função pura para ser
+// testável sem precisar renderizar o ícone/Chart.js.
+function buildPlotDatasets(inPorts, values, datasetSettings, genColor) {
+  return inPorts.flatMap((_, index) => {
+    const series = values[index] || [];
+    const baseName = datasetSettings[index]?.name || `Dataset ${index + 1}`;
+    const color = genColor(index);
+    if (series.length > 0 && Array.isArray(series[0])) {
+      const width = series[0].length;
+      return Array.from({ length: width }, (_, sub) => ({
+        label: `${baseName}[${sub}]`,
+        data: series.map((v) => v[sub]),
+        fill: false,
+        backgroundColor: color,
+        borderColor: color,
+        tension: 0.1,
+      }));
+    }
+    return [{
+      label: baseName,
+      data: series,
+      fill: false,
+      backgroundColor: color,
+      borderColor: color,
+      tension: 0.1,
+    }];
+  });
+}
+
 class PlotModel extends SimNodeModel {
   kind = 'plot';
   isTerminalBlock = true;
@@ -40,14 +73,7 @@ class PlotModel extends SimNodeModel {
   icon = () => {
     const GenColor = (index) => this.datasetSettings[index]?.color || `#${((1 << 24) + (index * 60 << 16) + (70 << 8) + 50).toString(16).slice(1)}`;
     if (this.component && this.values[0]?.length > 0 && (Simulation.realTimeMode || !Simulation.isRunning)) {
-      const datasets = this.getInPorts().map((_, index) => ({
-        label: this.datasetSettings[index]?.name || `Dataset ${index + 1}`,
-        data: this.values[index],
-        fill: false,
-        backgroundColor: GenColor(index),
-        borderColor: GenColor(index),
-        tension: 0.1,
-      }));
+      const datasets = buildPlotDatasets(this.getInPorts(), this.values, this.datasetSettings, GenColor);
       return <LineChart {...{ time: Simulation.getTimeArray(), datasets, plotWidth: this.plotWidth, plotHeight: this.plotHeight }} />;
     }
     return (
@@ -144,3 +170,4 @@ class PlotModel extends SimNodeModel {
 }
 
 export default PlotModel;
+export { buildPlotDatasets };

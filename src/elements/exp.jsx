@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class ExponentialModel extends SimNodeModel {
 
@@ -21,7 +22,7 @@ class ExponentialModel extends SimNodeModel {
         const inpt = this.getNodeByInput(0);
         
         if (inpt && inpt.solve) {
-            const value = inpt.solve();
+            const value = assertScalar(inpt.solve(), this.getModelName());
             return {'out': Math.exp(value)};
         }
         return {'out': NaN};

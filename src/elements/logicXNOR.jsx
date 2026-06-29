@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class XnorModel extends SimNodeModel {
 
@@ -23,7 +24,7 @@ class XnorModel extends SimNodeModel {
         for (let i = 0; i < this.getInPorts().length; i++) {
             const input = this.getNodeByInput(i);
             if (input && input.solve) {
-                result ^= (input.solve() > 0);
+                result ^= (assertScalar(input.solve(), this.getModelName()) > 0);
             }
         }
         return { 'out': result? 0 : 1 };

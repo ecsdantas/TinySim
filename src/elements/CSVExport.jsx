@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class ExportCSVModel extends SimNodeModel {
   kind = 'csvExport';
@@ -22,7 +23,7 @@ class ExportCSVModel extends SimNodeModel {
     ports.forEach((_, index) => {
       const inpt = this.getNodeByInput(index);
       if (inpt && inpt.solve) {
-        const value = inpt.solve()
+        const value = assertScalar(inpt.solve(), this.getModelName())
         this.mapValues.set(this.columnNames[index], [...(this.mapValues.get(this.columnNames[index]) || []), value]);
       }
     });

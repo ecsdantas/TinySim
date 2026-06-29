@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal  } from '../components/modal';
 import { InputGroup  } from '../components/inputGroup';
 import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class GainModel extends SimNodeModel {
 
@@ -25,7 +26,7 @@ class GainModel extends SimNodeModel {
     // Função principal do bloco
     solution() {
         const inpt = this.getNodeByInput(0);
-        const out = (inpt && inpt.solve) ? inpt.solve() * this.gainValue : 0
+        const out = (inpt && inpt.solve) ? assertScalar(inpt.solve(), this.getModelName()) * this.gainValue : 0
         return {'out': out}
     }
 

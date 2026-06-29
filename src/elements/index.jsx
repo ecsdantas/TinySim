@@ -60,6 +60,8 @@ import FrequencyScopeModel from "./frequencyScope";
 import SubsystemModel from "./subsystem";
 import SubsystemInputModel from "./subsystemInput";
 import SubsystemOutputModel from "./subsystemOutput";
+import MuxModel from "./mux";
+import DemuxModel from "./demux";
 
 export {
     ConstantModel,
@@ -122,5 +124,7 @@ export {
     FrequencyScopeModel,
     SubsystemModel,
     SubsystemInputModel,
-    SubsystemOutputModel
+    SubsystemOutputModel,
+    MuxModel,
+    DemuxModel
 }

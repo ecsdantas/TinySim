@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class MemoryModel extends SimNodeModel {
 
@@ -36,7 +37,7 @@ class MemoryModel extends SimNodeModel {
         this.lastStepSolved = Simulation.getCurrentStep()
         // Realiza o calculo nominal
         const inpt = this.getNodeByInput(0);
-        this.memoryValue = (inpt && inpt.solve) ? inpt.solve() : 0
+        this.memoryValue = assertScalar((inpt && inpt.solve) ? inpt.solve() : 0, this.getModelName())
         // Retorna o valor antigo da memória
         return {'out': outValue}
     }

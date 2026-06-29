@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import { SelectGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class RelationalOperatorModel extends SimNodeModel {
 
@@ -32,8 +33,8 @@ class RelationalOperatorModel extends SimNodeModel {
         const inpt2 = this.getNodeByInput(1);
         
         if (inpt1 && inpt1.solve && inpt2 && inpt2.solve) {
-            const value1 = inpt1.solve();
-            const value2 = inpt2.solve();
+            const value1 = assertScalar(inpt1.solve(), this.getModelName());
+            const value2 = assertScalar(inpt2.solve(), this.getModelName());
             switch(this.operator) {
                 case 'greaterThanOrEqual':
                     return {'out': Number(value1 >= value2)};

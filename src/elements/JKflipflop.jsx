@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class JKFlipFlopModel extends SimNodeModel {
 
@@ -20,9 +21,9 @@ class JKFlipFlopModel extends SimNodeModel {
 
     // Main function of the block
     solution() {
-        const j = this.getNodeByInput(0) ? this.getNodeByInput(0).solve() : 0;
-        const k = this.getNodeByInput(1) ? this.getNodeByInput(1).solve() : 0;
-        const clk = this.getNodeByInput(2) ? this.getNodeByInput(2).solve() : 0;
+        const j = assertScalar(this.getNodeByInput(0) ? this.getNodeByInput(0).solve() : 0, this.getModelName());
+        const k = assertScalar(this.getNodeByInput(1) ? this.getNodeByInput(1).solve() : 0, this.getModelName());
+        const clk = assertScalar(this.getNodeByInput(2) ? this.getNodeByInput(2).solve() : 0, this.getModelName());
 
         if (clk) {
             if (j && k) {

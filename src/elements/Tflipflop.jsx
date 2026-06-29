@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class TFlipFlopModel extends SimNodeModel {
 
@@ -19,8 +20,8 @@ class TFlipFlopModel extends SimNodeModel {
 
     // Main function of the block
     solution() {
-        const t = this.getNodeByInput(0) ? this.getNodeByInput(0).solve() : 0;
-        const clk = this.getNodeByInput(1) ? this.getNodeByInput(1).solve() : 0;
+        const t = assertScalar(this.getNodeByInput(0) ? this.getNodeByInput(0).solve() : 0, this.getModelName());
+        const clk = assertScalar(this.getNodeByInput(1) ? this.getNodeByInput(1).solve() : 0, this.getModelName());
 
         if (clk && t) {
             this.q = !this.q;

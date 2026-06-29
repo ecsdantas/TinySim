@@ -2,6 +2,7 @@ import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class DerivatorModel extends SimNodeModel {
 
@@ -31,7 +32,7 @@ class DerivatorModel extends SimNodeModel {
         this.lastStepSolved = Simulation.getCurrentStep()
 
         const inpt = this.getNodeByInput(0);
-        const currentInput = (inpt && inpt.solve) ? inpt.solve() : 0;
+        const currentInput = assertScalar((inpt && inpt.solve) ? inpt.solve() : 0, this.getModelName());
         const derivative = (currentInput - this.previousInput) / Simulation.getStepTime();
         this.previousInput = currentInput;
         this.previousOutput = derivative;

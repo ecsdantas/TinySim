@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class SwitchModel extends SimNodeModel {
 
@@ -25,7 +26,7 @@ class SwitchModel extends SimNodeModel {
         const inpt3 = this.getNodeByInput(2);
 
         if (inpt2 && inpt2.solve) {
-            const condition = inpt2.solve();
+            const condition = assertScalar(inpt2.solve(), this.getModelName());
             if (condition) {
                 if (inpt1 && inpt1.solve) {
                     return { 'out': inpt1.solve() };

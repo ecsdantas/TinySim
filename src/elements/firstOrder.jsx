@@ -5,6 +5,7 @@ import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
 import { integrateLinearODE } from '../simulation/integrationMethods';
 import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class FirstOrderModel extends SimNodeModel {
 
@@ -43,7 +44,7 @@ class FirstOrderModel extends SimNodeModel {
 
         // Realiza o cálculo nominal
         const inpt = this.getNodeByInput(0);
-        const inputValue = (inpt && inpt.solve) ? inpt.solve() : 0;
+        const inputValue = assertScalar((inpt && inpt.solve) ? inpt.solve() : 0, this.getModelName());
         const stepTime = Simulation.getStepTime();
 
         // Equação: dy/dt = inputValue - a * memoryValue

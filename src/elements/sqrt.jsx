@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class SqrtModel extends SimNodeModel {
 
@@ -21,7 +22,7 @@ class SqrtModel extends SimNodeModel {
         const inpt1 = this.getNodeByInput(0);
 
         if (inpt1 && inpt1.solve) {
-            const value = inpt1.solve();
+            const value = assertScalar(inpt1.solve(), this.getModelName());
             if (value < 0) {
                 return { 'out': NaN };
             }

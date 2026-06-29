@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class PowModel extends SimNodeModel {
 
@@ -23,8 +24,8 @@ class PowModel extends SimNodeModel {
         const inpt2 = this.getNodeByInput(1);
         
         if (inpt1 && inpt1.solve && inpt2 && inpt2.solve) {
-            const base = inpt1.solve();
-            const exponent = inpt2.solve();
+            const base = assertScalar(inpt1.solve(), this.getModelName());
+            const exponent = assertScalar(inpt2.solve(), this.getModelName());
             return {'out': Math.pow(base, exponent)};
         }
         return {'out': 0};

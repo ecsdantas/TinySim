@@ -3,6 +3,7 @@ import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class ZOHModel extends SimNodeModel {
 
@@ -39,7 +40,7 @@ class ZOHModel extends SimNodeModel {
 
         // Realiza o cálculo nominal
         const inpt = this.getNodeByInput(0);
-        const inputValue = (inpt && inpt.solve) ? inpt.solve() : 0;
+        const inputValue = assertScalar((inpt && inpt.solve) ? inpt.solve() : 0, this.getModelName());
 
         // Atualiza o valor somente se o passo for múltiplo do tempo de amostragem.
         // Usa contagem de steps (inteiros) em vez de tempo flutuante para evitar

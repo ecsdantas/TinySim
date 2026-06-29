@@ -5,6 +5,7 @@ import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import { addTF, LinearizationError } from '../simulation/transferFunctionMath';
+import { assertScalar } from '../simulation/vectorSignal';
 
 // Base class for blocks that fold 2+ numeric inputs into a single output
 // (Add, Sub, Multiply, Divide, Mod). It owns port creation, the "Add port"
@@ -44,7 +45,7 @@ class VariadicMathModel extends SimNodeModel {
         for (let i = 0; i < ports.length; i++) {
             const inpt = this.getNodeByInput(i);
             if (!(inpt && inpt.solve)) continue;
-            const value = inpt.solve();
+            const value = assertScalar(inpt.solve(), this.getModelName());
             if (!started) {
                 acc = value;
                 started = true;

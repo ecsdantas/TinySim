@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class LogModel extends SimNodeModel {
 
@@ -23,8 +24,8 @@ class LogModel extends SimNodeModel {
         const inpt2 = this.getNodeByInput(1);
         
         if (inpt1 && inpt1.solve && inpt2 && inpt2.solve) {
-            const value = inpt1.solve();
-            const base = inpt2.solve();
+            const value = assertScalar(inpt1.solve(), this.getModelName());
+            const base = assertScalar(inpt2.solve(), this.getModelName());
             if (value <= 0 || base <= 0 || base === 1) {
                 return {'out':  NaN}; // Logarithm is not defined for non-positive values or base 1
             }

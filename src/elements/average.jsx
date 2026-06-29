@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class AverageModel extends SimNodeModel {
   kind = 'average';
@@ -25,7 +26,7 @@ class AverageModel extends SimNodeModel {
     ports.forEach((port, index) => {
       const inpt = this.getNodeByInput(index);
       if (inpt && inpt.solve) {
-        sum += inpt.solve();
+        sum += assertScalar(inpt.solve(), this.getModelName());
         count++;
       }
     });

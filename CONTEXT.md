@@ -466,6 +466,102 @@ nodes/links/ports ainda é frágil.
   reativar) e a dependência `control-systems-js` no `package.json`
   (reservada para a Fase 4 — análise de frequência).
 
+### Fase 6 — Sinais vetoriais (Fase 1: Mux/Demux + visualização) (2026-06-29)
+- [x] **Maior gap estrutural com o Simulink identificado**: todo sinal hoje é
+      escalar (`solution()` retorna `{label: Number}`); blocos como
+      Add/Gain/Integrator fazem aritmética direta no valor lido, sem
+      checagem de tipo. Isso bloqueava qualquer bloco MIMO/vetorial. Decisão
+      explícita de **não** reescrever os ~70 blocos de uma vez (risco alto
+      demais dado o débito técnico do projeto); esta fase entrega o núcleo
+      Simulink-like com blast radius controlado.
+- [x] Sinal vetorial representado como array JS comum (`number[]`), fluindo
+      pela mesma porta/link que hoje carrega um `Number` — sem classe
+      wrapper nova, mantendo a filosofia "valor opaco" do motor de
+      simulação (`solve()`/cache/`getNodeByInput` continuam sem saber nada
+      sobre o tipo do dado).
+- [x] **Guard contra corrupção silenciosa**: novo módulo
+      `src/simulation/vectorSignal.jsx` (`isVectorSignal`, `VectorSignalError`,
+      `assertScalar`, mesmo padrão de `LinearizationError` em
+      `transferFunctionMath.jsx`). Aplicado nos pontos de maior tráfego —
+      `variadicMathModel.jsx` (cobre Add/Sub/Multiply/Divide/Mod de uma vez),
+      `gain.jsx`, `integrator.jsx`, `derivator.jsx`, `firstOrder.jsx`,
+      `memory.jsx` — para que alimentar esses blocos com um vetor lance um
+      erro claro em vez de corromper silenciosamente (concatenação de string
+      em vez de soma, por exemplo).
+  - **Gap conhecido, deixado de propósito**: os outros ~19 blocos que também
+    fazem aritmética/comparação direta (`comparator`, `average`,
+    `pow/log/exp/sqrt/trigonometric`, `lookupTable`, `saturation`, `switch`,
+    `CSVExport`, etc.) não receberam o guard nesta rodada — não é regressão
+    (hoje também não validam nada), mas alimentá-los com vetor ainda falha
+    silenciosamente. Candidato a uma Fase 1.1.
+- [x] **Blocos novos `Mux`/`Demux`** (`src/elements/mux.jsx`/`demux.jsx`),
+      registrados em `index.jsx`. `Mux`: N portas de entrada escalares (mesmo
+      padrão "Add port" de `VariadicMathModel`) → 1 saída vetorial
+      `[in1, in2, ...]`. `Demux`: 1 entrada vetorial → N saídas escalares,
+      largura configurável no painel de settings (recria as portas de saída
+      via `syncOutputPorts()`, mesmo padrão de `SubsystemModel.syncPorts()`).
+  - **Cuidado de serialização**: `Demux.deserialize()` **não** chama
+    `syncOutputPorts()` — as portas (e os links que carregam) já são
+    restauradas por `super.deserialize()` a partir do próprio JSON salvo;
+    recriá-las ali descartaria esses links. Só o campo `width` é restaurado.
+- [x] `SimNodeModel.createPort(label, isInput, options)` ganhou um 3º
+      parâmetro opcional repassado ao `BezierPortModel` — usado por Mux para
+      marcar sua porta de saída com `vectorWidth: N`. Blocos existentes
+      continuam chamando com 2 argumentos, sem alteração de comportamento.
+  - **Limitação conhecida**: `vectorWidth` não sobrevive a um save/load do
+    diagrama — `BezierPortModel` não tem `serialize()`/`deserialize()`
+    próprios, então esse metadado (puramente cosmético, usado só pra engrossar
+    o traço do link) se perde ao recarregar um `.tsim` salvo. Os links/portas
+    em si (e a simulação) não são afetados, só o indicador visual.
+- [x] **Visualização de vetor**: `plot.jsx` detecta quando um valor de porta é
+      um array (`buildPlotDatasets()`, extraída como função pura e testada
+      isoladamente) e expande automaticamente em N sub-datasets no gráfico
+      (`label[0]`, `label[1]`...) em vez de quebrar contra o Chart.js, que
+      espera `number[]` plano. `display.jsx` formata um valor vetorial como
+      `[1.00, 2.00, 3.00]` em vez do `toString()` padrão do React.
+      Comportamento escalar existente preservado 100% em ambos.
+- [x] Indicador visual cosmético em `bezierLinks.jsx`: link cuja porta de
+      origem tem `vectorWidth > 1` é desenhado com traço mais espesso (7 em
+      vez de 4). Não afeta a simulação.
+- **Fora de escopo desta fase** (mesmo padrão de documentação usado para
+  Subsystem/PID kd≠0): geração de código C para Mux/Demux (cai no mesmo erro
+  genérico "no C model registered"); `linearize()`/análise de frequência
+  através de Mux/Demux; sinais vetoriais cruzando fronteira de Subsystem.
+
+> `npm test` (113/113, 19 suítes) e `npm run build` passaram limpos após
+> esta fase (mesmo warning pré-existente de terceiros em
+> `@projectstorm/react-diagrams-routing`).
+
+### Fase 6.1 — Guard de sinal vetorial nos blocos restantes (2026-06-29)
+- [x] Fechado o gap documentado no fim da Fase 6: aplicado `assertScalar`
+      (`src/simulation/vectorSignal.jsx`) nos ~32 blocos restantes que liam
+      `inpt.solve()` cru e faziam aritmética/comparação direta —
+      `comparator`, `comparatorConstante`, `average`, `standardDeviation`,
+      `pow`, `log`, `exp`, `sqrt`, `trigonometric`, `round`, `saturation`,
+      `lookupTable`, `min`, `max`, `isEven`, `isOdd`, `CSVExport`,
+      `histogram`, `gauge`, `PIDcontroller` (entrada e setpoint), `zo`,
+      `zoh`, os 7 gates lógicos (`AND/OR/NOT/NOR/NAND/XOR/XNOR`) e os 4
+      flip-flops (`D/T/JK/SR`). Mesmo padrão de erro claro (`VectorSignalError`)
+      em vez de corrupção silenciosa (concatenação de string, comparação
+      sempre verdadeira por array ser truthy, `NaN`).
+  - **Decisão de escopo dentro do Switch**: só a porta de condição
+    (`in2`, usada como booleano) recebeu o guard. As portas selecionadas
+    (`in1`/`in3`, repassadas direto pro output) ficaram sem guard de
+    propósito — um Switch repassando um vetor inteiro (seleção de um de N
+    sinais vetoriais) é uma operação Simulink-like legítima, não corrupção.
+  - **Decisão de escopo no Subsystem**: `subsystem.jsx`/`subsystemOutput.jsx`
+    continuam sem guard — são passthrough transparente de fronteira, e
+    "sinais vetoriais cruzando fronteira de Subsystem" já está listado como
+    fora de escopo (ver Fase 6); guardar ali bloquearia essa extensão futura
+    sem nenhum bug atual a prevenir.
+- [x] Testes de regressão dedicados (`src/elements/vectorSignalGuard.test.jsx`)
+      cobrindo um representante de cada padrão de leitura (comparador de 2
+      portas, redução variádica booleana, condição do Switch, blocos de
+      aridade fixa 1 e 2 entradas, blocos de visualização) — não os 32
+      arquivos individualmente, só os padrões.
+
+> `npm test` (121/121, 20 suítes) e `npm run build` passaram limpos.
+
 ## Observação sobre ordem
 
 A Fase 1 deve vir antes da Fase 2 ser totalmente eficaz: escrever testes

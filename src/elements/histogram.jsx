@@ -4,6 +4,7 @@ import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import HistogramChart from './complements/HistogramChart';
 import { InputGroup, ColorPicker } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class HistogramModel extends SimNodeModel {
   kind = 'histogram';
@@ -37,7 +38,7 @@ class HistogramModel extends SimNodeModel {
         if (!this.values[index]) {
           this.values[index] = [];
         }
-        this.values[index].push(inpt.solve());
+        this.values[index].push(assertScalar(inpt.solve(), this.getModelName()));
       }
     });
     if (Simulation.getTimeArray().length === this.values[0]?.length && this.component) {

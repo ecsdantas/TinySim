@@ -46,10 +46,13 @@ class SimNodeModel extends DefaultNodeModel {
     }
 
     // Creates a new port
-    createPort(label, isInput = false) {
+    // options.vectorWidth: se definido (>1), marca a porta como portadora de
+    // sinal vetorial (usado por Mux/Demux e pelo indicador visual do link).
+    createPort(label, isInput = false, options = {}) {
         const port = new BezierPortModel({
             in: isInput,
             name: label,
+            ...options,
         });
         this.addPort(port);
         return port;

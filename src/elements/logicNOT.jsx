@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class NotModel extends SimNodeModel {
 
@@ -20,7 +21,7 @@ class NotModel extends SimNodeModel {
     solution() {
         const input = this.getNodeByInput(0);
         if (input && input.solve) {
-            return { 'out': (input.solve() > 0)? 0 : 1 };
+            return { 'out': (assertScalar(input.solve(), this.getModelName()) > 0)? 0 : 1 };
         }
         return { 'out': 1 }; // default output when no input
     }

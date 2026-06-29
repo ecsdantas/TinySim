@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class IsEvenModel extends SimNodeModel {
 
@@ -19,7 +20,7 @@ class IsEvenModel extends SimNodeModel {
     // Main function of the block
     solution() {
         const inpt = this.getNodeByInput(0);
-        const out = (inpt && inpt.solve) ? (inpt.solve() % 2 === 0 ? 1 : 0) : 0;
+        const out = (inpt && inpt.solve) ? (assertScalar(inpt.solve(), this.getModelName()) % 2 === 0 ? 1 : 0) : 0;
         return { 'out': out };
     }
 

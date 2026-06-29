@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import { InputGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class SaturationModel extends SimNodeModel {
 
@@ -26,7 +27,7 @@ class SaturationModel extends SimNodeModel {
     solution() {
         const inpt = this.getNodeByInput(0)
         if (inpt && inpt.solve) {
-            const value = inpt.solve();
+            const value = assertScalar(inpt.solve(), this.getModelName());
             return {'out': Math.max(this.MinValue, Math.min(this.MaxValue, value)) };
         }
         return {'out': 0}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel'
 import { useModal } from '../components/modal';
 import { InputGroup, SelectGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class RoundModel extends SimNodeModel {
 
@@ -27,7 +28,7 @@ class RoundModel extends SimNodeModel {
     solution() {
         const inpt = this.getNodeByInput(0);
         if (inpt && inpt.solve) {
-            const value = inpt.solve();
+            const value = assertScalar(inpt.solve(), this.getModelName());
             const factor = Math.pow(10, this.decimalPlaces);
 
             // Apply rounding based on selected type

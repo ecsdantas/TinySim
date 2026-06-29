@@ -1,6 +1,7 @@
 import React from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class SRFlipFlopModel extends SimNodeModel {
 
@@ -19,8 +20,8 @@ class SRFlipFlopModel extends SimNodeModel {
 
     // Main function of the block
     solution() {
-        const set = this.getNodeByInput(0) ? this.getNodeByInput(0).solve() : 0;
-        const reset = this.getNodeByInput(1) ? this.getNodeByInput(1).solve() : 0;
+        const set = assertScalar(this.getNodeByInput(0) ? this.getNodeByInput(0).solve() : 0, this.getModelName());
+        const reset = assertScalar(this.getNodeByInput(1) ? this.getNodeByInput(1).solve() : 0, this.getModelName());
 
         if (set && reset) {
             // Invalid state, typically this would be avoided in real circuits

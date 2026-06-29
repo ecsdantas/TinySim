@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import { SelectGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class TrigonometricModel extends SimNodeModel {
   kind = 'trigonometric';
@@ -24,7 +25,7 @@ class TrigonometricModel extends SimNodeModel {
     const inpt = this.getNodeByInput(0);
     let result = 0;
     if (inpt && inpt.solve) {
-      const inputValue = inpt.solve();
+      const inputValue = assertScalar(inpt.solve(), this.getModelName());
       switch (this.functionType) {
         case 'sin':
           result = Math.sin(inputValue);

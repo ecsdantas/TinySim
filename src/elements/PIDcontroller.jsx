@@ -4,6 +4,7 @@ import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
 import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class PIDControllerModel extends SimNodeModel {
   kind = 'pidController';
@@ -45,11 +46,11 @@ class PIDControllerModel extends SimNodeModel {
 
     let input = 0.0;
     if (inpt && inpt.solve) {
-      input = inpt.solve();
+      input = assertScalar(inpt.solve(), this.getModelName());
     }
 
     if (setpointInput && setpointInput.solve) {
-      this.setpoint = setpointInput.solve();
+      this.setpoint = assertScalar(setpointInput.solve(), this.getModelName());
     }
 
     const deltaTime = this.previousTime !== null ? (currentTime - this.previousTime) : 0;

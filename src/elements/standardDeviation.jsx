@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SimNodeModel } from '../nodes/nodes/simNodeModel';
 import { useModal } from '../components/modal';
 import { InputGroup } from '../components/inputGroup';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class StandardDeviationModel extends SimNodeModel {
   kind = 'deviation';
@@ -25,7 +26,7 @@ class StandardDeviationModel extends SimNodeModel {
     ports.forEach((port, index) => {
       const inpt = this.getNodeByInput(index);
       if (inpt && inpt.solve) {
-        values.push(inpt.solve());
+        values.push(assertScalar(inpt.solve(), this.getModelName()));
       }
     });
 

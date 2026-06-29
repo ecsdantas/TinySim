@@ -334,13 +334,17 @@ class BezierLinkModel extends DefaultLinkModel {
         if (!routePoints || routePoints.length < 2) return null;
 
         const fullPath = this.buildRoundedPath(routePoints);
+        // Indicador puramente visual: a porta de origem (ex. saída de um Mux)
+        // pode marcar `vectorWidth > 1` para sinalizar que o fio carrega um
+        // sinal vetorial. Não afeta a simulação.
+        const isVectorLink = (this.getSourcePort()?.getOptions()?.vectorWidth || 0) > 1;
 
         return (
             <g>
                 <path
                     d={fullPath}
                     stroke={this.isSelected() ? '#b388e0' : 'rgba(0, 0, 0, 0.8)'}
-                    strokeWidth="4"
+                    strokeWidth={isVectorLink ? '7' : '4'}
                     fill="none"
                     strokeDasharray={this.isSelected() ? '20,5' : '0'}
                     style={{

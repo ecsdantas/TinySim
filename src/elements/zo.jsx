@@ -4,6 +4,7 @@ import { useModal } from '../components/modal';
 import Simulation from '../simulation/core';
 import { InputGroup } from '../components/inputGroup';
 import { seriesTF, LinearizationError } from '../simulation/transferFunctionMath';
+import { assertScalar } from '../simulation/vectorSignal';
 
 class ZeroOrderModel extends SimNodeModel {
 
@@ -40,7 +41,7 @@ class ZeroOrderModel extends SimNodeModel {
 
         // Realiza o cálculo nominal
         const inpt = this.getNodeByInput(0);
-        const inputValue = (inpt && inpt.solve) ? inpt.solve() : 0;
+        const inputValue = assertScalar((inpt && inpt.solve) ? inpt.solve() : 0, this.getModelName());
         const stepTime = Simulation.getStepTime();
 
         // Equação: derivative = (input - memoryValue) / stepTime; memoryValue = input;
