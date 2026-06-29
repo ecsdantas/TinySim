@@ -76,7 +76,11 @@ const CGen = () => {
     toast.promise(CodeGen.compileC(), {
         pending: 'Generating code...',
         success: 'Code generated successfully!',
-        error: 'Failed to generate code.'
+        error: {
+            render({ data }) {
+                return `Failed to generate code: ${data?.message || data}`;
+            }
+        }
     })
 }
 

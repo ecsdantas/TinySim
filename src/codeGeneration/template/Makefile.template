@@ -1,0 +1,19 @@
+CC = gcc
+CFLAGS = -Wall -O2
+LDLIBS = -lm
+
+SOURCES = main.c model.c libs.c
+TARGET = tinysim_model
+
+all: $(TARGET)
+
+$(TARGET): $(SOURCES)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(TARGET) $(LDLIBS)
+
+run: all
+	./$(TARGET)
+
+clean:
+	rm -f $(TARGET)
+
+.PHONY: all run clean

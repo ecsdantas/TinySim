@@ -1,5 +1,18 @@
 // cmodel_import_csv.jsx
 
+// Reconstrói o CSV original (mesmas colunas/ordem que node.columnNames) a
+// partir dos dados já parseados em memória pelo elemento (node.mapValues),
+// pra ser empacotado no zip — sem isso, o C gerado abre um arquivo que
+// nunca existiu no projeto exportado.
+function buildCSVContent(node) {
+    const rowCount = node.mapValues.get(node.columnNames[0])?.length || 0;
+    const rows = [node.columnNames.join(',')];
+    for (let i = 0; i < rowCount; i++) {
+        rows.push(node.columnNames.map((name) => node.mapValues.get(name)[i]).join(','));
+    }
+    return rows.join('\n');
+}
+
 const ImportCSVModel = function (node) {
     const calledPort = node.calledPort.options.label; // Nome da porta ao qual foi chamado
     const tableVar = `csv_${node.CGenUID}_${calledPort}_table`;
@@ -26,6 +39,14 @@ const ImportCSVModel = function (node) {
     // Adiciona a implementação da função `lookup_csv`
     this.addLibsC__functions(`
 void lookup_csv(const double* time, const double* table, size_t* size, double currentTime, double* output) {
+    // table/time podem ser NULL ou *size 0 se o CSV não pôde ser carregado
+    // (arquivo ausente, cabeçalho inválido) — sem essa guarda, o acesso a
+    // table[timeIndex] abaixo seria uma desreferência de pointer nulo.
+    if (!table || !time || *size == 0) {
+        *output = 0.0;
+        return;
+    }
+
     int timeIndex = -1;
 
     // Localiza o índice mais próximo do tempo atual
@@ -164,12 +185,19 @@ void load_csv(const char* filename, double** table, size_t* length, const char* 
         this.addModelC__init(`load_csv(var_${node.CGenUID}_csvFilename, &${timeVar}, &${timeSize}, "Time");`);
         this.addModelC__term(`if (${timeVar}) free(${timeVar}), ${timeVar} = NULL;`);
         node.outputVars.push(timeVar);
+        // Empacota o CSV real (carregado no browser) no zip exportado, com o
+        // mesmo nome de arquivo usado abaixo. Feito só na primeira porta
+        // resolvida deste node (mesma guarda de outputVars já usada acima).
+        this.addExtraFile(`data_${node.CGenUID}.csv`, buildCSVContent(node));
     }
     this.addModelC__vars(`double* ${tableVar} = NULL;`); // [] = { ${node.mapValues.get(calledPort) } };
     this.addModelC__vars(`static double ${outputVar};`);
     this.addModelC__vars(`static size_t ${tableSize};`);
     this.addModelC__vars(`const char* ${node.CGenUID}_portNames[] = {${node.getOutPorts().map(port => `"${port.options.name}"`).join(', ')}};`);
-    this.addModelC__vars(`const char* var_${node.CGenUID}_csvFilename = "data.csv";`);
+    // Nome único por instância (antes era literal "data.csv" pra todo
+    // ImportCSVModel — duas instâncias no mesmo diagrama colidiam no mesmo
+    // arquivo). Mesmo padrão de nomeação que cmodel_csvExport.jsx já usa.
+    this.addModelC__vars(`const char* var_${node.CGenUID}_csvFilename = "data_${node.CGenUID}.csv";`);
 
     // Adiciona a inicialização para carregar os dados do arquivo CSV
     this.addModelC__init(`load_csv(var_${node.CGenUID}_csvFilename, &${tableVar}, &${tableSize}, "${calledPort}");`);

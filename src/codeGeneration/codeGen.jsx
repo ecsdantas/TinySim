@@ -25,6 +25,7 @@ class CodeGeneration {
         // Generate model actions, ports, and required libraries
         const cstruct = {}
         cstruct.replacements = []; // { placement: 'FUNCTION_DECLARATIONS', content: 'void myFunction(double *input, double *output);' }
+        cstruct.extraFiles = []; // { filename: 'data_csvImp.csv', content: '...' } -- arquivos extras (ex. dados de CSV Import) a empacotar no zip
 
         // Reseta compilações anteriores
         this.#nodes.forEach(node => node.isvisited = false);
@@ -76,9 +77,19 @@ class CodeGeneration {
             "model.c": await import('./template/model.c.template?raw').then(module => module.default),
             "model.h": await import('./template/model.h.template?raw').then(module => module.default),
             "libs.h": await import('./template/libs.h.template?raw').then(module => module.default),
-            "libs.c": await import('./template/libs.c.template?raw').then(module => module.default)
+            "libs.c": await import('./template/libs.c.template?raw').then(module => module.default),
+            "Makefile": await import('./template/Makefile.template?raw').then(module => module.default),
+            "README.md": await import('./template/README.template?raw').then(module => module.default)
         };
         const outputFiles = this.generateFiles(templates, replacements);
+
+        // Arquivos extras registrados pelos cmodels (ex. os .csv reais do
+        // CSV Import) não passam por placeholder substitution, só são
+        // copiados como estão pro zip final.
+        cstruct.extraFiles.forEach(({ filename, content }) => {
+            outputFiles[filename] = content;
+        });
+
         const zipBlob = await this.createZip(outputFiles);
 
         // Trigger download

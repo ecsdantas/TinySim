@@ -1,0 +1,24 @@
+# TinySim generated C model
+
+${MODELINFO_TEMPLATE}
+
+## Build
+
+With make:
+
+    make
+
+Without make:
+
+    gcc -Wall -O2 main.c model.c libs.c -o tinysim_model -lm
+
+The `-lm` flag links the math library — required because most blocks
+(trigonometric, pow, sqrt, log...) call into `<math.h>`.
+
+## Run
+
+    ./tinysim_model
+
+If your diagram includes a "CSV Import" block, this package already
+contains the matching `data_<id>.csv` file(s) it reads from — keep them
+in the same directory as the compiled binary.

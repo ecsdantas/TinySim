@@ -6,9 +6,11 @@ class ModelActions {
 
     constructor(cstruct) {
         this.replacements = cstruct.replacements;
-        
+        this.extraFiles = cstruct.extraFiles;
+
         // Métodos ligados ao contexto da classe
         this.addPort = this.addPort.bind(this);
+        this.addExtraFile = this.addExtraFile.bind(this);
         this.addLibsH__declaration = this.addLibsH__declaration.bind(this);
         this.addLibsH__include = this.addLibsH__include.bind(this);
         this.addLibsH__define = this.addLibsH__define.bind(this);
@@ -96,6 +98,15 @@ class ModelActions {
 
     addModelH__functions(st) {
         this.#addUniqueReplacement('MODEL_H__FUNCTIONS_TEMPLATE',  st);
+    }
+
+    // Empacota um arquivo extra (ex. um .csv com os dados reais carregados
+    // no browser) no zip exportado, ao lado de main.c/model.c/etc.
+    // Deduplicado por nome de arquivo, mesmo espírito do
+    // #addUniqueReplacement usado pelos demais addX.
+    addExtraFile(filename, content) {
+        if (this.extraFiles.some(f => f.filename === filename)) return;
+        this.extraFiles.push({ filename, content });
     }
 
     addModelC__generateNewVar(v){

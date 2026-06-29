@@ -604,6 +604,64 @@ nodes/links/ports ainda é frágil.
 > mesmo (risco não testado já citado na Fase 4, herdado pelo codegen sem
 > ser regressão nova).
 
+### Fase 7.1 — Correções e qualidade na geração de código C (2026-06-29)
+Auditoria do pipeline de codegen encontrou 3 bugs reais (não só gaps) e 1 gap
+de usabilidade; todos corrigidos nesta fase.
+
+- [x] **Bug real corrigido**: `cmodel_histogram.jsx` chamava `node.getNodes()`
+      — método que não existe no bloco `Histogram` (é método de
+      `DiagramModel`, não de um node). Qualquer diagrama com um bloco
+      Histogram travava a geração de código com `TypeError: node.getNodes
+      is not a function`, mesmo o próprio painel de settings do bloco já
+      avisando "Not compatible with Code Generation" (a intenção era um erro
+      claro; o que existia era um crash não tratado). Corrigido para seguir
+      o mesmo padrão de `cmodel_gauge.jsx`/`cmodel_display.jsx` — expõe cada
+      entrada conectada como uma porta GET (sem desenhar gráfico em C, já
+      que não há essa capacidade no C gerado), agora suportando múltiplos
+      datasets corretamente (a versão antiga, mesmo se não travasse, só
+      teria propagado o valor da última entrada pra uma única porta
+      compartilhada). Texto do painel atualizado pra refletir a nova
+      realidade.
+- [x] **Bug real corrigido**: `cmodel_csvImport.jsx` tinha o nome do arquivo
+      hardcoded como `"data.csv"` **literal** para toda instância do bloco —
+      duas instâncias de CSV Import no mesmo diagrama colidiam no mesmo
+      arquivo. Corrigido para `data_${node.CGenUID}.csv`, mesmo padrão que
+      `cmodel_csvExport.jsx` já usava (a inconsistência era só no Import).
+- [x] **Bug real corrigido**: o C gerado pelo CSV Import esperava um arquivo
+      `data.csv` que **nunca era exportado no zip** — o usuário precisava
+      criar esse arquivo manualmente com o cabeçalho exato. Se o arquivo não
+      existisse, `load_csv` falhava silenciosamente (`*table = NULL`) e
+      `lookup_csv` desreferenciava esse pointer nulo no primeiro passo
+      (segfault). Corrigido em duas partes: (1) guarda de
+      `NULL`/`*size == 0` no `lookup_csv` gerado, retornando 0.0 em vez de
+      desreferenciar; (2) o CSV real (carregado no browser, em
+      `node.mapValues`/`columnNames`) agora é reconstruído e empacotado no
+      zip via um mecanismo novo — `ModelActions.addExtraFile(filename,
+      content)` (dedupido por nome, mesmo espírito do
+      `#addUniqueReplacement` já usado pelos outros `addX`), com
+      `cstruct.extraFiles` mesclado em `outputFiles` antes do
+      `createZip()` em `codeGen.jsx`. Esse mecanismo é genérico — qualquer
+      cmodel futuro que precise empacotar um arquivo extra (não só
+      template C) pode reusá-lo.
+- [x] **UX corrigida**: `menubar.jsx` mostrava sempre `'Failed to generate
+      code.'` no toast de erro, descartando a mensagem específica que os
+      cmodels já lançam (incluindo as da Fase 7: "saída 2 não existe (rode
+      Sync Ports)" etc.). Trocado para `toast.promise(..., {error: {render
+      ({data}) => ...}})`, mostrando `data.message` — o usuário agora vê
+      qual bloco/motivo causou a falha.
+- [x] **Item de usabilidade**: zip gerado não tinha instruções de build —
+      só os `.c`/`.h`. Adicionados `Makefile.template` (regra `gcc ... -lm`,
+      flag necessária porque vários blocos usam `<math.h>` e o comentário
+      antigo em `main.c` não mencionava isso) e `README.template` (build com
+      e sem make, nota sobre os arquivos `data_<id>.csv` do CSV Import),
+      ambos registrados em `codeGen.jsx` junto aos demais templates.
+- [x] Testes novos: `cmodel_histogram.test.jsx` (regressão do crash + caso
+      sem portas), `cmodel_csvImport.test.jsx` (filename único, guarda
+      null no C gerado, conteúdo do CSV empacotado), `modelActions.test.jsx`
+      (dedupe do `addExtraFile`).
+
+> `npm test` (138/138, 26 suítes) e `npm run build` passaram limpos.
+
 ## Observação sobre ordem
 
 A Fase 1 deve vir antes da Fase 2 ser totalmente eficaz: escrever testes
