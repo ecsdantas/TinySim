@@ -7,7 +7,7 @@ import { INTEGRATION_METHODS } from "../simulation/integrationMethods"
 export const SettingsList = (props) => {
 
     // const {Side, Show, closeFcn} = props
-    const [getStepTime, setStepTime] = useState(Simulation.getStepTime())
+    const [getStepTime, setStepTime] = useState(Simulation.stepSize) // passo do usuário (getStepTime() pode ser o passo fixo do tempo real)
     const [getStopTime, setStopTime] = useState(Simulation.getStopTime())
     const [getUseStateless, setUseStateless] = useState(Simulation.statelessMode)
     const [getRealTime, setRealTime] = useState(Simulation.realTimeMode)

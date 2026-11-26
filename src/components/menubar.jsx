@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import LibrarySVG from "../assets/icons/library-white.svg"
 import PlaySVG from "../assets/icons/play-white.svg"
 import ResetSVG from "../assets/icons/reset.svg"
@@ -18,6 +18,44 @@ import { Samples } from "./samples"
 import { toast } from "react-toastify"
 
 const iconSizes = { width: 28, height: 28 }
+
+// Texto do indicador de progresso da simulação. Modo padrão: percentual do
+// stopTime; tempo real (sem fim definido): o tempo simulado.
+export function formatProgress(progress) {
+    if (!progress || !progress.running) return ''
+    if (progress.realTime) return `t = ${progress.currentTime.toFixed(1)} s`
+    return `${Math.floor(progress.fraction * 100)}%`
+}
+
+// Estado de execução do engine, atualizado pelo subscribe() a cada fatia
+export function useSimulationProgress(engine = Simulation) {
+    const [progress, setProgress] = useState(() => engine.getProgress())
+    useEffect(() => engine.subscribe(setProgress), [engine])
+    return progress
+}
+
+const StopIcon = ({ title, ...props }) => (
+    <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" style={{ cursor: 'pointer' }} {...props}>
+        <title>{title}</title>
+        <circle cx="14" cy="14" r="12" fill="none" stroke="#ffffff" strokeWidth="2" />
+        <rect x="9" y="9" width="10" height="10" rx="1" fill="#ff6b6b" />
+    </svg>
+)
+
+const RunStopButton = ({ Run }) => {
+    const progress = useSimulationProgress()
+    if (!progress.running) {
+        return <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop  ([ALT] + [1])" />
+    }
+    return (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <StopIcon {...iconSizes} onClick={Run} role="button" aria-label="Stop simulation" title="Stop  ([ALT] + [1])" />
+            <span className="sim-progress" data-testid="sim-progress" style={{ fontSize: 12, minWidth: 40, fontVariantNumeric: 'tabular-nums' }}>
+                {formatProgress(progress)}
+            </span>
+        </span>
+    )
+}
 
 const FileMenu = () => {
     const [showDropdown, setShowDropdown] = useState(false);
@@ -92,7 +130,7 @@ export const Menubar = (props) => {
         <div className='menubar'>
             <FileMenu />
             <img src={LibrarySVG} {...iconSizes} onClick={LeftbarToogle} title="Library" />
-            <img src={PlaySVG} {...iconSizes} onClick={Run} title="Run/Stop  ([ALT] + [1])" />
+            <RunStopButton Run={Run} />
             <img src={PlayStepSVG} {...iconSizes} onClick={RunStep} title="Run Step ([ALT] + [2])" />
             <img src={ResetSVG} {...iconSizes} onClick={Reset} title="Reset Simulation  ([ALT] + [3])" />
             <img src={SettingsSVG} {...iconSizes} onClick={RightbarToogle} title="Settings" />
